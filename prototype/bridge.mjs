@@ -68,6 +68,188 @@ function resolveClarification(){
  if(!clarification?.record||clarification.status!=='answered')return;
  clarification.status='resolved';clarification.record.status='resolved';evidence();text('cUserStatus','Đã hiểu · Vòng làm rõ đã được Minh đóng.');$('cResolve').hidden=true;
 }
+/* ===================== Personalized AI Interview Support =====================
+   Ngân hàng câu hỏi và phần tách cấu trúc là dữ liệu tĩnh — luôn chạy được, kể cả offline.
+   AI chỉ tham gia ở lớp "nói câu đó ra sao", và luôn phải qua bước người dùng xác nhận.
+   Hồ sơ hỗ trợ do người dùng tự khai, lưu trên máy họ, hiển thị công khai và sửa/xoá được. */
+const IV_KEY='cau-noi:interview-profile';
+let IVS=null,IVCLAR=null,ivProfile=null,ivCategory='all',ivQueue=[],ivIndex=0,ivQuestion=null;
+let ivSupport=null,ivSelection=null,ivController=null,ivRevision=0,ivSeq=0,ivReason='LOCAL_MODE';
+const ivUsage=new Map();
+function ivReadStored(){try{const raw=localStorage.getItem(IV_KEY);return raw?JSON.parse(raw):null;}catch{return null;}}
+function ivStore(){try{localStorage.setItem(IV_KEY,JSON.stringify(ivProfile));}catch{/* chế độ riêng tư chặn lưu: vẫn chạy trong phiên */}}
+function ivEnabled(){
+ const set=new Set(ivProfile?.kept||[]);
+ for(const group of IVS.profileQuestions){
+  const chosen=group.options.find(o=>o.optionId===ivProfile?.answers?.[group.groupId]);
+  for(const id of chosen?.enablesSupport||[])set.add(id);
+ }
+ for(const id of ivProfile?.declined||[])set.delete(id);
+ return set;
+}
+function ivRenderForm(){
+ $('ivProfileQuestions').replaceChildren();
+ for(const group of IVS.profileQuestions){
+  const box=node('div','');
+  box.append(node('div',`${group.label} — ${group.question}`,'sectionTitle'));
+  const grid=node('div','','choiceGrid');
+  for(const option of group.options){
+   const b=node('button',option.text,'opt');b.dataset.group=group.groupId;b.dataset.option=option.optionId;
+   b.setAttribute('aria-pressed',ivProfile?.answers?.[group.groupId]===option.optionId?'true':'false');
+   b.onclick=()=>{for(const other of grid.children)other.setAttribute('aria-pressed','false');b.setAttribute('aria-pressed','true');};
+   grid.append(b);
+  }
+  box.append(grid);$('ivProfileQuestions').append(box);
+ }
+ $('ivStrengths').replaceChildren();
+ for(const s of IVS.strengths){
+  const b=node('button',s.text,'opt');b.dataset.strength=s.strengthId;
+  b.setAttribute('aria-pressed',ivProfile?.strengths?.includes(s.strengthId)?'true':'false');
+  b.onclick=()=>b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')==='true'?'false':'true');
+  $('ivStrengths').append(b);
+ }
+}
+function ivShowSummary(){
+ const dl=$('ivSummaryList');dl.replaceChildren();
+ for(const group of IVS.profileQuestions){
+  const chosen=group.options.find(o=>o.optionId===ivProfile?.answers?.[group.groupId]);
+  if(chosen)dl.append(node('dt',group.label),node('dd',chosen.text));
+ }
+ const names=(ivProfile?.strengths||[]).map(id=>IVS.strengths.find(s=>s.strengthId===id)?.text).filter(Boolean);
+ if(names.length)dl.append(node('dt','Thế mạnh'),node('dd',names.join(' · ')));
+ const enabled=[...ivEnabled()].map(id=>IVS.supportActions.find(a=>a.supportId===id)?.label).filter(Boolean);
+ dl.append(node('dt','Hỗ trợ bật sẵn'),node('dd',enabled.length?enabled.join(' · '):'Chưa bật sẵn hỗ trợ nào'));
+ $('ivSummary').hidden=false;$('ivForm').hidden=true;
+}
+function ivRenderCategories(){
+ $('ivCategories').replaceChildren();
+ for(const c of [{categoryId:'all',label:'Tất cả'},...IVS.categories]){
+  const b=node('button',c.label,'supportBtn');
+  b.setAttribute('aria-pressed',c.categoryId===ivCategory?'true':'false');
+  b.onclick=()=>{ivCategory=c.categoryId;ivBuildQueue();ivRenderCategories();ivShowQuestion();};
+  $('ivCategories').append(b);
+ }
+}
+function ivRenderSupports(){
+ const enabled=ivEnabled();
+ $('ivSupports').replaceChildren();
+ for(const action of IVS.supportActions){
+  const b=node('button','','supportBtn');b.dataset.id=action.supportId;b.setAttribute('aria-pressed','false');b.title=action.description;
+  b.append(node('span',action.label));
+  if(enabled.has(action.supportId))b.append(node('span','gợi ý cho bạn','rec'));
+  b.onclick=()=>ivChooseSupport(action);
+  $('ivSupports').append(b);
+ }
+}
+function ivBuildQueue(){ivQueue=IVS.questions.filter(q=>ivCategory==='all'||q.categoryId===ivCategory);ivIndex=0;}
+function ivResetSupport(){
+ ivRevision++;ivController?.abort();ivController=null;ivSupport=null;ivSelection=null;ivReason='LOCAL_MODE';
+ $('ivPanel').hidden=true;$('ivPanel').replaceChildren();
+ $('ivComposer').hidden=true;$('ivOptions').replaceChildren();$('ivApproved').value='';$('ivUseLine').disabled=true;
+ for(const b of $('ivSupports').children)b.setAttribute('aria-pressed','false');
+}
+function ivShowQuestion(){
+ if(!ivQueue.length)return;
+ ivQuestion=ivQueue[ivIndex%ivQueue.length];
+ const cat=IVS.categories.find(c=>c.categoryId===ivQuestion.categoryId);
+ text('ivAsker',`Người phỏng vấn · ${cat?.label||''} · câu hỏi mô phỏng`);
+ text('ivQuestion',ivQuestion.text);text('ivStatus','');$('ivAnswer').value='';ivResetSupport();
+}
+function ivRenderOptions(options,source){
+ $('ivOptions').replaceChildren();ivSelection=null;$('ivApproved').value='';$('ivUseLine').disabled=true;
+ for(const option of options){
+  const b=node('button','','opt');b.setAttribute('aria-pressed','false');
+  b.append(node('span',IVCLAR.toneLabels?.[option.tone]||INT.toneLabels[option.tone]||option.tone,'toneTag'),node('span',option.text),node('span',source==='llm'?'AI · đã qua kiểm tra tự động, cần bạn kiểm tra ý nghĩa':`Câu mẫu · ${option.phrasingId}`,'src'));
+  b.onclick=()=>{for(const other of $('ivOptions').children)other.setAttribute('aria-pressed','false');b.setAttribute('aria-pressed','true');ivSelection={...option,source};$('ivApproved').value=option.text;$('ivUseLine').disabled=false;$('ivApproved').focus({preventScroll:true});};
+  $('ivOptions').append(b);
+ }
+}
+async function ivChooseSupport(action){
+ if(!ivQuestion)return;
+ ivRevision++;ivController?.abort();ivController=null;const current=ivRevision;
+ ivSupport=action;ivSelection=null;ivReason='LOCAL_MODE';
+ for(const b of $('ivSupports').children)b.setAttribute('aria-pressed',b.dataset.id===action.supportId?'true':'false');
+ ivUsage.set(action.supportId,(ivUsage.get(action.supportId)||0)+1);
+ // (a) Trợ giúp cấu trúc lấy thẳng từ ngân hàng câu hỏi — không do AI sinh ra.
+ const panel=$('ivPanel');panel.replaceChildren();
+ if(action.supportId==='question-breakdown'){
+  panel.append(node('h4','Câu hỏi này gồm các phần:'));
+  const list=document.createElement('ol');list.className='ivParts';
+  for(const part of ivQuestion.parts)list.append(node('li',part));
+  panel.append(list);
+ } else if(action.supportId==='question-focus'){
+  panel.append(node('h4','Câu hỏi có thể đang nhắm tới:'));
+  const list=document.createElement('ul');list.className='ivParts';
+  for(const focus of ivQuestion.focusOptions)list.append(node('li',focus));
+  panel.append(list);
+ } else {
+  panel.append(node('h4','Xin thêm thời gian là điều hợp lệ'),node('p','Một khoảng lặng ngắn để sắp xếp ý thường cho câu trả lời tốt hơn là trả lời vội.','tiny'));
+ }
+ panel.hidden=false;
+ // (b) Cách nói ra: câu mẫu trước, AI cá nhân hoá sau nếu bật chế độ AI.
+ const type=IVCLAR.clarificationTypes.find(t=>t.clarificationId===action.clarificationId);
+ if(!type)return;
+ $('ivComposer').hidden=false;ivRenderOptions(type.phrasings,'static');$('ivOptionsHeading').focus({preventScroll:true});
+ if(!$('aiMode').checked){text('ivStatus','Đang dùng câu mẫu; chưa gửi dữ liệu tới AI.');return;}
+ ivController=new AbortController();const localController=ivController;
+ text('ivStatus','Đang lấy gợi ý cách nói từ AI…');$('ivSupports').inert=true;$('ivOptions').inert=true;$('ivApproved').disabled=true;
+ const timeout=setTimeout(()=>localController.abort(),5500);
+ try{
+  const response=await fetch('/api/clarify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({originalMessage:ivQuestion.text,clarificationId:action.clarificationId,packId:'interview'}),signal:localController.signal});
+  const result=await response.json();if(current!==ivRevision)return;
+  if(response.status===400){ivReason='BAD_INPUT';text('ivStatus',result.message||'Dữ liệu không hợp lệ.');}
+  else if(response.ok&&result.mode==='llm'){ivReason=null;ivRenderOptions(Object.entries(result.options).map(([tone,value])=>({tone,text:value,phrasingId:`llm-${tone}`})),'llm');text('ivStatus','Gợi ý AI đã qua kiểm tra tự động; hãy kiểm tra lại ý nghĩa trước khi nói.');}
+  else{ivReason=result.reasonCode||'API_ERROR';text('ivStatus',`Dùng câu mẫu dự phòng (${ivReason}).`);}
+ }catch(error){if(current===ivRevision){ivReason=error.name==='AbortError'?'TIMEOUT':'NETWORK_ERROR';text('ivStatus',`Dùng câu mẫu dự phòng (${ivReason}).`);}}
+ finally{clearTimeout(timeout);if(current===ivRevision){ivController=null;$('ivSupports').inert=false;$('ivOptions').inert=false;$('ivApproved').disabled=false;}}
+}
+function ivUseLine(){
+ const approved=$('ivApproved').value.trim();if(!ivSupport||!ivQuestion||!approved)return;
+ records.push({recordType:'interview-support',id:`interview-${++ivSeq}`,questionId:ivQuestion.questionId,categoryId:ivQuestion.categoryId,supportId:ivSupport.supportId,userApprovedText:approved,source:ivSelection?.source==='llm'?'llm':ivSelection?'fallback':'user',sourceFile:ivSelection?.source==='static'?'data/clarifications_interview_vi.json':ivSelection?.source==='llm'?'/api/clarify':null,pickedPhrasingId:ivSelection?.phrasingId||null,wasEdited:!ivSelection||approved!==ivSelection.text,reasonCode:ivReason});
+ evidence();$('ivUseLine').disabled=true;
+ text('ivStatus','Đã ghi lại câu bạn chọn. Trong buổi phỏng vấn thật, bạn là người nói câu này — sản phẩm không nói thay bạn.');
+}
+function ivFinish(){
+ $('ivReview').hidden=false;
+ const body=$('ivReviewBody');body.replaceChildren();
+ if(!ivUsage.size){body.append(node('p','Buổi này bạn chưa dùng hỗ trợ nào. Không sao — hỗ trợ chỉ dùng khi bạn thấy cần.','tiny'));return;}
+ body.append(node('p','Đây là ghi nhận từ buổi luyện này, không phải kết luận về bạn. Bạn quyết định giữ hay bỏ.','tiny'));
+ const enabled=ivEnabled();
+ for(const [id,count] of ivUsage){
+  const action=IVS.supportActions.find(a=>a.supportId===id);if(!action)continue;
+  const card=node('div','','ivPanel');
+  card.append(node('h4',`${action.label} — bạn đã dùng ${count} lần`));
+  if(enabled.has(id))card.append(node('p','Đang bật sẵn trong hồ sơ của bạn.','tiny'));
+  else{
+   card.append(node('p','Bật sẵn cho những lần luyện sau?','tiny'));
+   const row=node('div','','row');
+   const keep=node('button','Bật sẵn');keep.onclick=()=>ivDecide(id,true);
+   const skip=node('button','Không cần');skip.onclick=()=>ivDecide(id,false);
+   row.append(keep,skip);card.append(row);
+  }
+  body.append(card);
+ }
+}
+function ivDecide(id,keep){
+ ivProfile={answers:{},strengths:[],...(ivProfile||{}),
+  kept:keep?[...new Set([...(ivProfile?.kept||[]),id])]:(ivProfile?.kept||[]).filter(x=>x!==id),
+  declined:keep?(ivProfile?.declined||[]).filter(x=>x!==id):[...new Set([...(ivProfile?.declined||[]),id])]};
+ ivStore();ivShowSummary();ivRenderSupports();ivFinish();
+}
+function ivSaveProfile(){
+ const answers={};
+ for(const b of $('ivProfileQuestions').querySelectorAll('button[aria-pressed="true"]'))answers[b.dataset.group]=b.dataset.option;
+ const strengths=[...$('ivStrengths').querySelectorAll('button[aria-pressed="true"]')].map(b=>b.dataset.strength);
+ ivProfile={...(ivProfile||{}),answers,strengths,kept:ivProfile?.kept||[],declined:ivProfile?.declined||[]};
+ ivStore();ivShowSummary();ivBeginPractice();
+}
+function ivBeginPractice(){
+ $('ivPractice').hidden=false;ivRenderCategories();ivRenderSupports();ivBuildQueue();ivShowQuestion();
+}
+function ivInit(){
+ ivProfile=ivReadStored();ivRenderForm();
+ if(ivProfile){ivShowSummary();ivBeginPractice();}
+}
 function cancel(){revision++;controller?.abort();controller=null;$('btnAnalyze').disabled=!INT;$('optsOut').inert=false;$('approved').disabled=false;}
 function invalidate(){cancel();draft=null;selected=null;$('analysis').hidden=true;$('approved').value='';$('btnSend').disabled=true;text('notice','');text('error','');}
 function updateSend(){$('btnSend').disabled=!draft||!$('approved').value.trim();}
@@ -147,13 +329,22 @@ $('cNextSample').onclick=()=>{sampleIndex=(sampleIndex+1)%CLAR.sampleMessages.le
 $('cApproved').oninput=updateClarificationSend;
 $('cResponse').oninput=()=>{$('cRespond').disabled=!clarification||clarification.status!=='awaiting-response'||!$('cResponse').value.trim();};
 $('cSend').onclick=sendClarification;$('cRespond').onclick=respondToClarification;$('cResolve').onclick=resolveClarification;
+$('ivSaveProfile').onclick=ivSaveProfile;
+$('ivSkipProfile').onclick=()=>{ivProfile={answers:{},strengths:[],kept:[],declined:[]};ivShowSummary();ivBeginPractice();};
+$('ivEditProfile').onclick=()=>{$('ivSummary').hidden=true;$('ivForm').hidden=false;ivRenderForm();$('ivForm').querySelector('button')?.focus({preventScroll:true});};
+$('ivClearProfile').onclick=()=>{ivProfile=null;try{localStorage.removeItem(IV_KEY);}catch{}ivRenderForm();$('ivSummary').hidden=true;$('ivForm').hidden=false;$('ivPractice').hidden=true;$('ivReview').hidden=true;ivUsage.clear();};
+$('ivApproved').oninput=()=>{$('ivUseLine').disabled=!ivSupport||!$('ivApproved').value.trim();};
+$('ivUseLine').onclick=ivUseLine;
+$('ivNext').onclick=()=>{ivIndex++;ivShowQuestion();$('ivQuestion').focus?.({preventScroll:true});};
+$('ivFinish').onclick=ivFinish;
 $('btnAnalyze').disabled=true;
 try {
- [INT,ORG,GLO,CLAR]=await Promise.all(['intents_vi','org_map','glossary_vi','clarifications_vi'].map(async name=>{const r=await fetch(`/data/${name}.json`);if(!r.ok)throw new Error('data');return r.json();}));
+ [INT,ORG,GLO,CLAR,IVS,IVCLAR]=await Promise.all(['intents_vi','org_map','glossary_vi','clarifications_vi','interview_support_vi','clarifications_interview_vi'].map(async name=>{const r=await fetch(`/data/${name}.json`);if(!r.ok)throw new Error('data');return r.json();}));
  text('bData',`Domain: ${INT.intents.length} ý định · ${ORG.roles.length} đầu mối`);$('btnAnalyze').disabled=false;
  const samples=[['Chưa rõ task','em không hiểu task API-142 lắm mà hỏi thì sợ phiền'],['Quá tải','nhiều task cùng lúc em không kịp'],['Quyền truy cập','em chưa có quyền truy cập repo'],['Cần viết lại','mọi người nói nhanh em không nhớ kịp'],['Thiếu thử thách','công việc lặp lại em muốn thử thách hơn'],['Chưa rõ nhu cầu','em muốn nói một chuyện']];
  for(const [label,value] of samples){const b=node('button',label);b.onclick=()=>{invalidate();$('raw').value=value;$('optsOut').inert=false;$('approved').disabled=false;$('raw').focus();};$('samples').append(b);}
  for(const type of CLAR.clarificationTypes){const button=node('button','', 'clarifyType');button.dataset.id=type.clarificationId;button.setAttribute('aria-pressed','false');button.append(node('strong',type.label),node('span',type.description));button.onclick=()=>chooseClarification(type);$('cTypes').append(button);}
  showClarificationSample();
+ ivInit();
  $('loadedList').replaceChildren(...[`${INT.intents.length} ý định, mỗi ý định có định tuyến và phản hồi mẫu.`,`${ORG.roles.length} vai trò hư cấu; cần thay bằng đầu mối thật khi triển khai.`,`${(GLO.entries||GLO.terms).length} mục tri thức; quy ước mẫu không phải cam kết của công ty.`].map(s=>node('li',s)));
 }catch{$('loadError').hidden=false;text('bData','Lỗi tải dữ liệu');}

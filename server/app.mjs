@@ -9,7 +9,15 @@ dotenv.config({path:path.join(root,'.env'),quiet:true});
 const intents=JSON.parse(await readFile(path.join(root,'data/intents_vi.json'),'utf8'));
 const org=JSON.parse(await readFile(path.join(root,'data/org_map.json'),'utf8'));
 const clarifications=JSON.parse(await readFile(path.join(root,'data/clarifications_vi.json'),'utf8'));
-const paths=new Set(['/prototype/bridge.html','/prototype/bridge.mjs','/prototype/core.mjs','/data/intents_vi.json','/data/org_map.json','/data/glossary_vi.json','/data/clarifications_vi.json']);
+const interviewClarifications=JSON.parse(await readFile(path.join(root,'data/clarifications_interview_vi.json'),'utf8'));
+const interviewOrg=JSON.parse(await readFile(path.join(root,'data/org_map_interview_vi.json'),'utf8'));
+// Mỗi pack mang theo bộ vai trò riêng: validator chặn bịa tên người phải canh đúng
+// danh sách vai trò của bối cảnh đang chạy, không phải của bối cảnh khác.
+const clarificationPacks={
+ workplace:{data:clarifications,roles:org.roles,promptMode:'clarify'},
+ interview:{data:interviewClarifications,roles:interviewOrg.roles,promptMode:'clarify-interview'}
+};
+const paths=new Set(['/prototype/bridge.html','/prototype/bridge.mjs','/prototype/core.mjs','/data/intents_vi.json','/data/org_map.json','/data/glossary_vi.json','/data/clarifications_vi.json','/data/clarifications_interview_vi.json','/data/org_map_interview_vi.json','/data/interview_support_vi.json']);
 export function createServer(provider=null) {
  return http.createServer(async(req,res)=>{
   const send=(status,value)=>{res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'});res.end(JSON.stringify(value));};
@@ -30,9 +38,11 @@ export function createServer(provider=null) {
    if(!req.headers['content-type']?.startsWith('application/json')) return send(400,{mode:'error',reasonCode:'BAD_INPUT',message:'Cần JSON.'});
    try {
     let body=''; for await(const chunk of req) {body+=chunk; if(Buffer.byteLength(body)>8192) return send(400,{mode:'error',reasonCode:'BAD_INPUT',message:'Nội dung quá dài.'});}
-    const request=validClarificationRequest(JSON.parse(body),clarifications);
+    const parsed=JSON.parse(body);
+    const pack=clarificationPacks[parsed?.packId]||clarificationPacks.workplace;
+    const request=validClarificationRequest(parsed,pack.data);
     if(!request) return send(400,{mode:'error',reasonCode:'BAD_INPUT',message:'Kiểm tra tin nhắn và loại câu hỏi làm rõ.'});
-    return send(200,await clarify(request,{provider,roles:org.roles}));
+    return send(200,await clarify(request,{provider,roles:pack.roles,promptMode:pack.promptMode}));
    } catch {return send(400,{mode:'error',reasonCode:'BAD_INPUT',message:'JSON không hợp lệ.'});}
   }
   const target=pathname==='/'?'/prototype/bridge.html':pathname;

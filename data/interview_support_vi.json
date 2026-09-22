@@ -1,0 +1,260 @@
+{
+  "schemaVersion": "1.0.0",
+  "packId": "interview-support",
+  "domain": "vietnamese-software-interview",
+  "updatedAt": "2026-09-22",
+  "note": "Ngân hàng câu hỏi luyện tập soạn sẵn, chạy offline. Sản phẩm KHÔNG dự đoán người phỏng vấn sẽ hỏi gì — đây là luyện tập để giảm bất ngờ, không phải để học thuộc đáp án.",
+  "designNote": "Hồ sơ hỗ trợ KHÔNG phải chẩn đoán. Nó chỉ ghi lại cách người dùng muốn được hỗ trợ, do chính họ khai báo và sửa được bất cứ lúc nào. Mọi suy luận của hệ thống đều hiển thị bằng ngôn ngữ thường và người dùng có quyền tắt.",
+
+  "profileQuestions": [
+    {
+      "groupId": "communication",
+      "label": "Giao tiếp",
+      "question": "Khi gặp một câu hỏi bất ngờ, bạn thường muốn gì?",
+      "options": [
+        { "optionId": "answer-now", "text": "Trả lời ngay", "enablesSupport": [] },
+        { "optionId": "few-seconds", "text": "Có vài giây để suy nghĩ", "enablesSupport": ["thinking-time"] },
+        { "optionId": "ask-back", "text": "Được hỏi lại cho rõ", "enablesSupport": ["question-focus"] },
+        { "optionId": "split-question", "text": "Câu hỏi được chia nhỏ ra", "enablesSupport": ["question-breakdown"] }
+      ]
+    },
+    {
+      "groupId": "information",
+      "label": "Tiếp nhận thông tin",
+      "question": "Với một chỉ dẫn phức tạp, bạn tiếp nhận tốt nhất bằng cách nào?",
+      "options": [
+        { "optionId": "written", "text": "Văn bản", "enablesSupport": ["question-breakdown"] },
+        { "optionId": "verbal", "text": "Nghe nói", "enablesSupport": [] },
+        { "optionId": "both", "text": "Cả hai", "enablesSupport": [] }
+      ]
+    },
+    {
+      "groupId": "workstyle",
+      "label": "Cách làm việc",
+      "question": "Bạn thường làm tốt nhất khi nào?",
+      "options": [
+        { "optionId": "clear-deadline", "text": "Có hạn chót rõ ràng", "enablesSupport": [] },
+        { "optionId": "interesting-problem", "text": "Gặp vấn đề thú vị", "enablesSupport": [] },
+        { "optionId": "deep-focus", "text": "Có thời gian tập trung sâu", "enablesSupport": ["thinking-time"] },
+        { "optionId": "structure", "text": "Có cấu trúc rõ ràng", "enablesSupport": ["question-breakdown"] }
+      ]
+    }
+  ],
+
+  "strengths": [
+    { "strengthId": "problem-solving", "text": "Giải quyết vấn đề" },
+    { "strengthId": "pattern-recognition", "text": "Nhận ra quy luật" },
+    { "strengthId": "creativity", "text": "Sáng tạo" },
+    { "strengthId": "attention-detail", "text": "Chú ý chi tiết" },
+    { "strengthId": "deep-focus", "text": "Tập trung sâu" },
+    { "strengthId": "persistence", "text": "Bền bỉ" },
+    { "strengthId": "system-thinking", "text": "Tư duy hệ thống" },
+    { "strengthId": "learning-fast", "text": "Học nhanh" }
+  ],
+
+  "supportActions": [
+    {
+      "supportId": "thinking-time",
+      "label": "Cần thêm thời gian",
+      "description": "Xin một khoảng lặng ngắn để sắp xếp ý, thay vì trả lời vội rồi thiếu ý.",
+      "clarificationId": "thinking-time"
+    },
+    {
+      "supportId": "question-focus",
+      "label": "Hỏi lại cho rõ",
+      "description": "Câu hỏi chạm nhiều khía cạnh — hỏi lại để biết nên tập trung vào phần nào.",
+      "clarificationId": "question-focus"
+    },
+    {
+      "supportId": "question-breakdown",
+      "label": "Tách nhỏ câu hỏi",
+      "description": "Câu hỏi ghép nhiều vế — tách ra để trả lời lần lượt, không sót ý.",
+      "clarificationId": "question-breakdown"
+    }
+  ],
+
+  "categories": [
+    { "categoryId": "technical", "label": "Kỹ thuật" },
+    { "categoryId": "behavioral", "label": "Hành vi" },
+    { "categoryId": "situational", "label": "Tình huống" },
+    { "categoryId": "job-specific", "label": "Theo vị trí" }
+  ],
+
+  "questions": [
+    {
+      "questionId": "tech-debug-500",
+      "categoryId": "technical",
+      "text": "Một API trả về lỗi 500. Bạn sẽ lần theo hướng nào để tìm nguyên nhân?",
+      "parts": [
+        "Bạn kiểm tra thông tin gì đầu tiên",
+        "Bạn thu hẹp phạm vi nguyên nhân ra sao",
+        "Bạn xác nhận đã sửa đúng bằng cách nào"
+      ],
+      "focusOptions": [
+        "Quy trình lần tìm lỗi của bạn",
+        "Kiến thức kỹ thuật cụ thể về HTTP và server",
+        "Cách bạn phối hợp với người khác khi gỡ lỗi"
+      ]
+    },
+    {
+      "questionId": "tech-code-review",
+      "categoryId": "technical",
+      "text": "Bạn nhận một nhận xét review code mà bạn không đồng ý. Bạn làm gì?",
+      "parts": [
+        "Bạn hiểu ý người review thế nào",
+        "Bạn trình bày quan điểm của mình ra sao",
+        "Bạn xử lý khi vẫn không thống nhất"
+      ],
+      "focusOptions": [
+        "Cách bạn lập luận về mặt kỹ thuật",
+        "Cách bạn giao tiếp khi bất đồng"
+      ]
+    },
+    {
+      "questionId": "tech-react-scale",
+      "categoryId": "technical",
+      "text": "Một ứng dụng React lớn dần lên. Bạn tổ chức lại cấu trúc theo hướng nào?",
+      "parts": [
+        "Bạn chia nhỏ theo tiêu chí gì",
+        "Bạn xử lý phần dùng chung ra sao",
+        "Bạn tránh việc mọi thứ phụ thuộc lẫn nhau thế nào"
+      ],
+      "focusOptions": [
+        "Nguyên tắc tổ chức mã nguồn",
+        "Kinh nghiệm thực tế bạn từng làm"
+      ]
+    },
+
+    {
+      "questionId": "behav-difficult-problem",
+      "categoryId": "behavioral",
+      "text": "Kể về một vấn đề kỹ thuật khó mà bạn đã giải quyết.",
+      "parts": [
+        "Bối cảnh và vấn đề là gì",
+        "Bạn đã làm những bước nào",
+        "Kết quả cuối cùng ra sao",
+        "Bạn rút ra điều gì"
+      ],
+      "focusOptions": [
+        "Cách bạn tiếp cận và suy luận",
+        "Độ khó kỹ thuật của vấn đề",
+        "Tác động của kết quả"
+      ]
+    },
+    {
+      "questionId": "behav-competing-priorities",
+      "categoryId": "behavioral",
+      "text": "Kể về một lần bạn phải cân bằng nhiều ưu tiên xung đột trong khi vẫn giữ được sự đồng thuận của các bên liên quan.",
+      "parts": [
+        "Tình huống có những ưu tiên nào xung đột",
+        "Bạn quyết định cái gì quan trọng hơn dựa trên điều gì",
+        "Bạn truyền đạt quyết định đó ra sao",
+        "Sau đó chuyện gì xảy ra"
+      ],
+      "focusOptions": [
+        "Cách bạn ra quyết định",
+        "Cách bạn giao tiếp với các bên",
+        "Kết quả và bài học"
+      ]
+    },
+    {
+      "questionId": "behav-tell-about-yourself",
+      "categoryId": "behavioral",
+      "text": "Bạn giới thiệu một chút về bản thân đi.",
+      "parts": [
+        "Bạn đang làm gì hiện tại",
+        "Điều gì đưa bạn tới vị trí này",
+        "Vì sao bạn quan tâm tới công việc đang ứng tuyển"
+      ],
+      "focusOptions": [
+        "Hành trình nghề nghiệp",
+        "Thế mạnh liên quan tới vị trí này",
+        "Động lực ứng tuyển"
+      ]
+    },
+
+    {
+      "questionId": "situ-teammate-disagree",
+      "categoryId": "situational",
+      "text": "Nếu một đồng nghiệp không đồng ý với cách bạn triển khai, bạn sẽ xử lý thế nào?",
+      "parts": [
+        "Bạn tìm hiểu lý do họ không đồng ý ra sao",
+        "Bạn đưa ra căn cứ của mình thế nào",
+        "Bạn kết thúc bất đồng bằng cách nào"
+      ],
+      "focusOptions": [
+        "Cách bạn giữ quan hệ làm việc",
+        "Cách bạn bảo vệ quyết định kỹ thuật"
+      ]
+    },
+    {
+      "questionId": "situ-missed-deadline",
+      "categoryId": "situational",
+      "text": "Bạn nhận ra sẽ không kịp hạn chót. Bạn làm gì?",
+      "parts": [
+        "Bạn nhận ra vào thời điểm nào",
+        "Bạn báo cho ai và báo thế nào",
+        "Bạn đề xuất phương án gì"
+      ],
+      "focusOptions": [
+        "Thời điểm và cách bạn báo sớm",
+        "Phương án bạn đưa ra"
+      ]
+    },
+    {
+      "questionId": "situ-unclear-task",
+      "categoryId": "situational",
+      "text": "Bạn được giao một việc mà yêu cầu chưa rõ ràng. Bạn bắt đầu từ đâu?",
+      "parts": [
+        "Bạn xác định chỗ nào chưa rõ",
+        "Bạn hỏi ai và hỏi gì",
+        "Bạn bắt đầu làm khi nào"
+      ],
+      "focusOptions": [
+        "Cách bạn làm rõ yêu cầu",
+        "Cách bạn tránh làm sai hướng"
+      ]
+    },
+
+    {
+      "questionId": "job-first-90-days",
+      "categoryId": "job-specific",
+      "text": "Trong 90 ngày đầu ở vị trí này, bạn muốn đạt được điều gì?",
+      "parts": [
+        "Bạn muốn học gì trước",
+        "Bạn muốn đóng góp gì sớm",
+        "Bạn đo bằng cách nào"
+      ],
+      "focusOptions": [
+        "Kế hoạch học việc",
+        "Đóng góp cụ thể bạn nhắm tới"
+      ]
+    },
+    {
+      "questionId": "job-why-this-role",
+      "categoryId": "job-specific",
+      "text": "Vì sao bạn chọn vị trí này thay vì một vị trí khác?",
+      "parts": [
+        "Điều gì ở công việc này hợp với bạn",
+        "Bạn mang lại được gì cho vị trí này"
+      ],
+      "focusOptions": [
+        "Động lực cá nhân",
+        "Sự phù hợp về năng lực"
+      ]
+    },
+    {
+      "questionId": "job-working-style",
+      "categoryId": "job-specific",
+      "text": "Bạn làm việc hiệu quả nhất trong môi trường như thế nào?",
+      "parts": [
+        "Điều kiện giúp bạn tập trung",
+        "Cách bạn thích nhận thông tin và phản hồi"
+      ],
+      "focusOptions": [
+        "Điều kiện làm việc",
+        "Cách giao tiếp trong nhóm"
+      ]
+    }
+  ]
+}

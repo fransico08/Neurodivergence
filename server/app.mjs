@@ -15,7 +15,7 @@ const bank=JSON.parse(await readFile(path.join(root,'data/interview_support_vi.j
 const clarificationPacks={
  interview:{data:interviewClarifications,roles:interviewOrg.roles,promptMode:'clarify-interview'}
 };
-const paths=new Set(['/prototype/bridge.html','/prototype/bridge.mjs','/prototype/core.mjs','/prototype/interview-core.mjs','/prototype/interview-flow.mjs','/data/job_profiles_vi.json','/data/glossary_vi.json','/data/clarifications_interview_vi.json','/data/org_map_interview_vi.json','/data/interview_support_vi.json']);
+const paths=new Set(['/prototype/bridge.html','/prototype/bridge.mjs','/prototype/layout.mjs','/prototype/core.mjs','/prototype/interview-core.mjs','/prototype/interview-flow.mjs','/data/job_profiles_vi.json','/data/glossary_vi.json','/data/clarifications_interview_vi.json','/data/org_map_interview_vi.json','/data/interview_support_vi.json']);
 export function createServer(provider=null) {
  return http.createServer(async(req,res)=>{
   const send=(status,value)=>{res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'});res.end(JSON.stringify(value));};

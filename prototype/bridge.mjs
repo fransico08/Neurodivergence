@@ -14,7 +14,7 @@ function renderClarificationOptions(options,source){
  $('cOptions').replaceChildren();clarificationSelection=null;$('cApproved').value='';updateClarificationSend();
  for(const option of options){
   const button=node('button','', 'opt');button.setAttribute('aria-pressed','false');
-  button.append(node('span',CLAR.toneLabels[option.tone]||option.tone,'toneTag'),node('span',option.text),node('span',source==='llm'?'AI · automatically checked; review the meaning':`Template · ${option.phrasingId}`,'src'));
+  button.append(node('span',CLAR.toneLabels[option.tone]||option.tone,'toneTag'),node('span',option.text),node('span',source==='llm'?'AI suggestion':'Built-in suggestion','src'));
   button.onclick=()=>{for(const other of $('cOptions').children)other.setAttribute('aria-pressed','false');button.setAttribute('aria-pressed','true');clarificationSelection={...option,source};$('cApproved').value=option.text;updateClarificationSend();$('cApproved').focus({preventScroll:true});};
   $('cOptions').append(button);
  }
@@ -23,7 +23,7 @@ function showClarificationSample(){
  if(!CLAR)return;
  const sample=CLAR.sampleMessages[sampleIndex%CLAR.sampleMessages.length];
  const role=ORG.roles.find(item=>item.roleId===sample.senderRoleId);
- text('cSender',`${role?.title||'Interviewer'} · simulated message`);text('cOriginal',sample.text);
+ text('cSender',role?.title||'Interviewer');text('cOriginal',sample.text);
 }
 function resetClarificationView(){
  cancelClarification();clarification=null;clarificationSelection=null;
@@ -38,38 +38,38 @@ async function chooseClarification(type){
  clarification={status:'draft',sample,type,reasonCode:'LOCAL_MODE'};
  for(const button of $('cTypes').children)button.setAttribute('aria-pressed',button.dataset.id===type.clarificationId?'true':'false');
  $('cComposer').hidden=false;renderClarificationOptions(type.phrasings,'static');$('cOptionsHeading').focus({preventScroll:true});
- if(!$('aiMode').checked){text('cUserStatus','Using a template; no data has been sent to AI.');return;}
+ if(!$('aiMode').checked){text('cUserStatus','Built-in suggestions. Nothing sent to AI.');return;}
  clarificationController=new AbortController();const localController=clarificationController;
- text('cUserStatus','Getting clarification suggestions from AI…');$('cTypes').inert=true;$('cOptions').inert=true;$('cApproved').disabled=true;
+ text('cUserStatus','Asking AI…');$('cTypes').inert=true;$('cOptions').inert=true;$('cApproved').disabled=true;
  const timeout=setTimeout(()=>localController.abort(),5500);
  try{
   const response=await fetch('/api/clarify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({originalMessage:sample.text,clarificationId:type.clarificationId,packId:'interview'}),signal:localController.signal});
   const result=await response.json();if(current!==clarificationRevision)return;
-  if(response.status===400){clarification.reasonCode='BAD_INPUT';text('cUserStatus',result.message||'The clarification data is invalid.');}
+  if(response.status===400){clarification.reasonCode='BAD_INPUT';text('cUserStatus',result.message||'Something went wrong. Try again.');}
   else if(response.ok&&result.mode==='llm'){
    clarification.reasonCode=null;renderClarificationOptions(Object.entries(result.options).map(([tone,value])=>({tone,text:value,phrasingId:`llm-${tone}`})),'llm');
-   text('cUserStatus','The AI suggestion passed automated checks; review the meaning before sending.');
-  }else{clarification.reasonCode=result.reasonCode||'API_ERROR';text('cUserStatus',`Using a fallback template (${clarification.reasonCode}).`);}
- }catch(error){if(current===clarificationRevision){clarification.reasonCode=error.name==='AbortError'?'TIMEOUT':'NETWORK_ERROR';text('cUserStatus',`Using a fallback template (${clarification.reasonCode}).`);}}
+   text('cUserStatus','AI suggestions. Check they mean what you want.');
+  }else{clarification.reasonCode=result.reasonCode||'API_ERROR';text('cUserStatus','AI is not available. Showing built-in suggestions.');}
+ }catch(error){if(current===clarificationRevision){clarification.reasonCode=error.name==='AbortError'?'TIMEOUT':'NETWORK_ERROR';text('cUserStatus','AI is not available. Showing built-in suggestions.');}}
  finally{clearTimeout(timeout);if(current===clarificationRevision){clarificationController=null;$('cTypes').inert=false;$('cOptions').inert=false;$('cApproved').disabled=false;}}
 }
 function sendClarification(confirmed=false){
- if(confirmed!==true){text('error','Blocked: approval is required. The interviewer received nothing and no record was created.');return false;}
+ if(confirmed!==true){text('error','Blocked. You did not approve it, so nothing was sent.');return false;}
  const approved=$('cApproved').value.trim();if(!clarification||clarification.status!=='draft'||!approved)return;
  const record={recordType:'clarification',id:`clarify-${++clarificationSeq}`,originalMessageId:clarification.sample.messageId,originalMessage:clarification.sample.text,fromRoleId:clarification.sample.senderRoleId,clarificationId:clarification.type.clarificationId,userApprovedText:approved,source:clarificationSelection?.source==='llm'?'llm':clarificationSelection?'fallback':'user',sourceFile:clarificationSelection?.source==='static'?'data/clarifications_interview_vi.json':clarificationSelection?.source==='llm'?'/api/clarify':null,pickedPhrasingId:clarificationSelection?.phrasingId||null,wasEdited:!clarificationSelection||approved!==clarificationSelection.text,reasonCode:clarification.reasonCode,status:'awaiting-response',response:null};
  clarification={...clarification,record,status:'awaiting-response'};records.push(record);evidence();
  text('cReceiverOriginal',record.originalMessage);text('cReceiverQuestion',record.userApprovedText);$('cReceiverEmpty').hidden=true;$('cReceiver').hidden=false;
  $('cResponse').value=CLAR.responseExamples[sampleIndex%CLAR.responseExamples.length]||'';$('cRespond').disabled=!$('cResponse').value.trim();
- text('cUserStatus','Sent in the simulation · Waiting for the interviewer response.');$('cTypes').inert=true;$('cOptions').inert=true;$('cApproved').disabled=true;$('cSend').disabled=true;$('cResponse').focus({preventScroll:true});
+ text('cUserStatus','Sent. Now reply as the interviewer.');$('cTypes').inert=true;$('cOptions').inert=true;$('cApproved').disabled=true;$('cSend').disabled=true;$('cResponse').focus({preventScroll:true});
 }
 function respondToClarification(){
  if(!clarification?.record||clarification.status!=='awaiting-response'||!$('cResponse').value.trim())return;
  clarification.record.response={userApprovedText:$('cResponse').value.trim(),respondedByRoleId:clarification.sample.senderRoleId};clarification.record.status='answered';clarification.status='answered';evidence();
- text('cAnswer',`Interviewer response:\n${clarification.record.response.userApprovedText}`);$('cAnswer').hidden=false;$('cResolve').hidden=false;$('cRespond').disabled=true;text('cUserStatus','Response received · You decide when the question is clear enough.');$('cAnswer').focus?.({preventScroll:true});
+ text('cAnswer',`Interviewer:\n${clarification.record.response.userApprovedText}`);$('cAnswer').hidden=false;$('cResolve').hidden=false;$('cRespond').disabled=true;text('cUserStatus','Reply received. Press “Got it” when it is clear.');$('cAnswer').focus?.({preventScroll:true});
 }
 function resolveClarification(){
  if(!clarification?.record||clarification.status!=='answered')return;
- clarification.status='resolved';clarification.record.status='resolved';evidence();text('cUserStatus','Understood · You closed the clarification loop.');$('cResolve').hidden=true;
+ clarification.status='resolved';clarification.record.status='resolved';evidence();text('cUserStatus','Done. Well asked.');$('cResolve').hidden=true;
 }
 /* ===================== Personalized AI Interview Support =====================
    The question bank and decompositions are static and always available offline.
@@ -89,7 +89,7 @@ function ivReadStored(){
   return p;
  }catch{return null;}
 }
-function ivStore(){try{localStorage.setItem(IV_KEY,JSON.stringify(ivProfile));localStorage.removeItem(LEGACY_IV_KEY);}catch{text('notice','This browser could not save your profile. You can still practice in this session.');}}
+function ivStore(){try{localStorage.setItem(IV_KEY,JSON.stringify(ivProfile));localStorage.removeItem(LEGACY_IV_KEY);}catch{text('notice','Could not save your profile. You can still practice.');}}
 function ivEnabled(){
  const set=new Set(ivProfile?.kept||[]);
  for(const group of IVS.profileQuestions){
@@ -130,7 +130,7 @@ function ivShowSummary(){
  const names=(ivProfile?.strengths||[]).map(id=>IVS.strengths.find(s=>s.strengthId===id)?.text).filter(Boolean);
  if(names.length)dl.append(node('dt','Strengths'),node('dd',names.join(' · ')));
  const enabled=[...ivEnabled()].map(id=>IVS.supportActions.find(a=>a.supportId===id)?.label).filter(Boolean);
- dl.append(node('dt','Prioritized support'),node('dd',enabled.length?enabled.join(' · '):'No support prioritized yet'));
+ dl.append(node('dt','Help you prefer'),node('dd',enabled.length?enabled.join(' · '):'None yet'));
  $('ivSummary').hidden=false;$('ivForm').hidden=true;
 }
 function ivRenderCategories(){
@@ -162,17 +162,17 @@ function ivResetSupport(){
  for(const b of $('ivSupports').children)b.setAttribute('aria-pressed','false');
 }
 function ivShowQuestion(){
- if(!ivQueue.length){ivQuestion=null;ivResetSupport();$('ivSupports').inert=true;text('ivQuestion','No questions match this filter. Choose another level or All.');text('ivAsker','');$('ivAnswer').value='';interviewFlow?.onQuestionChange();return;}
+ if(!ivQueue.length){ivQuestion=null;ivResetSupport();$('ivSupports').inert=true;text('ivQuestion','No questions here. Pick another level.');text('ivAsker','');$('ivAnswer').value='';interviewFlow?.onQuestionChange();return;}
  ivQuestion=ivQueue[ivIndex%ivQueue.length];
  const cat=IVS.categories.find(c=>c.categoryId===ivQuestion.categoryId);
- text('ivAsker',`Interviewer · ${cat?.label||''} · practice question`);
+ text('ivAsker',`Interviewer · ${cat?.label||''}`);
  text('ivQuestion',ivQuestion.text);text('ivStatus','');$('ivAnswer').value=ivDrafts.get(ivQuestion.questionId)||'';ivResetSupport();interviewFlow?.onQuestionChange();
 }
 function ivRenderOptions(options,source){
  $('ivOptions').replaceChildren();ivSelection=null;$('ivApproved').value='';$('ivUseLine').disabled=true;
  for(const option of options){
   const b=node('button','','opt');b.setAttribute('aria-pressed','false');
-  b.append(node('span',IVCLAR.toneLabels?.[option.tone]||option.tone,'toneTag'),node('span',option.text),node('span',source==='llm'?'AI · automatically checked; review the meaning':`Template · ${option.phrasingId}`,'src'));
+  b.append(node('span',IVCLAR.toneLabels?.[option.tone]||option.tone,'toneTag'),node('span',option.text),node('span',source==='llm'?'AI suggestion':'Built-in suggestion','src'));
   b.onclick=()=>{for(const other of $('ivOptions').children)other.setAttribute('aria-pressed','false');b.setAttribute('aria-pressed','true');ivSelection={...option,source};$('ivApproved').value=option.text;$('ivUseLine').disabled=false;$('ivApproved').focus({preventScroll:true});};
   $('ivOptions').append(b);
  }
@@ -205,24 +205,24 @@ async function ivChooseSupport(action){
  const type=IVCLAR.clarificationTypes.find(t=>t.clarificationId===action.clarificationId);
  if(!type)return;
  $('ivComposer').hidden=false;ivRenderOptions(type.phrasings,'static');$('ivOptionsHeading').focus({preventScroll:true});
- if(!$('aiMode').checked){text('ivStatus','Using a template; no data has been sent to AI.');return;}
+ if(!$('aiMode').checked){text('ivStatus','Built-in suggestions. Nothing sent to AI.');return;}
  ivController=new AbortController();const localController=ivController;
- text('ivStatus','Getting phrasing suggestions from AI…');$('ivSupports').inert=true;$('ivOptions').inert=true;$('ivApproved').disabled=true;
+ text('ivStatus','Asking AI…');$('ivSupports').inert=true;$('ivOptions').inert=true;$('ivApproved').disabled=true;
  const timeout=setTimeout(()=>localController.abort(),5500);
  try{
   const response=await fetch('/api/clarify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({originalMessage:ivQuestion.text,clarificationId:action.clarificationId,packId:'interview'}),signal:localController.signal});
   const result=await response.json();if(current!==ivRevision)return;
-  if(response.status===400){ivReason='BAD_INPUT';text('ivStatus',result.message||'The data is invalid.');}
-  else if(response.ok&&result.mode==='llm'){ivReason=null;ivRenderOptions(Object.entries(result.options).map(([tone,value])=>({tone,text:value,phrasingId:`llm-${tone}`})),'llm');text('ivStatus','The AI suggestion passed automated checks; review the meaning before speaking.');}
-  else{ivReason=result.reasonCode||'API_ERROR';text('ivStatus',`Using a fallback template (${ivReason}).`);}
- }catch(error){if(current===ivRevision){ivReason=error.name==='AbortError'?'TIMEOUT':'NETWORK_ERROR';text('ivStatus',`Using a fallback template (${ivReason}).`);}}
+  if(response.status===400){ivReason='BAD_INPUT';text('ivStatus',result.message||'Something went wrong. Try again.');}
+  else if(response.ok&&result.mode==='llm'){ivReason=null;ivRenderOptions(Object.entries(result.options).map(([tone,value])=>({tone,text:value,phrasingId:`llm-${tone}`})),'llm');text('ivStatus','AI suggestions. Check they mean what you want.');}
+  else{ivReason=result.reasonCode||'API_ERROR';text('ivStatus','AI is not available. Showing built-in suggestions.');}
+ }catch(error){if(current===ivRevision){ivReason=error.name==='AbortError'?'TIMEOUT':'NETWORK_ERROR';text('ivStatus','AI is not available. Showing built-in suggestions.');}}
  finally{clearTimeout(timeout);if(current===ivRevision){ivController=null;$('ivSupports').inert=false;$('ivOptions').inert=false;$('ivApproved').disabled=false;}}
 }
 function ivUseLine(){
  const approved=$('ivApproved').value.trim();if(!ivSupport||!ivQuestion||!approved)return;
  records.push({recordType:'interview-support',id:`interview-${++ivSeq}`,questionId:ivQuestion.questionId,categoryId:ivQuestion.categoryId,supportId:ivSupport.supportId,userApprovedText:approved,source:ivSelection?.source==='llm'?'llm':ivSelection?'fallback':'user',sourceFile:ivSelection?.source==='static'?'data/clarifications_interview_vi.json':ivSelection?.source==='llm'?'/api/clarify':null,pickedPhrasingId:ivSelection?.phrasingId||null,wasEdited:!ivSelection||approved!==ivSelection.text,reasonCode:ivReason});
  evidence();$('ivUseLine').disabled=true;
- text('ivStatus','Your chosen line was recorded. In a real interview, you say it yourself—the product never speaks for you.');
+ text('ivStatus','Saved. In a real interview, you say it in your own words.');
 }
 function ivFinish(){
  ivRememberDraft();ivResetSupport();
@@ -230,19 +230,19 @@ function ivFinish(){
  $('ivReview').hidden=false;
  $('reviewTitle').focus();
  const body=$('ivReviewBody');body.replaceChildren();
- if(!ivUsage.size){body.append(node('p','You did not use any support in this session. That is fine—support is available only when you want it.','tiny'));return;}
- body.append(node('p','This is a record of the practice session, not a conclusion about you. You decide what to keep.','tiny'));
+ if(!ivUsage.size){body.append(node('p','You didn’t use any help this time. That’s fine.','tiny'));return;}
+ body.append(node('p','Help you used:','tiny'));
  const enabled=ivEnabled();
  for(const [id,count] of ivUsage){
   const action=IVS.supportActions.find(a=>a.supportId===id);if(!action)continue;
   const card=node('div','','ivPanel');
-  card.append(node('h4',`${action.label} — used ${count} ${count===1?'time':'times'}`));
-  if(enabled.has(id))card.append(node('p','This support is prioritized in your profile. You can still turn it off.','tiny'));
+  card.append(node('h4',`${action.label} · ${count}×`));
+  if(enabled.has(id))card.append(node('p','In your profile.','tiny'));
   {
-   card.append(node('p','Prioritize this for next time? Only you can decide whether it helped.','tiny'));
+   card.append(node('p','Use it next time?','tiny'));
    const row=node('div','','row');
-   const keep=node('button','Prioritize');keep.onclick=()=>ivDecide(id,true);
-   const skip=node('button','Not needed');skip.onclick=()=>ivDecide(id,false);
+   const keep=node('button','Yes, keep');keep.onclick=()=>ivDecide(id,true);
+   const skip=node('button','No');skip.onclick=()=>ivDecide(id,false);
    row.append(keep,skip);card.append(row);
   }
   body.append(card);
@@ -278,7 +278,7 @@ $('cSend').onclick=()=>sendClarification(true);$('cRespond').onclick=respondToCl
 $('ivSaveProfile').onclick=ivSaveProfile;
 $('ivSkipProfile').onclick=()=>{ivResetSupport();ivProfile={answers:{},strengths:[],kept:[],declined:[]};interviewFlow?.invalidatePack();ivShowSummary();ivBeginPractice();};
 $('ivEditProfile').onclick=()=>{$('ivSummary').hidden=true;$('ivForm').hidden=false;ivRenderForm();$('ivForm').querySelector('button')?.focus({preventScroll:true});};
-$('ivClearProfile').onclick=()=>{ivResetSupport();interviewFlow?.cancelAll();interviewFlow?.invalidatePack();ivProfile=null;try{localStorage.removeItem(IV_KEY);localStorage.removeItem(LEGACY_IV_KEY);}catch{}ivRenderForm();$('ivSummary').hidden=true;$('ivForm').hidden=false;$('ivReview').hidden=true;ivUsage.clear();ivRenderSupports();$('ivForm').querySelector('button')?.focus();text('ivStatus','Profile deleted. Practice content remains in this session.');};
+$('ivClearProfile').onclick=()=>{ivResetSupport();interviewFlow?.cancelAll();interviewFlow?.invalidatePack();ivProfile=null;try{localStorage.removeItem(IV_KEY);localStorage.removeItem(LEGACY_IV_KEY);}catch{}ivRenderForm();$('ivSummary').hidden=true;$('ivForm').hidden=false;$('ivReview').hidden=true;ivUsage.clear();ivRenderSupports();$('ivForm').querySelector('button')?.focus();text('ivStatus','Profile deleted.');};
 $('ivApproved').oninput=()=>{$('ivUseLine').disabled=!ivSupport||!$('ivApproved').value.trim();};
 $('ivUseLine').onclick=ivUseLine;
 $('ivNext').onclick=()=>{ivRememberDraft();ivIndex++;ivShowQuestion();$('ivQuestion').focus?.({preventScroll:true});};
@@ -287,7 +287,7 @@ $('dismissSupport').onclick=()=>{ivResetSupport();$('ivAnswer').focus();};
 $('ivDifficulty').onchange=()=>{ivRememberDraft();ivBuildQueue();ivShowQuestion();};
 
 $('btnViolate').onclick=()=>sendClarification(false);
-$('aiMode').onchange=()=>{resetClarificationView();ivResetSupport();interviewFlow?.cancelAll();text('notice','Mode changed; no additional content has been sent to AI.');};
+$('aiMode').onchange=()=>{resetClarificationView();ivResetSupport();interviewFlow?.cancelAll();text('notice','AI setting changed.');};
 try {
  [ORG,GLO,CLAR,IVS]=await Promise.all(['org_map_interview_vi','glossary_vi','clarifications_interview_vi','interview_support_vi'].map(async name=>{const r=await fetch('/data/'+name+'.json');if(!r.ok)throw new Error('data');return r.json();}));
  IVCLAR=CLAR;
@@ -300,6 +300,6 @@ try {
   clearPractice:()=>{ivResetSupport();ivQuestion=null;ivDrafts.clear();ivUsage.clear();records.length=0;evidence();resetClarificationView();$('ivAnswer').value='';ivCategory='all';$('ivDifficulty').value='0';ivRenderCategories();}
  });
  showClarificationSample();ivInit();
- text('bData','Interview Pack · 12 practice questions · 4 categories');
- $('loadedList').replaceChildren(...['Self-reported support profile with no diagnostic labels.','12 practice questions, 4 clarification types, and a simulated interviewer role.'].map(s=>node('li',s)));
-}catch{$('loadError').hidden=false;text('bData','Data loading error');}
+ text('bData','Practice data: 12 questions ready');
+ $('loadedList').replaceChildren(...['Your profile uses your own words. No diagnosis needed.','12 practice questions and 4 ways to ask for clarity.'].map(s=>node('li',s)));
+}catch{$('loadError').hidden=false;text('bData','Practice data did not load');}

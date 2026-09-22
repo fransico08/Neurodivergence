@@ -184,7 +184,11 @@
     border-radius: var(--radius-shell);
     box-shadow: 0 30px 80px -15px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.12);
     overflow: hidden;
+    /* clip thay vì hidden: vẫn bo góc nhưng không tạo scroll container, để sidebar sticky hoạt động */
+    overflow: clip;
     position: relative;
+    display: grid;
+    grid-template-columns: 296px minmax(0, 1fr);
   }
 
   /* =========================================================
@@ -1216,8 +1220,6 @@
   /* Interview layout additions reuse the existing design tokens. */
   .skip-link { position:absolute;left:16px;top:-80px;padding:12px;background:var(--neu-base);z-index:10;color:var(--a-ink); }
   .skip-link:focus { top:12px; }
-  .flow-nav { display:flex;gap:16px;flex-wrap:wrap;margin:20px 0; }
-  .flow-nav a { color:var(--a-ink);padding:8px 12px; }
   .flow-section { margin:28px 0;padding:22px;border:var(--neu-border-input);border-radius:var(--radius-lg);background:var(--neu-surface-subtle); }
   .flow-section h3 { margin-top:0;font-size:18px; }
   .source-note { color:var(--ink-muted);font-size:13px;margin:8px 0; }
@@ -1236,6 +1238,183 @@
   button,textarea,.opt,.badge,.clarifyType { transition-property:transform,opacity; }
   .message,dd,p,h1,h2,h3,h4,button,li { overflow-wrap:anywhere; }
   @media(max-width:768px) { .result-grid,.progress-list { grid-template-columns:1fr; }.flow-section { padding:16px; }.ivSummary dl { grid-template-columns:1fr;gap:4px; }textarea { font-size:16px; } }
+
+  /* =========================================================
+     SIDEBAR + ĐIỀU HƯỚNG MỖI LẦN MỘT BƯỚC
+     ========================================================= */
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    max-height: 100vh;
+    overflow-y: auto;
+    padding: 20px 16px 22px;
+    background: var(--neu-surface);
+    border-right: 1px solid rgba(162, 178, 202, 0.35);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .side-brand { display: flex; flex-direction: column; gap: 16px; }
+  .side-brand .brand-group { gap: 12px; }
+  .side-brand .brand-emblem { width: 44px; height: 44px; }
+  .side-brand h1.app-title { font-size: 22px; }
+  .side-tagline { margin: 2px 0 0; font-size: 13px; line-height: 1.4; color: var(--ink-muted); }
+  .side-art.neuro-banner { padding: 14px 12px 12px; border-radius: var(--radius-lg); border-bottom: 0; }
+  .side-art .neuro-art-svg { margin-bottom: 4px; }
+  .side-art .neuro-tagline { font-size: 11.5px; margin-top: 2px; color: #CBD5E1; }
+
+  .side-label {
+    margin: 0 0 8px;
+    padding: 0 10px;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+  .step-list { list-style: none; margin: 0 0 14px; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+  .step-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+    padding: 8px 12px;
+    border-radius: var(--radius-md);
+    border: 1px solid transparent;
+    color: var(--ink-secondary);
+    text-decoration: none;
+  }
+  .step-link:hover { background: var(--neu-base); color: var(--ink-primary); }
+  .step-link[aria-current="step"] {
+    background: var(--neu-base);
+    box-shadow: var(--neu-shadow-pressed);
+    border-color: var(--a-border-subtle);
+    color: var(--a-ink);
+  }
+  .step-num {
+    flex-shrink: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    background: var(--neu-base);
+    box-shadow: var(--neu-shadow-sm);
+    color: var(--ink-secondary);
+  }
+  .step-link[aria-current="step"] .step-num { background: var(--a-primary); color: #FFFFFF; box-shadow: none; }
+  .step-num-icon { flex-shrink: 0; width: 30px; height: 30px; padding: 5px; vertical-align: 0; }
+  .step-text { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+  .step-label { font-size: 14px; font-weight: 600; line-height: 1.3; }
+  .step-hint { font-size: 12px; line-height: 1.35; color: var(--ink-muted); }
+  .step-icon-done, .step-icon-lock { display: none; color: var(--ink-muted); }
+  .step-link.is-done .step-icon-done { display: inline-block; color: var(--ok-text); }
+  .step-link.is-locked .step-icon-lock { display: inline-block; }
+  .step-link.is-locked .step-label { color: var(--ink-muted); }
+
+  .side-settings { margin-top: auto; display: flex; flex-direction: column; gap: 14px; }
+  .side-settings .ai-control-banner { margin: 0; padding: 14px 16px; }
+  .side-settings .ai-toggle-label { font-size: 14px; gap: 10px; }
+  .ai-explainer-details summary { font-size: 12.5px; }
+  .ai-explainer-details .ai-explainer { margin-top: 6px; font-size: 12.5px; }
+
+  .app-shell > main { min-width: 0; padding: 32px 36px 48px; }
+  .main-head { margin-bottom: 22px; }
+  .main-head h2 {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ink-primary);
+  }
+  .main-intro { margin: 8px 0 0; max-width: 760px; font-size: 14px; color: var(--ink-muted); }
+  .step-meta {
+    margin: 14px 0 0;
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--a-ink);
+  }
+  .step-meta:empty { display: none; }
+
+  /* Chỉ panel đang chọn được hiển thị. Không dùng thuộc tính hidden để tránh
+     đụng vào các phần tử mà JS nghiệp vụ đang tự bật/tắt hidden. */
+  .step-panel { display: none; }
+  .step-panel.is-active { display: block; }
+  .step-panel > .flow-section,
+  .step-panel > .step-locked-note,
+  .practice-main > .flow-section,
+  .practice-side > .flow-section { margin: 0 0 20px; }
+  .step-panel > section.clarifier { margin-top: 0; }
+
+  .step-locked-note { display: none; }
+  .step-panel[data-locked] .step-locked-note { display: block; }
+  .step-panel[data-locked] .practice-layout { display: none; }
+  .step-locked-note h3 { margin-top: 0; font-size: 18px; }
+
+  .practice-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: 24px;
+    align-items: start;
+  }
+  .practice-side .progress-list { grid-template-columns: 1fr; }
+
+  .step-pager {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(162, 178, 202, 0.35);
+  }
+  .step-pager [data-dir="next"] { margin-left: auto; }
+
+  @media (max-width: 1180px) {
+    .practice-layout { grid-template-columns: minmax(0, 1fr); }
+  }
+  /* Màn thấp (máy chiếu 1366×768, laptop 1024×768): bỏ hình trang trí để cả sidebar vừa một màn hình. */
+  @media (min-width: 861px) and (max-height: 820px) {
+    .side-art { display: none; }
+  }
+  @media (max-width: 1024px) {
+    .app-shell { grid-template-columns: 260px minmax(0, 1fr); }
+    .app-shell > main { padding: 26px 24px 40px; }
+  }
+  @media (max-width: 860px) {
+    .app-shell { grid-template-columns: minmax(0, 1fr); }
+    .sidebar {
+      position: static;
+      max-height: none;
+      overflow: visible;
+      padding: 18px 16px;
+      gap: 14px;
+      border-right: 0;
+      border-bottom: 1px solid rgba(162, 178, 202, 0.35);
+    }
+    /* Hình trang trí ẩn trên màn hẹp để nội dung làm việc xuất hiện sớm hơn. */
+    .side-art { display: none; }
+    .side-label { padding: 0; }
+    .step-list { flex-direction: row; overflow-x: auto; gap: 8px; margin-bottom: 12px; padding-bottom: 4px; }
+    .step-list li { flex: 0 0 auto; }
+    .step-link { min-height: 44px; padding: 8px 12px; background: var(--neu-base); box-shadow: var(--neu-shadow-sm); }
+    .step-hint { display: none; }
+    .side-settings { margin-top: 0; }
+    .app-shell > main { padding: 20px 16px 32px; }
+    .main-intro { font-size: 13.5px; }
+  }
 </style>
 </head>
 <body>
@@ -1244,9 +1423,23 @@
 <div class="app-shell">
 
   <!-- =========================================================
-       BOTANICAL ART BANNER (Inspired by Image 1 Neurodiversity Flowers)
+       SIDEBAR — thương hiệu, các bước chuẩn bị, cài đặt AI
        ========================================================= -->
-  <aside class="neuro-banner" aria-label="Neurodiversity visual identity">
+  <div class="sidebar">
+  <header class="side-brand" role="banner">
+    <div class="brand-group">
+      <div class="brand-emblem" aria-hidden="true">
+        <!-- Heroicon: Arrows Right Left / Bridge Symbol -->
+        <svg class="hi" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+        </svg>
+      </div>
+      <div>
+        <h1 class="app-title">Bridge</h1>
+        <p class="side-tagline">Interview practice, your way</p>
+      </div>
+    </div>
+    <div class="neuro-banner side-art">
     <div class="neuro-banner-inner">
       <svg class="neuro-art-svg" viewBox="0 0 680 180" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Six colorful flowers representing neurodiversity">
         <!-- Gradients -->
@@ -1351,42 +1544,81 @@
       </svg>
       <p class="neuro-tagline">Different minds, flexible support, clearer conversations</p>
     </div>
-  </aside>
-
-  <!-- =========================================================
-     TOP NAVIGATION / BRAND HEADER
-     ========================================================= -->
-  <header class="top-header" role="banner">
-    <div class="header-main-row">
-      <div class="brand-group">
-        <div class="brand-emblem" aria-hidden="true">
-          <!-- Heroicon: Arrows Right Left / Bridge Symbol -->
-          <svg class="hi" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
-          </svg>
-        </div>
-        <div>
-          <h1 class="app-title">
-            Bridge
-            <span class="title-tagline">— interview preparation that adapts to you</span>
-          </h1>
-          <div class="sub-metadata">
-            <span>Communication support designed for cognitive accessibility</span>
-            <span>·</span>
-            <span>Prepare in a way that works for you</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Badges Bar -->
-    <div class="badges-container" role="status" aria-label="System status">
-      <span class="badge" id="bData"><span class="status-dot"></span>Practice data: loading…</span>
-      <span class="badge ok" id="bGate"><span class="status-dot pulse"></span>Approval gate: active</span>
-      <span class="badge ok" id="bGen"><span class="status-dot"></span>AI and template sources are labeled on every result</span>
-      <span class="badge"><span class="status-dot"></span>Simulation only · not connected to an employer</span>
     </div>
   </header>
+
+  <nav class="step-nav" aria-label="Preparation steps">
+    <p class="side-label">Preparation steps</p>
+    <ol class="step-list">
+      <li><a class="step-link" href="#step-profile" data-step-link="profile" data-step-sequence>
+        <span class="step-num" aria-hidden="true">1</span>
+        <span class="step-text"><span class="step-label">Support profile</span><span class="step-hint">What helps you</span></span>
+        <!-- Heroicon: Check Circle -->
+        <svg class="hi step-icon-done" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+        <span class="sr-only step-state"></span>
+      </a></li>
+      <li><a class="step-link" href="#step-role" data-step-link="role" data-step-sequence>
+        <span class="step-num" aria-hidden="true">2</span>
+        <span class="step-text"><span class="step-label">Understand the role</span><span class="step-hint">Paste a job ad</span></span>
+        <svg class="hi step-icon-done" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+        <span class="sr-only step-state"></span>
+      </a></li>
+      <li><a class="step-link" href="#step-practice" data-step-link="practice" data-step-sequence>
+        <span class="step-num" aria-hidden="true">3</span>
+        <span class="step-text"><span class="step-label">Mock interview</span><span class="step-hint">One question at a time</span></span>
+        <!-- Heroicon: Lock Closed -->
+        <svg class="hi step-icon-lock" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" /></svg>
+        <span class="sr-only step-state"></span>
+      </a></li>
+      <li><a class="step-link" href="#step-reflect" data-step-link="reflect" data-step-sequence>
+        <span class="step-num" aria-hidden="true">4</span>
+        <span class="step-text"><span class="step-label">Reflection</span><span class="step-hint">Keep what helped</span></span>
+        <svg class="hi step-icon-lock" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" /></svg>
+        <span class="sr-only step-state"></span>
+      </a></li>
+      <li><a class="step-link" href="#step-pack" data-step-link="pack" data-step-sequence>
+        <span class="step-num" aria-hidden="true">5</span>
+        <span class="step-text"><span class="step-label">Preparation pack</span><span class="step-hint">For the real interview</span></span>
+        <span class="sr-only step-state"></span>
+      </a></li>
+    </ol>
+    <p class="side-label">More practice</p>
+    <ul class="step-list">
+      <li><a class="step-link" href="#step-clarify" data-step-link="clarify">
+        <!-- Heroicon: Chat Bubble Left Right -->
+        <svg class="hi step-num-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" /></svg>
+        <span class="step-text"><span class="step-label">Ask to clarify</span><span class="step-hint">When a question is unclear</span></span>
+      </a></li>
+      <li><a class="step-link" href="#step-records" data-step-link="records">
+        <!-- Heroicon: Document Text -->
+        <svg class="hi step-num-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
+        <span class="step-text"><span class="step-label">About this demo</span><span class="step-hint">How it keeps you safe</span></span>
+      </a></li>
+    </ul>
+  </nav>
+
+  <section class="side-settings" aria-label="AI setting and system status">
+    <!-- AI Mode Configuration Card (Neumorphic Toggle Bar) -->
+    <div class="ai-control-banner">
+      <div class="ai-toggle-row">
+        <label class="ai-toggle-label" for="aiMode">
+          <input type="checkbox" id="aiMode">
+          <!-- Heroicon: Sparkles -->
+          <svg class="hi" style="color: var(--a-primary)" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z" />
+          </svg>
+          Use AI suggestions
+        </label>
+      </div>
+      <details class="ai-explainer-details">
+        <summary>How AI is used</summary>
+        <p class="ai-explainer">AI runs only when you ask for a suggestion.</p>
+        <p class="ai-explainer">Your text goes to the AI service then. This app does not save it.</p>
+        <p class="ai-explainer">Turn AI off to use built-in suggestions.</p>
+      </details>
+    </div>
+  </section>
+  </div>
 
   <!-- =========================================================
      MAIN CONTENT AREA
@@ -1399,115 +1631,100 @@
       Run this command in <code>C:\Hackathon</code>: <code>npm start</code> then open <code>http://localhost:8777/prototype/bridge.html</code>.
     </div>
 
-    <!-- AI Mode Configuration Card (Neumorphic Toggle Bar) -->
-    <div class="ai-control-banner">
-      <div class="ai-toggle-row">
-        <label class="ai-toggle-label" for="aiMode">
-          <input type="checkbox" id="aiMode">
-          <!-- Heroicon: Sparkles -->
-          <svg class="hi" style="color: var(--a-primary)" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z" />
-          </svg>
-          Use AI suggestions (optional)
-        </label>
-        <span class="ai-badge-indicator">Interview Pack · privacy-aware</span>
-      </div>
-      <p class="ai-explainer">
-        When AI is enabled, content is sent only after you request a suggestion. It passes through the local proxy to the AI provider. The app does not write that content to files or logs; the provider’s own data policy still applies. Turn AI off to use the built-in templates.
-      </p>
-    </div>
-
     <!-- Live Alerts -->
     <div id="notice" role="status" aria-live="polite"></div>
     <div id="error" role="alert"></div>
 
-    <details class="loaded"><summary>Sample data and session records</summary>
-      <ul id="loadedList"></ul><p class="tiny">Only approved wording is recorded here. Reload the page to clear session records.</p><pre id="evidence">[]</pre>
-    </details>
     <!-- =========================================================
-         MODULE 3: PERSONALIZED AI INTERVIEW SUPPORT (MAIN THEME)
+         PERSONALIZED AI INTERVIEW SUPPORT — tiêu đề vùng chính
          ========================================================= -->
-    <section class="clarifier" aria-labelledby="ivTitle" style="border: 2px solid rgba(139, 92, 246, 0.35); box-shadow: var(--neu-shadow-lg);">
-      <div class="clarifierHead" style="background: linear-gradient(135deg, rgba(238, 242, 255, 0.9) 0%, rgba(250, 245, 255, 0.9) 50%, rgba(240, 253, 250, 0.9) 100%); border-bottom: 2px solid rgba(139, 92, 246, 0.25);">
-        <h2 id="ivTitle">
-          <!-- Heroicon: Academic Cap -->
-          <svg class="hi" style="color:var(--flower-violet)" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" />
-          </svg>
-          Personalized AI Interview Support
-        </h2>
-        <div class="tiny" style="margin-top:4px;">
-          Create your support profile → practise with communication supports → keep only what works for you.
-          <strong>Designed with neurodivergent users in mind: no diagnosis, no scoring, and no pressure to respond quickly. Every support is optional.</strong>
-        </div>
-      </div>
-      <div class="clarifierBody">
+    <header class="main-head">
+      <h2 id="ivTitle">
+        <!-- Heroicon: Academic Cap -->
+        <svg class="hi" style="color:var(--flower-violet)" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" />
+        </svg>
+        Personalized AI Interview Support
+      </h2>
+      <p class="main-intro">Practice at your own pace. No timers. No scores.</p>
+      <p class="step-meta" id="stepMeta"></p>
+    </header>
 
-        <nav class="flow-nav" aria-label="Preparation steps"><a href="#ivTitle">Support profile</a><a href="#jobTitle">Job description</a><a href="#practiceTitle">Practice</a><a href="#reviewTitle">Reflect</a></nav>
-        <p>Prepare at your own pace. There is no countdown, emotion analysis, eye-contact scoring, or response-speed scoring.</p>
-        <!-- STEP 1 · SUPPORT PROFILE -->
-        <h3 class="sectionTitle">1 · Your support profile</h3>
+    <!-- STEP 1 · SUPPORT PROFILE -->
+    <div class="step-panel is-active" id="step-profile" data-step="profile">
+      <section class="flow-section" aria-labelledby="profileTitle">
+        <h3 id="profileTitle" tabindex="-1" data-step-heading>Your support profile</h3>
+        <p>Pick what usually helps you. You can change it anytime.</p>
 
         <div id="ivSummary" class="ivSummary" hidden>
           <dl id="ivSummaryList"></dl>
           <div class="row" style="margin-top:14px">
             <button id="ivEditProfile">Edit profile</button>
-            <button id="ivClearProfile">Delete profile from this device</button>
+            <button id="ivClearProfile">Delete profile</button>
           </div>
         </div>
 
         <div id="ivForm">
           <div id="ivProfileQuestions"></div>
-          <div class="sectionTitle" style="margin-top:20px">Strengths you want to communicate</div>
-          <div class="choiceGrid" id="ivStrengths" role="group" aria-label="Self-reported strengths"></div>
+          <div class="sectionTitle" style="margin-top:20px">Your strengths (optional)</div>
+          <div class="choiceGrid" id="ivStrengths" role="group" aria-label="Your strengths"></div>
           <div class="row" style="margin-top:16px">
             <button class="primaryA" id="ivSaveProfile">Save profile</button>
-            <button id="ivSkipProfile">Skip the profile for this session</button>
+            <button id="ivSkipProfile">Skip for now</button>
           </div>
-          <div class="tiny" style="margin-top:10px">
-            Your profile is stored in this browser (<code>bridge:interview-profile</code>), and is never sent to the server or the AI provider. You can edit or delete it at any time.
-          </div>
+          <p class="tiny" style="margin-top:10px">Saved only on this device. Never sent anywhere.</p>
         </div>
+      </section>
+    </div>
 
+    <!-- STEP 2 · UNDERSTAND THE ROLE -->
+    <div class="step-panel" id="step-role" data-step="role">
         <section class="flow-section" aria-labelledby="jobTitle">
-          <h3 id="jobTitle" tabindex="-1">2 · Understand the role</h3>
-          <p>Paste a job description to explore what you may need to demonstrate. Do not include personal information. This version accepts text, not PDF files.</p>
-          <div id="jobSamples" class="row" role="group" aria-label="Sample job descriptions"></div>
-          <label for="jdText">Job description (1–5,000 characters)</label>
-          <textarea id="jdText" maxlength="5000" aria-describedby="jobPrivacy jobError" placeholder="Paste the job description here…"></textarea>
-          <p id="jobPrivacy" class="tiny">The job description is sent to the AI provider only when AI is enabled and you select Analyze. Your support profile is never included. The job description and answers remain in this browser session.</p>
-          <div class="row"><button id="jobAnalyze" class="primaryA">Analyze job description</button><button id="jobCancel" hidden>Cancel AI request</button></div>
+          <h3 id="jobTitle" tabindex="-1" data-step-heading>Understand the role</h3>
+          <p>Paste a job ad to see what it asks for. Leave out personal details.</p>
+          <p class="tiny" id="jobSamplesLabel">Or try an example:</p>
+          <div id="jobSamples" class="row" role="group" aria-labelledby="jobSamplesLabel"></div>
+          <label for="jdText">Job ad</label>
+          <textarea id="jdText" maxlength="5000" aria-describedby="jobPrivacy jobError" placeholder="Paste the job ad here…"></textarea>
+          <p id="jobPrivacy" class="tiny">With AI on, this text is sent to the AI service.</p>
+          <div class="row"><button id="jobAnalyze" class="primaryA">Analyze job ad</button><button id="jobCancel" hidden>Cancel</button></div>
           <div id="jobError" role="alert" class="err"></div><p id="jobStatus" role="status" aria-live="polite"></p>
-          <div id="jobResult" hidden><h4 id="jobResultTitle" tabindex="-1">What the role may require</h4><div id="jobCards" class="result-grid"></div></div>
-          <div class="row"><button id="generateQuestions" disabled>Generate role-based questions</button><button id="startPractice">Practise with template questions</button></div>
-          <p id="questionSource" class="source-note">Template question bank · does not predict the interview.</p>
-          <details><summary>Interview terms in plain language</summary><dl id="interviewGlossary"></dl></details>
+          <div id="jobResult" hidden><h4 id="jobResultTitle" tabindex="-1">What this job asks for</h4><div id="jobCards" class="result-grid"></div></div>
+          <div class="row"><button id="generateQuestions" disabled>Make questions for this job</button><button id="startPractice">Practice with general questions</button></div>
+          <p id="questionSource" class="source-note">General questions. Real interviews may differ.</p>
+          <details><summary>Interview words explained</summary><dl id="interviewGlossary"></dl></details>
         </section>
-        <section class="flow-section" aria-labelledby="mapTitle">
-          <h3 id="mapTitle">Preparation map</h3><p>A count of answers you chose to save in this session—not an ability score or interview-readiness score.</p>
-          <ul id="preparationMap" class="progress-list"></ul><p id="focusAreas" class="tiny"></p>
-        </section>
-        <!-- STEP 2 · INTERVIEW PRACTICE -->
-        <div id="ivPractice" hidden>
-          <h3 class="sectionTitle" id="practiceTitle" tabindex="-1">3 · Mock interview</h3>
-          <p>You can pause, rewrite, or ask for clarification. These are realistic practice questions, not predictions of what an employer will ask.</p>
-          <label for="ivDifficulty">Challenge level you choose</label><select id="ivDifficulty"><option value="0">All levels</option><option value="1">1 · Familiar</option><option value="2">2 · Applied</option><option value="3">3 · Complex</option><option value="4">4 · Unexpected follow-up</option></select>
+    </div>
+
+    <!-- STEP 3 · MOCK INTERVIEW -->
+    <div class="step-panel" id="step-practice" data-step="practice">
+      <div class="step-locked-note flow-section">
+        <h3 tabindex="-1">Practice isn't open yet</h3>
+        <p>Save or skip your profile first.</p>
+        <div class="row"><button type="button" class="primaryA" data-step-go="profile">Go to profile</button></div>
+      </div>
+      <div class="practice-layout">
+      <div class="practice-main">
+        <div id="ivPractice" class="flow-section" hidden>
+          <h3 class="sectionTitle" id="practiceTitle" tabindex="-1" data-step-heading>Mock interview</h3>
+          <p>Take your time. Stuck on a question? Use the help buttons below.</p>
+          <label for="ivDifficulty">Difficulty</label><select id="ivDifficulty"><option value="0">All levels</option><option value="1">1 · Familiar</option><option value="2">2 · Applied</option><option value="3">3 · Complex</option><option value="4">4 · Unexpected follow-up</option></select>
           <div class="row" id="ivCategories" role="group" aria-label="Choose a question category"></div>
 
           <div class="incoming" style="margin-top:14px">
-            <div class="sender" id="ivAsker">Interviewer · simulated question</div>
+            <div class="sender" id="ivAsker">Interviewer asks</div>
             <p class="ivQuestion" id="ivQuestion" tabindex="-1"></p>
             <p id="currentQuestionSource" class="source-note"></p>
           </div>
 
-          <div class="sectionTitle" style="margin-top:18px">Communication supports</div>
-          <div class="row" id="ivSupports" role="group" aria-label="Communication supports"></div>
-          <button id="dismissSupport" hidden>Close support and answer independently</button>
+          <div class="sectionTitle" style="margin-top:18px">Need help with this question?</div>
+          <div class="row" id="ivSupports" role="group" aria-label="Help with this question"></div>
+          <button id="dismissSupport" hidden>Close help</button>
           <div id="ivPanel" class="ivPanel" hidden></div>
 
           <div id="ivComposer" hidden>
             <h3 id="ivOptionsHeading" tabindex="-1" style="font-size:15px; font-weight:700; margin:18px 0 10px; color:var(--ink-primary);">
-              Choose wording that reflects your intent
+              Pick what you'd say
             </h3>
             <div id="ivOptions"></div>
             <div class="gate">
@@ -1516,75 +1733,91 @@
                 <svg class="hi" style="color:var(--guard-primary)" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
                 </svg>
-                You approve the wording before using it
+                You decide what to say
               </h3>
-              <label for="ivApproved">What you would say to the interviewer — editable</label>
-              <textarea id="ivApproved" maxlength="500" placeholder="Choose a suggestion above or write your own…"></textarea>
+              <label for="ivApproved">What you'll say (you can edit)</label>
+              <textarea id="ivApproved" maxlength="500" placeholder="Pick one above, or write your own…"></textarea>
               <div class="row">
-                <button class="primaryA" id="ivUseLine" disabled>Use this wording</button>
+                <button class="primaryA" id="ivUseLine" disabled>Use this</button>
               </div>
-              <div class="tiny" style="margin-top:8px">AI suggests wording. You decide what to say.</div>
             </div>
           </div>
 
           <div style="margin-top:20px">
-            <label for="ivAnswer">Your answer — a session draft that is cleared when the page reloads</label>
-            <textarea id="ivAnswer" aria-describedby="answerPrivacy answerError" maxlength="2000" placeholder="Draft your answer here for review…"></textarea>
+            <label for="ivAnswer">Your answer</label>
+            <textarea id="ivAnswer" aria-describedby="answerPrivacy answerError" maxlength="2000" placeholder="Write your answer here…"></textarea>
           </div>
 
-          <p id="answerPrivacy" class="tiny">Your answer is recorded only when you select “Save answer &amp; analyze.” When AI is enabled, that action sends the question, answer, and job context—but never your support profile.</p>
-          <div class="row"><button id="analyzeAnswer" class="primaryA">Save answer &amp; analyze</button><button id="answerCancel" hidden>Cancel AI analysis</button></div>
+          <p id="answerPrivacy" class="tiny">Not kept after you reload. With AI on, your answer is sent to the AI service.</p>
+          <div class="row"><button id="analyzeAnswer" class="primaryA">Save and review answer</button><button id="answerCancel" hidden>Cancel</button></div>
           <div id="answerError" class="err" role="alert"></div><p id="answerStatus" role="status" aria-live="polite"></p>
-          <section id="answerResult" class="flow-section" aria-labelledby="answerTitle" hidden><h3 id="answerTitle" tabindex="-1">Strength → Evidence</h3><div id="answerCards"></div></section>
+          <section id="answerResult" class="flow-section" aria-labelledby="answerTitle" hidden><h3 id="answerTitle" tabindex="-1">What your answer shows</h3><div id="answerCards"></div></section>
           <div class="row" style="margin-top:14px">
             <button class="primaryA" id="ivNext">Next question</button>
             <button id="ivFinish">Finish practice</button>
           </div>
           <div id="ivStatus" role="status" aria-live="polite" class="message" style="margin-top:16px; font-size:14px; color:var(--ink-secondary);"></div>
         </div>
-
-        <section class="flow-section" aria-labelledby="packTitle">
-          <h3 id="packTitle">Preparation pack for the real interview</h3>
-          <label for="employerQuestions">Questions you want to ask the employer</label>
-          <textarea id="employerQuestions" maxlength="1000" placeholder="Example: What stages are in the interview? Could I receive multi-part questions in writing?"></textarea>
-          <div class="row"><button id="buildPack">Build on-screen pack</button><button id="clearSession">Clear practice-session data</button></div>
-          <p class="tiny">Nothing is sent to the employer or exported. Clearing the session does not delete your saved support profile.</p><div id="interviewPack" hidden tabindex="-1"></div>
+      </div>
+      <aside class="practice-side" aria-labelledby="mapTitle">
+        <section class="flow-section">
+          <h3 id="mapTitle">Your progress</h3><p class="tiny">Answers you saved in each area.</p>
+          <ul id="preparationMap" class="progress-list"></ul><p id="focusAreas" class="tiny"></p>
         </section>
-        <!-- STEP 3 · REVIEW SUPPORT USED -->
-        <div id="ivReview" hidden>
-          <h3 class="sectionTitle" id="reviewTitle" tabindex="-1">4 · Practice reflection</h3>
-          <p>Using a support does not prove it helped. You decide what should be prioritized next time.</p>
+      </aside>
+      </div>
+    </div>
+
+    <!-- STEP 5 · PREPARATION PACK -->
+    <div class="step-panel" id="step-pack" data-step="pack">
+        <section class="flow-section" aria-labelledby="packTitle">
+          <h3 id="packTitle" tabindex="-1" data-step-heading>Your interview pack</h3>
+          <p>Everything you prepared, on one page. Nothing is sent to employers.</p>
+          <label for="employerQuestions">Questions to ask the employer (optional)</label>
+          <textarea id="employerQuestions" maxlength="1000" placeholder="Example: Could I get multi-part questions in writing?"></textarea>
+          <div class="row"><button id="buildPack" class="primaryA">Make my pack</button><button id="clearSession">Clear practice (keeps profile)</button></div>
+          <div id="interviewPack" hidden tabindex="-1"></div>
+        </section>
+    </div>
+
+    <!-- STEP 4 · REFLECTION -->
+    <div class="step-panel" id="step-reflect" data-step="reflect">
+      <div class="step-locked-note flow-section">
+        <h3 tabindex="-1">Reflection isn't open yet</h3>
+        <p>Answer a question, then press <strong>Finish practice</strong>.</p>
+        <div class="row"><button type="button" class="primaryA" data-step-go="practice">Go to practice</button></div>
+      </div>
+        <div id="ivReview" class="flow-section" hidden>
+          <h3 class="sectionTitle" id="reviewTitle" tabindex="-1" data-step-heading>What helped you</h3>
+          <p>Keep the help you want next time.</p>
           <div id="ivReviewBody"></div><div id="reflectionBody"></div>
         </div>
+    </div>
 
-      </div>
-    </section>
-
-    <details class="loaded"><summary>Try a two-way clarification loop with a simulated interviewer</summary>
+    <!-- MORE PRACTICE · CLARIFICATION LOOP -->
+    <div class="step-panel" id="step-clarify" data-step="clarify">
     <!-- =========================================================
          MODULE 2: CLARIFICATION ASSISTANT
          ========================================================= -->
     <section class="clarifier" aria-labelledby="clarifierTitle">
       <div class="clarifierHead">
-        <h2 id="clarifierTitle">
+        <h2 id="clarifierTitle" tabindex="-1" data-step-heading>
           <!-- Heroicon: Question Mark Circle -->
           <svg class="hi" style="color:var(--a-primary)" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
           </svg>
-          Clarification Assistant — when the question is still unclear
+          Ask to clarify
         </h2>
-        <div class="tiny" style="margin-top:4px;">
-          Choose what is unclear → review or edit the question → send it yourself → receive a simulated response. AI never answers on the interviewer’s behalf.
-        </div>
+        <p class="tiny" style="margin:4px 0 0;">Practice asking the interviewer to explain a question.</p>
       </div>
       <div class="clarifierBody">
         <div class="clarifyGrid">
 
           <!-- Clarifier Left: Minh -->
           <div>
-            <div class="sectionTitle">1 · The question you received</div>
+            <div class="sectionTitle">1 · The question</div>
             <div class="incoming">
-              <div class="sender" id="cSender">Interviewer · simulated question</div>
+              <div class="sender" id="cSender">Interviewer asks</div>
               <p id="cOriginal"></p>
             </div>
             <div class="row">
@@ -1593,18 +1826,18 @@
                 <svg class="hi" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 0 1-.923 1.785A5.969 5.969 0 0 0 6 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337Z" />
                 </svg>
-                Clarify
+                Ask to clarify
               </button>
-              <button id="cNextSample">Change sample scenario</button>
+              <button id="cNextSample">Try another question</button>
             </div>
 
             <div id="cFlow" hidden>
-              <div class="sectionTitle">2 · What would you like to clarify?</div>
+              <div class="sectionTitle">2 · What is unclear?</div>
               <div class="choiceGrid" id="cTypes"></div>
 
               <div id="cComposer" hidden>
                 <h3 id="cOptionsHeading" tabindex="-1" style="font-size:15px; font-weight:700; margin:20px 0 10px; color:var(--ink-primary);">
-                  3 · Choose wording that reflects your intent
+                  3 · Pick what you'd ask
                 </h3>
                 <div id="cOptions"></div>
 
@@ -1614,21 +1847,20 @@
                     <svg class="hi" style="color:var(--guard-primary)" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
                     </svg>
-                    You approve the question before sending
+                    You decide what to ask
                   </h3>
-                  <label for="cApproved">Question to send — editable</label>
-                  <textarea id="cApproved" maxlength="500" placeholder="Choose a question above or edit your own…"></textarea>
+                  <label for="cApproved">Your question (you can edit)</label>
+                  <textarea id="cApproved" maxlength="500" placeholder="Pick one above, or write your own…"></textarea>
                   <div class="row">
                     <button class="primaryA" id="cSend" disabled>
                       <!-- Heroicon: Paper Airplane -->
                       <svg class="hi" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
                       </svg>
-                      Confirm &amp; send question
+                      Send question
                     </button>
-                    <button id="btnViolate">Try sending without approval</button>
+                    <button id="btnViolate">Demo: send without checking</button>
                   </div>
-                  <div class="tiny" style="margin-top:8px">The system never sends automatically or guesses the answer.</div>
                 </div>
               </div>
             </div>
@@ -1640,30 +1872,30 @@
               <svg class="hi" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" />
               </svg>
-              I understand now — close the clarification loop
+              Got it — done
             </button>
           </div>
 
           <!-- Clarifier Right: Receiver -->
           <div>
-            <div class="sectionTitle">4 · Simulated interviewer view</div>
-            <div id="cReceiverEmpty" class="empty">No question has been sent.</div>
+            <div class="sectionTitle">4 · Interviewer's side (practice)</div>
+            <div id="cReceiverEmpty" class="empty">Nothing sent yet.</div>
 
             <div id="cReceiver" hidden>
               <div class="bCard">
                 <div class="bRow">
-                  <div class="k">Original question</div>
+                  <div class="k">Question</div>
                   <div class="v" id="cReceiverOriginal"></div>
                 </div>
                 <div class="bRow action">
-                  <div class="k">Your approved clarification</div>
+                  <div class="k">You asked</div>
                   <div class="v" id="cReceiverQuestion"></div>
                 </div>
               </div>
 
-              <h3 style="font-size:15px; font-weight:700; margin:18px 0 10px; color:var(--ink-primary);">Respond to complete the clarification loop</h3>
-              <label for="cResponse">Response — editable</label>
-              <textarea id="cResponse" maxlength="700" placeholder="Draft a response that clarifies the question…"></textarea>
+              <h3 style="font-size:15px; font-weight:700; margin:18px 0 10px; color:var(--ink-primary);">Reply as the interviewer</h3>
+              <label for="cResponse">Reply (you can edit)</label>
+              <textarea id="cResponse" maxlength="700" placeholder="Write a reply…"></textarea>
 
               <div class="row">
                 <button class="primaryB" id="cRespond" disabled>
@@ -1671,23 +1903,36 @@
                   <svg class="hi" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
                   </svg>
-                  Send response
+                  Send reply
                 </button>
               </div>
-              <div class="tiny" style="margin-top:10px">This response is part of the simulation; the interviewer still reviews and sends it manually.</div>
             </div>
           </div>
 
         </div>
       </div>
     </section>
+    </div>
 
-
-</details>
+    <!-- MORE PRACTICE · SESSION RECORDS -->
+    <div class="step-panel" id="step-records" data-step="records">
+      <section class="flow-section loaded" aria-labelledby="recordsTitle">
+        <h3 id="recordsTitle" tabindex="-1" data-step-heading>About this demo</h3>
+        <div class="badges-container" role="status" aria-label="System status">
+          <span class="badge" id="bData"><span class="status-dot"></span>Practice data: loading…</span>
+          <span class="badge ok" id="bGate"><span class="status-dot"></span>Nothing is sent without your approval</span>
+          <span class="badge ok" id="bGen"><span class="status-dot"></span>Every suggestion shows if it came from AI</span>
+          <span class="badge"><span class="status-dot"></span>Practice only · not connected to an employer</span>
+        </div>
+        <ul id="loadedList"></ul>
+        <details><summary>Session record</summary><p class="tiny">Only wording you approved. Reload to clear.</p><pre id="evidence">[]</pre></details>
+      </section>
+    </div>
   </main>
 
 </div>
 
+<script type="module" src="/prototype/layout.mjs"></script>
 <script type="module" src="/prototype/bridge.mjs"></script>
 </body>
 </html>

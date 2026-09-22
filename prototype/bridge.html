@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="vi">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cầu Nối — từ điều khó nói thành việc làm được</title>
+<title>Bridge — Interview preparation that adapts to you</title>
 <style>
   @font-face {
     font-family: 'Poppins';
@@ -35,98 +35,124 @@
   }
 
   :root {
-    /* Color Tokens - Inspired by Image 1 (Deep Blue Floral & Stardust) & Image 2 (SETO Clean Studio) */
-    --bg-page: #0B1120;
-    --surface-shell: #FFFFFF;
-    --surface-subtle: #F8FAFC;
-    --surface-card: #FFFFFF;
-    --surface-hover: #F1F5F9;
-    --surface-active: #E2E8F0;
-    
-    --ink-primary: #0F172A;
-    --ink-secondary: #334155;
-    --ink-muted: #64748B;
-    --ink-faint: #94A3B8;
+    /* =========================================================
+       DESIGN TOKENS
+       Synthesis of Reference Image 1 (Neurodiversity Botanical Pride)
+       & Reference Image 2 (Neumorphism Soft Tactile Surfaces)
+       ========================================================= */
+
+    /* Ambient Canvas (Image 1 Deep Botanical Night) */
+    --canvas-bg: #090E17;
+
+    /* Neumorphism Surface Palette (Image 2 Soft UI) */
+    --neu-base: #E4EBF5;
+    --neu-surface: #E8EEF7;
+    --neu-surface-subtle: #EDF3FB;
+    --neu-surface-elevated: #F0F5FD;
+
+    /* Neumorphic Lighting & Shadows */
+    --neu-light: rgba(255, 255, 255, 0.95);
+    --neu-dark: rgba(162, 178, 202, 0.48);
+    --neu-dark-deep: rgba(145, 163, 190, 0.55);
+
+    /* Tactile Dual-Shadow Presets */
+    --neu-shadow-sm: -4px -4px 10px var(--neu-light), 4px 4px 10px var(--neu-dark);
+    --neu-shadow-md: -7px -7px 18px var(--neu-light), 7px 7px 18px var(--neu-dark);
+    --neu-shadow-lg: -12px -12px 28px var(--neu-light), 12px 12px 28px var(--neu-dark);
+    --neu-shadow-pressed: inset -4px -4px 9px var(--neu-light), inset 4px 4px 9px var(--neu-dark);
+    --neu-shadow-pressed-deep: inset -5px -5px 12px var(--neu-light), inset 5px 5px 12px var(--neu-dark-deep);
+    --neu-border-soft: 1px solid rgba(255, 255, 255, 0.85);
+    --neu-border-input: 1px solid #CBD5E1;
+
+    /* High-Contrast Accessible Typography (WCAG AA compliant on #E4EBF5) */
+    --ink-primary: #0F172A;     /* Contrast ratio > 12:1 */
+    --ink-secondary: #334155;   /* Contrast ratio > 7.5:1 */
+    --ink-muted: #475569;       /* Contrast ratio > 5.2:1 */
+    --ink-faint: #64748B;
     --ink-inverse: #FFFFFF;
-    
-    --border-subtle: #E2E8F0;
-    --border-light: #F1F5F9;
-    --border-strong: #CBD5E1;
-    
+
+    /* Rainbow Accent Colors (from Image 1 Botanical Flowers) */
+    --flower-rose: #F43F5E;
+    --flower-coral: #FB7185;
+    --flower-amber: #F97316;
+    --flower-sun: #EAB308;
+    --flower-mint: #10B981;
+    --flower-cyan: #0284C7;
+    --flower-violet: #8B5CF6;
+
     /* Persona A (Minh) Palette */
     --a-primary: #2563EB;
     --a-primary-hover: #1D4ED8;
     --a-primary-active: #1E40AF;
-    --a-bg-subtle: #EFF6FF;
-    --a-border-subtle: #BFDBFE;
+    --a-bg-subtle: #E0ECFD;
+    --a-border-subtle: #93C5FD;
     --a-ink: #1E3A8A;
-    
-    /* Persona B (Receiver) Palette */
-    --b-primary: #854D0E;
-    --b-primary-hover: #713F12;
-    --b-primary-active: #58310E;
-    --b-bg-subtle: #FEF9F5;
-    --b-border-subtle: #FED7AA;
+
+    /* Persona B (Receiver / Mentor) Palette */
+    --b-primary: #D97706;
+    --b-primary-hover: #B45309;
+    --b-primary-active: #92400E;
+    --b-bg-subtle: #FEF3C7;
+    --b-border-subtle: #FCD34D;
     --b-ink: #78350F;
-    
+
     /* Semantic Feedback */
-    --ok-primary: #10B981;
-    --ok-bg: #ECFDF5;
-    --ok-border: #A7F3D0;
+    --ok-primary: #059669;
+    --ok-bg: #D1FAE5;
+    --ok-border: #6EE7B7;
     --ok-text: #065F46;
-    
-    --guard-primary: #EF4444;
-    --guard-bg: #FEF2F2;
-    --guard-border: #FECACA;
+
+    --guard-primary: #DC2626;
+    --guard-bg: #FEE2E2;
+    --guard-border: #FCA5A5;
     --guard-text: #991B1B;
-    
-    --stardust: #F59E0B;
-    --stardust-bg: #FFFBEB;
+
+    --stardust: #D97706;
+    --stardust-bg: #FEF3C7;
     --stardust-border: #FDE68A;
-    
-    /* Shadows - SETO style layered soft diffuse shadows */
-    --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
-    --shadow-sm: 0 2px 4px rgba(15, 23, 42, 0.05);
-    --shadow-md: 0 6px 12px -2px rgba(15, 23, 42, 0.06), 0 2px 4px -1px rgba(15, 23, 42, 0.04);
-    --shadow-lg: 0 12px 24px -4px rgba(15, 23, 42, 0.08), 0 4px 8px -2px rgba(15, 23, 42, 0.03);
-    --shadow-shell: 0 25px 60px -15px rgba(2, 6, 23, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.15);
-    
-    /* Radii */
-    --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 16px;
-    --radius-xl: 20px;
-    --radius-shell: 28px;
+    --stardust-text: #92400E;
+
+    /* Radii Tokens (Smooth Soft UI Curvature) */
+    --radius-xs: 8px;
+    --radius-sm: 12px;
+    --radius-md: 16px;
+    --radius-lg: 20px;
+    --radius-xl: 26px;
+    --radius-shell: 32px;
     --radius-pill: 9999px;
-    
-    /* Typography */
+
+    /* Typography Scales */
     --font-sans: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    
-    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-normal: 220ms cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Motion & Transitions */
+    --transition-fast: 160ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-normal: 240ms cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   * { box-sizing: border-box; }
-  
+
   body {
     margin: 0;
     min-height: 100vh;
-    background: 
-      radial-gradient(circle at 12% 15%, rgba(37, 99, 235, 0.28) 0%, transparent 45%),
-      radial-gradient(circle at 88% 22%, rgba(79, 70, 229, 0.25) 0%, transparent 50%),
-      radial-gradient(circle at 50% 90%, rgba(245, 158, 11, 0.12) 0%, transparent 45%),
-      linear-gradient(155deg, #0A0F1D 0%, #0F172A 50%, #1E1B4B 100%);
+    background-color: var(--canvas-bg);
+    background-image:
+      radial-gradient(circle at 10% 8%, rgba(244, 63, 94, 0.18) 0%, transparent 40%),
+      radial-gradient(circle at 35% 5%, rgba(234, 179, 8, 0.15) 0%, transparent 35%),
+      radial-gradient(circle at 65% 5%, rgba(16, 185, 129, 0.16) 0%, transparent 35%),
+      radial-gradient(circle at 90% 8%, rgba(139, 92, 246, 0.2) 0%, transparent 40%),
+      radial-gradient(circle at 50% 95%, rgba(37, 99, 235, 0.12) 0%, transparent 50%),
+      linear-gradient(180deg, #090E17 0%, #0D1524 60%, #111C30 100%);
     background-attachment: fixed;
     color: var(--ink-primary);
     font-family: var(--font-sans);
     font-size: 15px;
     line-height: 1.6;
-    padding: 24px 16px;
+    padding: 24px 16px 48px;
     -webkit-font-smoothing: antialiased;
   }
 
-  /* Accessibility & Utility */
+  /* Accessibility Defaults */
   :focus-visible {
     outline: 3px solid var(--a-primary);
     outline-offset: 3px;
@@ -138,32 +164,84 @@
     white-space: pre-wrap;
     overflow-wrap: anywhere;
   }
-  
-  /* Heroicon style */
+
+  /* Inline Heroicons */
   .hi {
     display: inline-block;
     width: 1.25em;
     height: 1.25em;
-    vertical-align: -0.2em;
+    vertical-align: -0.22em;
     flex-shrink: 0;
   }
 
-  /* Main App Shell (SETO Floating Studio Layout) */
+  /* =========================================================
+     APP SHELL (Floating Studio Container with Soft Neumorphism)
+     ========================================================= */
   .app-shell {
-    max-width: 1400px;
+    max-width: 1360px;
     margin: 0 auto;
-    background: var(--surface-shell);
+    background: var(--neu-base);
     border-radius: var(--radius-shell);
-    box-shadow: var(--shadow-shell);
+    box-shadow: 0 30px 80px -15px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.12);
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.85);
+    position: relative;
   }
 
-  /* Top Navigation & Brand Header */
+  /* =========================================================
+     BOTANICAL HERO BANNER (Image 1 Neurodiversity Flower Line Art)
+     ========================================================= */
+  .neuro-banner {
+    background: #060911;
+    color: #FFFFFF;
+    padding: 28px 32px 24px;
+    position: relative;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+  }
+  .neuro-banner::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg,
+      var(--flower-rose) 0%,
+      var(--flower-amber) 20%,
+      var(--flower-sun) 40%,
+      var(--flower-mint) 60%,
+      var(--flower-cyan) 80%,
+      var(--flower-violet) 100%);
+  }
+  .neuro-banner-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+  .neuro-art-svg {
+    width: 100%;
+    max-width: 680px;
+    height: auto;
+    margin-bottom: 12px;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.6));
+  }
+  .neuro-tagline {
+    font-size: 13.5px;
+    color: #94A3B8;
+    margin: 6px 0 0;
+    max-width: 720px;
+  }
+
+  /* =========================================================
+     TOP NAVIGATION / BRAND HEADER
+     ========================================================= */
   header.top-header {
-    background: linear-gradient(180deg, #FFFFFF 0%, #FAFCFE 100%);
-    border-bottom: 1px solid var(--border-subtle);
-    padding: 20px 28px;
+    background: var(--neu-base);
+    padding: 22px 32px 18px;
+    border-bottom: var(--neu-border-soft);
     position: relative;
   }
   .header-main-row {
@@ -176,22 +254,23 @@
   .brand-group {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 16px;
   }
   .brand-emblem {
-    width: 44px;
-    height: 44px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, #2563EB 0%, #4F46E5 50%, #9333EA 100%);
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-md);
+    background: var(--neu-base);
+    box-shadow: var(--neu-shadow-sm);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #fff;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+    color: var(--a-primary);
+    border: var(--neu-border-soft);
   }
   h1.app-title {
     margin: 0;
-    font-size: 21px;
+    font-size: 23px;
     font-weight: 700;
     color: var(--ink-primary);
     letter-spacing: -0.02em;
@@ -201,7 +280,7 @@
     flex-wrap: wrap;
   }
   .title-tagline {
-    font-size: 14px;
+    font-size: 14.5px;
     font-weight: 400;
     color: var(--ink-muted);
   }
@@ -215,63 +294,72 @@
     flex-wrap: wrap;
   }
 
-  /* Status Badges */
+  /* Status Badges Bar (Neumorphic Soft Pills) */
   .badges-container {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     flex-wrap: wrap;
-    margin-top: 14px;
+    margin-top: 16px;
     align-items: center;
   }
   .badge {
     font-size: 12px;
     font-weight: 500;
-    padding: 5px 12px;
+    padding: 6px 14px;
     border-radius: var(--radius-pill);
-    border: 1px solid var(--border-subtle);
-    background: var(--surface-subtle);
+    background: var(--neu-base);
+    box-shadow: var(--neu-shadow-sm);
+    border: var(--neu-border-soft);
     color: var(--ink-secondary);
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    transition: var(--transition-fast);
+    gap: 7px;
+    transition: all var(--transition-fast);
   }
   .badge.ok {
-    background: var(--ok-bg);
-    border-color: var(--ok-border);
     color: var(--ok-text);
+    background: linear-gradient(135deg, #ECFDF5 0%, var(--neu-base) 100%);
+    border-color: var(--ok-border);
   }
   .badge.warn {
-    background: var(--guard-bg);
-    border-color: var(--guard-border);
     color: var(--guard-text);
+    background: linear-gradient(135deg, #FEF2F2 0%, var(--neu-base) 100%);
+    border-color: var(--guard-border);
   }
   .status-dot {
-    width: 7px;
-    height: 7px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     background: currentColor;
     display: inline-block;
   }
   .status-dot.pulse {
-    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3);
     animation: pulseDot 2s infinite ease-in-out;
   }
   @keyframes pulseDot {
     0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.6; transform: scale(0.85); }
+    50% { opacity: 0.5; transform: scale(0.85); }
   }
 
-  /* AI Mode Control Card (SETO Prompt Bar Style) */
+  /* =========================================================
+     MAIN BODY & SECTIONS
+     ========================================================= */
+  main {
+    padding: 28px 32px 48px;
+  }
+
+  /* AI Mode Control Card (Neumorphic Extruded Surface) */
   .ai-control-banner {
-    background: linear-gradient(135deg, #F8FAFC 0%, #EEF2F6 100%);
-    border: 1px solid var(--border-subtle);
+    background: var(--neu-surface);
+    box-shadow: var(--neu-shadow-md);
+    border: var(--neu-border-soft);
     border-radius: var(--radius-lg);
-    padding: 14px 18px;
-    margin-bottom: 22px;
+    padding: 16px 22px;
+    margin-bottom: 26px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
   }
   .ai-toggle-row {
     display: flex;
@@ -283,126 +371,127 @@
   .ai-toggle-label {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     cursor: pointer;
-    font-size: 14.5px;
+    font-size: 15px;
     font-weight: 600;
     color: var(--ink-primary);
     margin: 0;
   }
   .ai-toggle-label input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
     accent-color: var(--a-primary);
     cursor: pointer;
   }
   .ai-badge-indicator {
-    font-size: 11px;
+    font-size: 11.5px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    padding: 2px 8px;
+    padding: 4px 12px;
     border-radius: var(--radius-pill);
-    background: #E0E7FF;
-    color: #3730A3;
+    background: var(--neu-base);
+    box-shadow: var(--neu-shadow-sm);
+    color: var(--a-ink);
+    border: var(--neu-border-soft);
   }
   .ai-explainer {
-    font-size: 12.5px;
+    font-size: 13px;
     color: var(--ink-muted);
     margin: 0;
-    line-height: 1.5;
+    line-height: 1.55;
   }
 
-  /* Alerts & System Notifications */
+  /* System Alerts */
   #notice:not(:empty) {
-    background: #EFF6FF;
-    border: 1px solid #BFDBFE;
-    color: #1E40AF;
-    padding: 12px 16px;
+    background: var(--a-bg-subtle);
+    border: 1px solid var(--a-border-subtle);
+    color: var(--a-ink);
+    padding: 14px 18px;
     border-radius: var(--radius-md);
-    margin-bottom: 16px;
-    font-size: 13.5px;
+    margin-bottom: 18px;
+    font-size: 14px;
+    box-shadow: var(--neu-shadow-sm);
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
   }
   #error:not(:empty), .err {
     background: var(--guard-bg);
     border: 1px solid var(--guard-border);
     color: var(--guard-text);
-    padding: 14px 18px;
+    padding: 15px 20px;
     border-radius: var(--radius-md);
-    margin-bottom: 16px;
-    font-size: 14px;
+    margin-bottom: 18px;
+    font-size: 14.5px;
     line-height: 1.5;
+    box-shadow: var(--neu-shadow-sm);
   }
 
-  /* Two-Col Studio Layout */
-  main {
-    padding: 24px 28px 40px;
-  }
+  /* Two-Column Studio Layout for Module 1 */
   .cols {
     display: grid;
     grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-    gap: 24px;
+    gap: 28px;
     align-items: flex-start;
   }
   .col {
     min-width: 0;
   }
 
-  /* Cards & Panes (SETO Card Language) */
+  /* =========================================================
+     NEUMORPHIC PANES & CARDS (Image 2 Structure)
+     ========================================================= */
   .pane {
-    background: var(--surface-card);
-    border: 1px solid var(--border-subtle);
+    background: var(--neu-surface);
     border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--neu-shadow-md);
+    border: var(--neu-border-soft);
     overflow: hidden;
     transition: box-shadow var(--transition-normal);
   }
-  .pane:hover {
-    box-shadow: var(--shadow-md);
-  }
   .paneHead {
-    padding: 16px 22px;
-    border-bottom: 1px solid var(--border-subtle);
+    padding: 18px 24px;
+    border-bottom: 1px solid rgba(162, 178, 202, 0.25);
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
     gap: 8px;
+    background: rgba(255, 255, 255, 0.35);
   }
   .paneHead h2 {
     margin: 0;
-    font-size: 16.5px;
-    font-weight: 600;
+    font-size: 17px;
+    font-weight: 700;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
   }
   .paneHead .who {
-    font-size: 12.5px;
+    font-size: 13px;
     color: var(--ink-muted);
   }
   .paneA .paneHead {
-    background: linear-gradient(90deg, #EFF6FF 0%, #FAFCFF 100%);
-    border-left: 5px solid var(--a-primary);
+    border-left: 6px solid var(--a-primary);
   }
   .paneA .paneHead h2 {
     color: var(--a-ink);
   }
   .paneB .paneHead {
-    background: linear-gradient(90deg, #FEF9F5 0%, #FFFEFD 100%);
-    border-left: 5px solid var(--b-primary);
+    border-left: 6px solid var(--b-primary);
   }
   .paneB .paneHead h2 {
     color: var(--b-ink);
   }
   .paneBody {
-    padding: 22px;
+    padding: 24px;
   }
 
-  /* Forms & Controls */
+  /* =========================================================
+     INPUTS & FORMS (Recessed Tactile Neumorphism)
+     ========================================================= */
   label {
     display: block;
     font-size: 13.5px;
@@ -412,92 +501,28 @@
   }
   textarea, input[type="text"] {
     width: 100%;
-    padding: 12px 14px;
-    border: 1px solid var(--border-strong);
+    padding: 14px 16px;
+    border: var(--neu-border-input);
     border-radius: var(--radius-md);
     font-family: inherit;
     font-size: 14.5px;
     color: var(--ink-primary);
-    background: #FFFFFF;
+    background: var(--neu-base);
+    box-shadow: var(--neu-shadow-pressed);
     resize: vertical;
     transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-    line-height: 1.5;
+    line-height: 1.55;
   }
   textarea:focus, input[type="text"]:focus {
     border-color: var(--a-primary);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    box-shadow: var(--neu-shadow-pressed), 0 0 0 3px rgba(37, 99, 235, 0.2);
     outline: none;
   }
   textarea {
-    min-height: 96px;
+    min-height: 100px;
   }
 
-  /* Buttons */
-  button {
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 500;
-    padding: 10px 18px;
-    min-height: 44px;
-    border-radius: var(--radius-pill);
-    border: 1px solid var(--border-strong);
-    background: #FFFFFF;
-    color: var(--ink-primary);
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: background-color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
-    touch-action: manipulation;
-  }
-  button:hover:not(:disabled) {
-    background: var(--surface-hover);
-    border-color: var(--ink-muted);
-  }
-  button:active:not(:disabled) {
-    transform: scale(0.98);
-  }
-  button:disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
-  }
-  button.primaryA {
-    background: var(--a-primary);
-    border-color: var(--a-primary);
-    color: #FFFFFF;
-    font-weight: 600;
-    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
-  }
-  button.primaryA:hover:not(:disabled) {
-    background: var(--a-primary-hover);
-    border-color: var(--a-primary-hover);
-  }
-  button.primaryB {
-    background: var(--b-primary);
-    border-color: var(--b-primary);
-    color: #FFFFFF;
-    font-weight: 600;
-    box-shadow: 0 2px 8px rgba(133, 77, 14, 0.25);
-  }
-  button.primaryB:hover:not(:disabled) {
-    background: var(--b-primary-hover);
-    border-color: var(--b-primary-hover);
-  }
-  .row {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    align-items: center;
-    margin-top: 14px;
-  }
-  .tiny {
-    font-size: 12.5px;
-    color: var(--ink-muted);
-    line-height: 1.5;
-  }
-
-  /* Quick Samples (SETO Style Prompt Pills) */
+  /* Quick Samples Pills */
   .samples {
     display: flex;
     gap: 8px;
@@ -506,37 +531,119 @@
   }
   .samples button {
     font-size: 12.5px;
-    min-height: 34px;
-    padding: 6px 14px;
+    min-height: 36px;
+    padding: 6px 16px;
     border-radius: var(--radius-pill);
-    background: var(--surface-subtle);
-    border: 1px solid var(--border-subtle);
+    background: var(--neu-base);
+    box-shadow: var(--neu-shadow-sm);
+    border: var(--neu-border-soft);
     color: var(--ink-secondary);
     font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
   }
   .samples button:hover:not(:disabled) {
-    background: var(--a-bg-subtle);
-    border-color: var(--a-border-subtle);
     color: var(--a-primary);
+    box-shadow: var(--neu-shadow-md);
+    transform: translateY(-1px);
+  }
+  .samples button:active:not(:disabled) {
+    box-shadow: var(--neu-shadow-pressed);
+    transform: translateY(0);
   }
 
-  /* Section Titles */
+  /* =========================================================
+     BUTTONS (Tactile Neumorphic Controls)
+     ========================================================= */
+  button {
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 22px;
+    min-height: 44px;
+    border-radius: var(--radius-pill);
+    background: var(--neu-base);
+    box-shadow: var(--neu-shadow-sm);
+    border: var(--neu-border-soft);
+    color: var(--ink-primary);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all var(--transition-fast);
+    user-select: none;
+  }
+  button:hover:not(:disabled) {
+    box-shadow: var(--neu-shadow-md);
+    transform: translateY(-1px);
+    color: var(--a-primary);
+  }
+  button:active:not(:disabled) {
+    box-shadow: var(--neu-shadow-pressed);
+    transform: translateY(0);
+  }
+  button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    box-shadow: none;
+    border-color: rgba(162, 178, 202, 0.4);
+  }
+
+  /* Primary Blue Button (Minh) */
+  button.primaryA {
+    background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+    color: #FFFFFF;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: -4px -4px 10px rgba(255, 255, 255, 0.7), 4px 4px 12px rgba(37, 99, 235, 0.4);
+  }
+  button.primaryA:hover:not(:disabled) {
+    background: linear-gradient(135deg, #1D4ED8 0%, #1E40AF 100%);
+    color: #FFFFFF;
+    box-shadow: -5px -5px 14px rgba(255, 255, 255, 0.8), 5px 5px 16px rgba(37, 99, 235, 0.5);
+  }
+  button.primaryA:active:not(:disabled) {
+    box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Primary Amber Button (Receiver) */
+  button.primaryB {
+    background: linear-gradient(135deg, #D97706 0%, #B45309 100%);
+    color: #FFFFFF;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: -4px -4px 10px rgba(255, 255, 255, 0.7), 4px 4px 12px rgba(217, 119, 6, 0.4);
+  }
+  button.primaryB:hover:not(:disabled) {
+    background: linear-gradient(135deg, #B45309 0%, #92400E 100%);
+    color: #FFFFFF;
+    box-shadow: -5px -5px 14px rgba(255, 255, 255, 0.8), 5px 5px 16px rgba(217, 119, 6, 0.5);
+  }
+
+  .row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 14px;
+  }
+
+  /* Section Title Dividers */
   .sectionTitle {
-    font-size: 12.5px;
+    font-size: 13px;
     text-transform: uppercase;
     font-weight: 700;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.07em;
     color: var(--ink-muted);
-    margin: 22px 0 10px;
+    margin: 24px 0 12px;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
   }
   .sectionTitle::after {
     content: '';
     flex: 1;
     height: 1px;
-    background: var(--border-subtle);
+    background: rgba(162, 178, 202, 0.35);
     margin-left: 8px;
   }
 
@@ -549,10 +656,11 @@
   .chip {
     font-size: 12.5px;
     font-weight: 500;
-    padding: 5px 12px;
+    padding: 6px 14px;
     border-radius: var(--radius-pill);
-    background: #F1F5F9;
-    border: 1px solid var(--border-subtle);
+    background: var(--neu-base);
+    box-shadow: var(--neu-shadow-sm);
+    border: var(--neu-border-soft);
     color: var(--ink-secondary);
   }
   .chip.glo {
@@ -562,14 +670,14 @@
     cursor: help;
   }
 
-  /* Route Card */
+  /* Routing Card */
   .routeCard {
-    border: 1px solid var(--a-border-subtle);
-    background: linear-gradient(135deg, #EFF6FF 0%, #F8FAFC 100%);
+    border: var(--neu-border-soft);
+    background: var(--neu-surface-subtle);
     border-radius: var(--radius-lg);
-    padding: 16px;
-    margin-top: 6px;
-    box-shadow: var(--shadow-xs);
+    padding: 18px;
+    margin-top: 8px;
+    box-shadow: var(--neu-shadow-sm);
   }
   .routeCard.abstain {
     border-color: var(--guard-border);
@@ -577,73 +685,74 @@
   }
   .routeCard .name {
     font-weight: 700;
-    font-size: 15.5px;
+    font-size: 16px;
     color: var(--ink-primary);
   }
   .routeCard .meta {
     font-size: 13px;
     color: var(--ink-muted);
-    margin: 4px 0 12px;
+    margin: 4px 0 14px;
   }
   .routeCard select {
     width: 100%;
-    padding: 10px 12px;
+    padding: 10px 14px;
     border-radius: var(--radius-md);
-    border: 1px solid var(--border-strong);
-    background: #FFFFFF;
+    border: var(--neu-border-input);
+    background: var(--neu-base);
+    box-shadow: var(--neu-shadow-pressed);
     font-family: inherit;
     font-size: 14px;
     color: var(--ink-primary);
     cursor: pointer;
   }
 
-  /* Phrasing Options (SETO 3-Card Style) */
+  /* Phrasing Options (Interactive Cards) */
   #optsOut {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin-bottom: 18px;
+    gap: 12px;
+    margin-bottom: 20px;
   }
   .opt {
     width: 100%;
     text-align: left;
-    padding: 14px 16px;
-    min-height: 52px;
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--border-strong);
-    background: #FFFFFF;
-    line-height: 1.5;
+    padding: 15px 18px;
+    min-height: 54px;
+    border-radius: var(--radius-md);
+    background: var(--neu-surface);
+    box-shadow: var(--neu-shadow-sm);
+    border: var(--neu-border-soft);
+    line-height: 1.55;
     display: block;
     cursor: pointer;
-    box-shadow: var(--shadow-xs);
     transition: all var(--transition-fast);
   }
   .opt:hover:not(:disabled) {
-    border-color: var(--a-primary);
-    background: #F8FAFC;
+    box-shadow: var(--neu-shadow-md);
     transform: translateY(-1px);
-    box-shadow: var(--shadow-sm);
+    border-color: var(--a-border-subtle);
   }
   .opt[aria-pressed="true"] {
     background: var(--a-bg-subtle);
-    border-color: var(--a-primary);
-    border-width: 2px;
-    box-shadow: 0 0 0 1px var(--a-primary), var(--shadow-sm);
+    box-shadow: var(--neu-shadow-pressed);
+    border: 2px solid var(--a-primary);
+    color: var(--a-ink);
+    font-weight: 500;
   }
   .opt .toneTag {
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
     color: var(--a-primary);
     display: inline-block;
-    margin-bottom: 4px;
-    background: rgba(37, 99, 235, 0.08);
-    padding: 2px 8px;
+    margin-bottom: 5px;
+    background: rgba(37, 99, 235, 0.12);
+    padding: 2px 10px;
     border-radius: var(--radius-pill);
   }
   .opt .src {
-    font-size: 11.5px;
+    font-size: 12px;
     color: var(--ink-muted);
     display: block;
     margin-top: 6px;
@@ -653,15 +762,15 @@
   /* Safety Confirmation Gate */
   .gate {
     border: 2px solid var(--guard-border);
-    background: linear-gradient(180deg, #FEF2F2 0%, #FFFFFF 100%);
+    background: linear-gradient(180deg, #FEF2F2 0%, var(--neu-surface) 100%);
     border-radius: var(--radius-xl);
-    padding: 18px;
-    margin-top: 14px;
-    box-shadow: var(--shadow-sm);
+    padding: 20px;
+    margin-top: 18px;
+    box-shadow: var(--neu-shadow-sm);
   }
   .gate h3 {
-    margin: 0 0 10px;
-    font-size: 14.5px;
+    margin: 0 0 12px;
+    font-size: 15px;
     font-weight: 700;
     color: var(--guard-text);
     display: flex;
@@ -669,12 +778,13 @@
     gap: 8px;
   }
   #btnViolate {
-    background: #FFFFFF;
+    background: var(--neu-base);
     border-color: var(--guard-border);
     color: var(--guard-text);
   }
   #btnViolate:hover:not(:disabled) {
     background: var(--guard-bg);
+    color: var(--guard-text);
   }
 
   /* Receiver Pane (Person B) */
@@ -684,26 +794,27 @@
     text-align: center;
     padding: 48px 24px;
     line-height: 1.7;
-    background: var(--surface-subtle);
+    background: var(--neu-base);
     border-radius: var(--radius-lg);
-    border: 1px dashed var(--border-strong);
+    box-shadow: var(--neu-shadow-pressed);
+    border: 1px dashed rgba(162, 178, 202, 0.6);
   }
   .empty-icon {
-    font-size: 32px;
+    font-size: 36px;
     color: var(--ink-faint);
     margin-bottom: 12px;
   }
   .bCard {
-    border: 1px solid var(--border-subtle);
+    border: var(--neu-border-soft);
     border-radius: var(--radius-lg);
     overflow: hidden;
-    margin: 14px 0 18px;
-    background: #FFFFFF;
-    box-shadow: var(--shadow-xs);
+    margin: 16px 0 20px;
+    background: var(--neu-surface);
+    box-shadow: var(--neu-shadow-sm);
   }
   .bRow {
-    padding: 13px 16px;
-    border-bottom: 1px solid var(--border-subtle);
+    padding: 14px 18px;
+    border-bottom: 1px solid rgba(162, 178, 202, 0.25);
   }
   .bRow:last-child {
     border-bottom: none;
@@ -721,8 +832,8 @@
     color: var(--ink-primary);
   }
   .bRow.action {
-    background: #FEF9F5;
-    border-left: 4px solid var(--b-primary);
+    background: #FFFBEB;
+    border-left: 5px solid var(--b-primary);
   }
   .bRow.action .v {
     font-weight: 600;
@@ -730,7 +841,7 @@
   }
   .mins {
     display: inline-block;
-    font-size: 11.5px;
+    font-size: 12px;
     font-weight: 600;
     color: var(--b-primary);
     border: 1px solid var(--b-primary);
@@ -747,52 +858,56 @@
     margin-bottom: 14px;
   }
   #replyOptions .opt {
-    padding: 11px 14px;
-    min-height: 44px;
+    padding: 12px 16px;
+    min-height: 46px;
   }
 
   /* Status Indicators */
   #aStatus:not(:empty) {
-    margin-top: 16px;
-    padding: 14px 16px;
+    margin-top: 18px;
+    padding: 14px 18px;
     border-radius: var(--radius-md);
     font-size: 14.5px;
     background: var(--ok-bg);
     border: 1px solid var(--ok-border);
     color: var(--ok-text);
+    box-shadow: var(--neu-shadow-sm);
   }
   #btnResolve {
     background: var(--ok-bg);
     border: 1px solid var(--ok-primary);
     color: var(--ok-text);
     font-weight: 600;
-    margin-top: 12px;
+    margin-top: 14px;
     width: 100%;
   }
   #btnResolve:hover:not(:disabled) {
-    background: #D1FAE5;
+    background: #A7F3D0;
+    color: var(--ok-text);
   }
   #followupBox {
     margin-top: 18px;
-    padding: 16px;
-    border: 1px solid var(--border-subtle);
+    padding: 18px;
+    border: var(--neu-border-soft);
     border-radius: var(--radius-lg);
-    background: var(--surface-subtle);
+    background: var(--neu-surface-subtle);
+    box-shadow: var(--neu-shadow-sm);
   }
 
-  /* Loaded Domain Knowledge & Evidence */
+  /* Domain Knowledge & Evidence Section */
   .loaded {
-    margin-top: 22px;
-    background: var(--surface-card);
-    border: 1px solid var(--border-subtle);
+    margin-top: 24px;
+    background: var(--neu-surface);
+    border: var(--neu-border-soft);
     border-radius: var(--radius-lg);
-    padding: 16px 20px;
-    box-shadow: var(--shadow-xs);
+    padding: 18px 22px;
+    box-shadow: var(--neu-shadow-sm);
   }
   .loaded h3 {
-    margin: 0 0 6px;
-    font-size: 14.5px;
-    font-weight: 600;
+    margin: 0 0 8px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink-primary);
   }
   .loaded ul {
     margin: 8px 0 0;
@@ -811,7 +926,7 @@
     padding: 4px 0;
   }
   pre {
-    background: #0F172A;
+    background: #090E17;
     color: #E2E8F0;
     border-radius: var(--radius-md);
     padding: 14px;
@@ -821,93 +936,96 @@
     max-height: 240px;
     white-space: pre-wrap;
     word-break: break-word;
-    margin-top: 8px;
+    margin-top: 10px;
   }
   code {
-    background: #F1F5F9;
+    background: rgba(162, 178, 202, 0.25);
     padding: 2px 6px;
     border-radius: 4px;
     font-family: var(--font-mono);
     font-size: 12.5px;
   }
 
-  /* Clarification Assistant Section */
+  /* =========================================================
+     MODULE 2: CLARIFICATION ASSISTANT
+     ========================================================= */
   section.clarifier {
-    margin-top: 36px;
-    background: var(--surface-card);
-    border: 1px solid var(--border-subtle);
+    margin-top: 40px;
+    background: var(--neu-surface);
     border-radius: var(--radius-xl);
     overflow: hidden;
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--neu-shadow-lg);
+    border: var(--neu-border-soft);
   }
   .clarifierHead {
-    padding: 18px 24px;
-    background: linear-gradient(135deg, #EFF6FF 0%, #FEF9F5 50%, #FAF5FF 100%);
-    border-bottom: 1px solid var(--border-subtle);
+    padding: 22px 28px;
+    background: linear-gradient(135deg, rgba(239, 246, 255, 0.7) 0%, rgba(254, 249, 245, 0.7) 50%, rgba(250, 245, 255, 0.7) 100%);
+    border-bottom: 1px solid rgba(162, 178, 202, 0.25);
   }
   .clarifierHead h2 {
     margin: 0;
-    font-size: 17.5px;
+    font-size: 18.5px;
     font-weight: 700;
     color: var(--ink-primary);
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
   }
   .clarifierBody {
-    padding: 24px;
+    padding: 28px;
   }
   .clarifyGrid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 24px;
+    gap: 28px;
   }
   .incoming {
-    border: 1px solid var(--b-border-subtle);
-    border-left: 5px solid var(--b-primary);
+    border: var(--neu-border-soft);
+    border-left: 6px solid var(--b-primary);
     border-radius: var(--radius-md);
-    padding: 14px 16px;
-    background: #FFFDF9;
-    box-shadow: var(--shadow-xs);
+    padding: 16px 20px;
+    background: var(--neu-surface-subtle);
+    box-shadow: var(--neu-shadow-sm);
   }
   .incoming .sender {
     font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
     color: var(--b-primary);
-    margin-bottom: 4px;
+    margin-bottom: 6px;
   }
   .incoming p {
     margin: 0;
     font-size: 15.5px;
     color: var(--ink-primary);
-    line-height: 1.5;
+    line-height: 1.55;
   }
   .choiceGrid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-    margin: 10px 0 16px;
+    gap: 12px;
+    margin: 12px 0 18px;
   }
   .clarifyType {
     text-align: left;
-    padding: 12px 14px;
+    padding: 14px 16px;
     border-radius: var(--radius-md);
-    border: 1px solid var(--border-strong);
-    background: #FFFFFF;
+    background: var(--neu-surface);
+    box-shadow: var(--neu-shadow-sm);
+    border: var(--neu-border-soft);
     cursor: pointer;
     transition: all var(--transition-fast);
   }
   .clarifyType:hover:not(:disabled) {
-    border-color: var(--a-primary);
-    background: #F8FAFC;
+    box-shadow: var(--neu-shadow-md);
+    transform: translateY(-1px);
+    border-color: var(--a-border-subtle);
   }
   .clarifyType[aria-pressed="true"] {
     background: var(--a-bg-subtle);
-    border-color: var(--a-primary);
-    border-width: 2px;
-    box-shadow: 0 0 0 1px var(--a-primary);
+    box-shadow: var(--neu-shadow-pressed);
+    border: 2px solid var(--a-primary);
   }
   .clarifyType strong {
     display: block;
@@ -916,47 +1034,175 @@
   }
   .clarifyType span {
     display: block;
-    font-size: 12px;
+    font-size: 12.5px;
     color: var(--ink-muted);
-    margin-top: 3px;
+    margin-top: 4px;
     line-height: 1.4;
   }
   .answer {
-    border-left: 5px solid var(--ok-primary);
+    border-left: 6px solid var(--ok-primary);
     background: var(--ok-bg);
-    padding: 14px 16px;
+    padding: 16px 20px;
     border-radius: var(--radius-md);
-    margin-top: 14px;
+    margin-top: 16px;
     white-space: pre-wrap;
     font-size: 14.5px;
     color: var(--ok-text);
     border: 1px solid var(--ok-border);
+    box-shadow: var(--neu-shadow-sm);
   }
 
-  /* Responsive Media Queries */
+  /* =========================================================
+     MODULE 3: PERSONALIZED AI INTERVIEW SUPPORT (Centerpiece)
+     ========================================================= */
+  .ivQuestion {
+    font-size: 17.5px;
+    font-weight: 600;
+    color: var(--ink-primary);
+    line-height: 1.55;
+    margin: 0;
+  }
+  .ivParts {
+    margin: 10px 0 0;
+    padding-left: 24px;
+  }
+  .ivParts li {
+    margin-bottom: 6px;
+    color: var(--ink-secondary);
+    font-size: 14.5px;
+  }
+  .ivPanel {
+    border: var(--neu-border-soft);
+    background: var(--neu-base);
+    box-shadow: var(--neu-shadow-pressed);
+    border-radius: var(--radius-lg);
+    padding: 18px 22px;
+    margin-top: 16px;
+  }
+  .ivPanel h4 {
+    margin: 0 0 10px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--a-ink);
+  }
+
+  /* Support Action Buttons (Image 2 Pill Neumorphism) */
+  .supportBtn {
+    font-size: 13.5px;
+    font-weight: 600;
+    padding: 10px 20px;
+    min-height: 46px;
+    border-radius: var(--radius-pill);
+    background: var(--neu-base);
+    box-shadow: var(--neu-shadow-sm);
+    border: var(--neu-border-soft);
+    color: var(--ink-primary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+  .supportBtn:hover:not(:disabled) {
+    box-shadow: var(--neu-shadow-md);
+    transform: translateY(-1px);
+    color: var(--a-primary);
+  }
+  .supportBtn[aria-pressed="true"] {
+    background: var(--a-bg-subtle);
+    box-shadow: var(--neu-shadow-pressed);
+    border: 2px solid var(--a-primary);
+    color: var(--a-ink);
+    font-weight: 700;
+  }
+  .supportBtn .rec {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--b-primary);
+    background: rgba(217, 119, 6, 0.12);
+    padding: 2px 8px;
+    border-radius: var(--radius-pill);
+    margin-left: 8px;
+    display: inline-block;
+  }
+
+  /* Profile Summary Card */
+  .ivSummary {
+    border: var(--neu-border-soft);
+    background: var(--neu-surface-subtle);
+    box-shadow: var(--neu-shadow-sm);
+    border-radius: var(--radius-lg);
+    padding: 18px 24px;
+    margin-bottom: 20px;
+  }
+  .ivSummary dl {
+    margin: 0;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px 18px;
+    font-size: 14.5px;
+  }
+  .ivSummary dt {
+    color: var(--ink-muted);
+    font-weight: 600;
+  }
+  .ivSummary dd {
+    margin: 0;
+    color: var(--ink-primary);
+    font-weight: 500;
+  }
+
+  .tiny {
+    font-size: 12.5px;
+    color: var(--ink-muted);
+    line-height: 1.5;
+  }
+
+  /* =========================================================
+     RESPONSIVE MEDIA QUERIES (375px, 768px, 1024px, 1440px)
+     ========================================================= */
   @media (max-width: 1024px) {
     .cols {
       grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    .clarifyGrid {
+      grid-template-columns: 1fr;
+      gap: 24px;
     }
   }
   @media (max-width: 768px) {
     body {
-      padding: 12px 8px;
+      padding: 12px 8px 32px;
     }
     .app-shell {
       border-radius: var(--radius-lg);
     }
+    .neuro-banner {
+      padding: 20px 16px 18px;
+    }
     header.top-header {
-      padding: 16px;
+      padding: 16px 20px;
     }
     main {
-      padding: 16px;
+      padding: 18px 16px;
     }
-    .clarifyGrid {
-      grid-template-columns: 1fr;
+    .clarifierBody {
+      padding: 18px 16px;
     }
     .choiceGrid {
       grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 375px) {
+    h1.app-title {
+      font-size: 19px;
+    }
+    button {
+      width: 100%;
+    }
+    .row {
+      flex-direction: column;
+      align-items: stretch;
     }
   }
   @media (prefers-reduced-motion: reduce) {
@@ -967,71 +1213,149 @@
     }
   }
 
-  /* ===== Interview Support ===== */
-  .ivQuestion {
-    font-size: 17px;
-    font-weight: 600;
-    color: var(--ink-primary);
-    line-height: 1.5;
-    margin: 0;
-  }
-  .ivParts {
-    margin: 10px 0 0;
-    padding-left: 22px;
-  }
-  .ivParts li {
-    margin-bottom: 6px;
-    color: var(--ink-secondary);
-  }
-  .ivPanel {
-    border: 1px solid var(--a-border-subtle);
-    background: var(--a-bg-subtle);
-    border-radius: var(--radius-md);
-    padding: 14px 16px;
-    margin-top: 12px;
-  }
-  .ivPanel h4 {
-    margin: 0 0 8px;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--a-ink);
-  }
-  .supportBtn[aria-pressed="true"] {
-    background: var(--a-bg-subtle);
-    border-color: var(--a-primary);
-    color: var(--a-ink);
-    font-weight: 600;
-  }
-  .supportBtn .rec {
-    font-size: 10.5px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: .5px;
-    color: var(--b-primary);
-    margin-left: 6px;
-  }
-  .ivSummary {
-    border: 1px solid var(--border-subtle);
-    background: var(--surface-subtle);
-    border-radius: var(--radius-md);
-    padding: 14px 16px;
-  }
-  .ivSummary dl {
-    margin: 0;
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 6px 14px;
-    font-size: 14px;
-  }
-  .ivSummary dt { color: var(--ink-muted); }
-  .ivSummary dd { margin: 0; color: var(--ink-primary); }
+  /* Interview layout additions reuse the existing design tokens. */
+  .skip-link { position:absolute;left:16px;top:-80px;padding:12px;background:var(--neu-base);z-index:10;color:var(--a-ink); }
+  .skip-link:focus { top:12px; }
+  .flow-nav { display:flex;gap:16px;flex-wrap:wrap;margin:20px 0; }
+  .flow-nav a { color:var(--a-ink);padding:8px 12px; }
+  .flow-section { margin:28px 0;padding:22px;border:var(--neu-border-input);border-radius:var(--radius-lg);background:var(--neu-surface-subtle); }
+  .flow-section h3 { margin-top:0;font-size:18px; }
+  .source-note { color:var(--ink-muted);font-size:13px;margin:8px 0; }
+  .result-grid { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px; }
+  .result-card { min-width:0;padding:18px;background:var(--neu-surface);border:var(--neu-border-input);border-radius:var(--radius-md);overflow-wrap:anywhere; }
+  .result-card h4 { margin:0 0 8px; }
+  blockquote { margin:12px 0;padding:8px 12px;border-left:3px solid var(--a-primary);white-space:pre-wrap;overflow-wrap:anywhere; }
+  .full-width { width:100%; }
+  #jdText { min-height:150px; }
+  #jobError:empty,#answerError:empty { display:none; }
+  .progress-list { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px; }
+  .progress-list p { margin:0;padding:12px;border:var(--neu-border-input);border-radius:var(--radius-sm); }
+  select { max-width:100%;min-height:44px;font:inherit;padding:8px;border:var(--neu-border-input);border-radius:var(--radius-sm);color:var(--ink-primary);background:var(--neu-base); }
+  fieldset { border:0;padding:0;margin:0;min-width:0; }
+  .clarifier:first-of-type { margin-top:24px; }
+  button,textarea,.opt,.badge,.clarifyType { transition-property:transform,opacity; }
+  .message,dd,p,h1,h2,h3,h4,button,li { overflow-wrap:anywhere; }
+  @media(max-width:768px) { .result-grid,.progress-list { grid-template-columns:1fr; }.flow-section { padding:16px; }.ivSummary dl { grid-template-columns:1fr;gap:4px; }textarea { font-size:16px; } }
 </style>
 </head>
 <body>
+<a class="skip-link" href="#mainContent">Skip to practice content</a>
 
 <div class="app-shell">
 
-  <!-- ============ TOP NAVIGATION / HEADER ============ -->
+  <!-- =========================================================
+       BOTANICAL ART BANNER (Inspired by Image 1 Neurodiversity Flowers)
+       ========================================================= -->
+  <aside class="neuro-banner" aria-label="Neurodiversity visual identity">
+    <div class="neuro-banner-inner">
+      <svg class="neuro-art-svg" viewBox="0 0 680 180" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Six colorful flowers representing neurodiversity">
+        <!-- Gradients -->
+        <defs>
+          <linearGradient id="grad-rose" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#F43F5E"/>
+            <stop offset="100%" stop-color="#FDA4AF"/>
+          </linearGradient>
+          <linearGradient id="grad-amber" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#FB923C"/>
+            <stop offset="100%" stop-color="#FED7AA"/>
+          </linearGradient>
+          <linearGradient id="grad-sun" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#FACC15"/>
+            <stop offset="100%" stop-color="#FEF08A"/>
+          </linearGradient>
+          <linearGradient id="grad-mint" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#4ADE80"/>
+            <stop offset="100%" stop-color="#BBF7D0"/>
+          </linearGradient>
+          <linearGradient id="grad-cyan" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#38BDF8"/>
+            <stop offset="100%" stop-color="#BAE6FD"/>
+          </linearGradient>
+          <linearGradient id="grad-violet" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#C084FC"/>
+            <stop offset="100%" stop-color="#E9D5FF"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Flower 1: Rose / Tulip (Coral-Rose) -->
+        <g stroke="url(#grad-rose)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M70 145 C70 120 72 95 72 75"/>
+          <path d="M72 105 C55 115 50 135 50 140"/>
+          <path d="M72 90 C85 98 92 118 90 132"/>
+          <path d="M58 45 C56 68 72 78 72 78 C72 78 88 68 86 45 C86 45 74 54 72 54 C70 54 58 45 58 45 Z"/>
+          <path d="M72 54 C66 40 72 32 72 32 C72 32 78 40 72 54 Z"/>
+        </g>
+
+        <!-- Flower 2: Poppy (Warm Amber) -->
+        <g stroke="url(#grad-amber)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M175 145 C176 122 178 98 178 82"/>
+          <path d="M177 115 C160 110 152 125 150 138"/>
+          <path d="M178 100 C192 106 198 122 196 135"/>
+          <circle cx="178" cy="62" r="7"/>
+          <path d="M178 55 C168 40 155 58 171 66"/>
+          <path d="M185 62 C200 52 198 75 183 68"/>
+          <path d="M178 69 C188 84 165 85 173 68"/>
+          <path d="M171 62 C156 70 162 48 174 58"/>
+        </g>
+
+        <!-- Flower 3: Sunflower (Golden Radiant) -->
+        <g stroke="url(#grad-sun)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M285 145 C285 118 286 92 286 76"/>
+          <path d="M286 110 C270 120 262 135 264 142"/>
+          <path d="M286 98 C302 108 308 126 306 138"/>
+          <circle cx="286" cy="52" r="11"/>
+          <!-- Petals ring -->
+          <path d="M286 41 L286 28 M286 63 L286 76 M275 52 L262 52 M297 52 L310 52"/>
+          <path d="M278 44 L269 35 M294 60 L303 69 M278 60 L269 69 M294 44 L303 35"/>
+          <path d="M282 42 L277 30 M290 62 L295 74 M276 48 L264 43 M296 56 L308 61"/>
+        </g>
+
+        <!-- Flower 4: Wild Bellflower (Fresh Verdant Mint) -->
+        <g stroke="url(#grad-mint)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M395 145 C396 115 398 90 399 74"/>
+          <path d="M397 105 C378 98 370 120 368 138"/>
+          <path d="M398 90 C416 95 422 118 420 135"/>
+          <path d="M380 48 C380 70 399 76 399 76 C399 76 418 70 418 48 C410 52 405 48 399 54 C393 48 388 52 380 48 Z"/>
+          <path d="M390 49 C390 36 399 32 399 32 C399 32 408 36 408 49"/>
+        </g>
+
+        <!-- Flower 5: Cluster Wildflower (Sky Cyan) -->
+        <g stroke="url(#grad-cyan)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M505 145 C508 118 512 88 514 60"/>
+          <circle cx="510" cy="115" r="4"/>
+          <circle cx="494" cy="102" r="5"/>
+          <circle cx="524" cy="92" r="5"/>
+          <circle cx="504" cy="78" r="6"/>
+          <circle cx="522" cy="62" r="5"/>
+          <circle cx="512" cy="46" r="6"/>
+          <path d="M505 115 L494 102 M510 95 L524 92 M512 82 L504 78 M513 65 L522 62 M514 52 L512 46"/>
+        </g>
+
+        <!-- Flower 6: Amethyst Orchid (Royal Violet) -->
+        <g stroke="url(#grad-violet)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M615 145 C615 120 616 95 616 75"/>
+          <path d="M616 112 C630 118 638 132 636 142"/>
+          <circle cx="616" cy="68" r="5"/>
+          <circle cx="616" cy="40" r="5"/>
+          <!-- Lower bloom -->
+          <path d="M616 63 C605 52 595 68 612 71"/>
+          <path d="M621 68 C632 60 635 78 620 73"/>
+          <path d="M616 73 C624 85 608 86 613 73"/>
+          <!-- Upper bloom -->
+          <path d="M616 35 C605 24 595 40 612 43"/>
+          <path d="M621 40 C632 32 635 50 620 45"/>
+        </g>
+
+        <!-- "NEURODIVERSITY" Geometric Typography inspired by Image 1 -->
+        <text x="340" y="172" text-anchor="middle" fill="#FFFFFF" font-family="'Poppins', sans-serif" font-weight="700" font-size="16" letter-spacing="6">NEURODIVERSITY</text>
+      </svg>
+      <p class="neuro-tagline">Different minds, flexible support, clearer conversations</p>
+    </div>
+  </aside>
+
+  <!-- =========================================================
+     TOP NAVIGATION / BRAND HEADER
+     ========================================================= -->
   <header class="top-header" role="banner">
     <div class="header-main-row">
       <div class="brand-group">
@@ -1043,41 +1367,39 @@
         </div>
         <div>
           <h1 class="app-title">
-            Cầu Nối
-            <span class="title-tagline">— từ điều khó nói thành việc làm được</span>
+            Bridge
+            <span class="title-tagline">— interview preparation that adapts to you</span>
           </h1>
           <div class="sub-metadata">
-            <span>ADC Hackathon 2026</span>
+            <span>Communication support designed for cognitive accessibility</span>
             <span>·</span>
-            <span>Neurodivergence Track</span>
-            <span>·</span>
-            <span>Stage 4: Workplace Onboarding</span>
-            <span>·</span>
-            <span>Công ty phần mềm Việt Nam</span>
+            <span>Prepare in a way that works for you</span>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Badges Bar -->
-    <div class="badges-container" role="status" aria-label="Trạng thái hệ thống">
-      <span class="badge" id="bData"><span class="status-dot"></span>Dữ liệu domain: đang tải…</span>
-      <span class="badge ok" id="bGate"><span class="status-dot pulse"></span>Cổng xác nhận: đang bật</span>
-      <span class="badge ok" id="bGen"><span class="status-dot"></span>Nguồn câu chữ: soạn sẵn, không tự sinh</span>
-      <span class="badge"><span class="status-dot"></span>Demo hai vai trên cùng máy · không gửi tin ra ngoài</span>
+    <div class="badges-container" role="status" aria-label="System status">
+      <span class="badge" id="bData"><span class="status-dot"></span>Practice data: loading…</span>
+      <span class="badge ok" id="bGate"><span class="status-dot pulse"></span>Approval gate: active</span>
+      <span class="badge ok" id="bGen"><span class="status-dot"></span>AI and template sources are labeled on every result</span>
+      <span class="badge"><span class="status-dot"></span>Simulation only · not connected to an employer</span>
     </div>
   </header>
 
-  <!-- ============ MAIN CONTENT AREA ============ -->
-  <main role="main">
+  <!-- =========================================================
+     MAIN CONTENT AREA
+     ========================================================= -->
+  <main role="main" id="mainContent">
 
     <!-- Error Notice when HTTP loading fails -->
     <div id="loadError" class="err" hidden role="alert">
-      <strong>Không tải được dữ liệu domain.</strong> Trang phải chạy qua HTTP, không mở bằng <code>file://</code>.<br>
-      Chạy lệnh tại <code>C:\Hackathon</code>: <code>npm start</code> rồi mở <code>http://localhost:8777/prototype/bridge.html</code>.
+      <strong>Could not load the practice data.</strong> Run this page through HTTP; do not open it with <code>file://</code>.<br>
+      Run this command in <code>C:\Hackathon</code>: <code>npm start</code> then open <code>http://localhost:8777/prototype/bridge.html</code>.
     </div>
 
-    <!-- AI Mode Configuration Card (SETO Style Studio Bar) -->
+    <!-- AI Mode Configuration Card (Neumorphic Toggle Bar) -->
     <div class="ai-control-banner">
       <div class="ai-toggle-row">
         <label class="ai-toggle-label" for="aiMode">
@@ -1086,12 +1408,12 @@
           <svg class="hi" style="color: var(--a-primary)" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z" />
           </svg>
-          Dùng AI để gợi ý câu chữ (tùy chọn)
+          Use AI suggestions (optional)
         </label>
-        <span class="ai-badge-indicator">Workplace Pack · An toàn dữ liệu</span>
+        <span class="ai-badge-indicator">Interview Pack · privacy-aware</span>
       </div>
       <p class="ai-explainer">
-        Khi bật và bấm “Tìm cách diễn đạt”, nội dung thô được gửi qua proxy tới nhà cung cấp AI. Ứng dụng không ghi nội dung vào file/log; chính sách lưu trữ của nhà cung cấp áp dụng riêng. Tắt AI để dùng câu mẫu có sẵn.
+        When AI is enabled, content is sent only after you request a suggestion. It passes through the local proxy to the AI provider. The app does not write that content to files or logs; the provider’s own data policy still applies. Turn AI off to use the built-in templates.
       </p>
     </div>
 
@@ -1099,394 +1421,93 @@
     <div id="notice" role="status" aria-live="polite"></div>
     <div id="error" role="alert"></div>
 
-    <!-- 2-COL WORKSPACE (MINH & RECEIVER) -->
-    <div class="cols">
-
-      <!-- ============ NGƯỜI A: MINH ============ -->
-      <div class="col">
-        <section class="pane paneA" aria-labelledby="paneAHeading">
-          <div class="paneHead">
-            <h2 id="paneAHeading">
-              <!-- Heroicon: User -->
-              <svg class="hi" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-              </svg>
-              Màn hình của Minh
-            </h2>
-            <div class="who">Lập trình viên mới · tuần thứ 2 · đang kẹt nhưng ngại hỏi</div>
-          </div>
-          <div class="paneBody">
-
-            <label for="raw">Minh gõ thô — nghĩ gì gõ nấy, không cần đúng câu chữ</label>
-            <div class="samples" id="samples" aria-label="Gợi ý câu mẫu nhanh"></div>
-            
-            <textarea id="raw" maxlength="500" placeholder="Ví dụ: em không hiểu cái task này lắm mà hỏi thì sợ phiền..."></textarea>
-            
-            <div class="row">
-              <button class="primaryA" id="btnAnalyze">
-                <!-- Heroicon: Sparkles -->
-                <svg class="hi" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                </svg>
-                Tìm cách diễn đạt
-              </button>
-              <button id="btnReset">
-                <!-- Heroicon: Arrow Path -->
-                <svg class="hi" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-                </svg>
-                Làm lại
-              </button>
-            </div>
-
-            <!-- Analysis Section (Toggled via JS) -->
-            <div id="analysis" hidden>
-              <div class="sectionTitle">
-                <!-- Heroicon: Tag -->
-                <svg class="hi" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6Z" />
-                </svg>
-                Hệ thống đọc được gì
-              </div>
-              <div class="chips" id="chipsOut"></div>
-
-              <div class="sectionTitle">
-                <!-- Heroicon: User Circle -->
-                <svg class="hi" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                </svg>
-                Nên gửi cho ai
-              </div>
-              <div id="routeOut"></div>
-
-              <div id="normOut"></div>
-
-              <h3 id="optionsHeading" tabindex="-1" style="font-size:15px; font-weight:600; margin:22px 0 10px;">
-                Chọn cách nói đúng ý bạn
-              </h3>
-              <div id="optsOut" role="group" aria-labelledby="optionsHeading"></div>
-
-              <!-- Safety Confirmation Gate -->
-              <div class="gate" role="region" aria-labelledby="gateTitle">
-                <h3 id="gateTitle">
-                  <!-- Heroicon: Shield Check -->
-                  <svg class="hi" style="color:var(--guard-primary)" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
-                  </svg>
-                  Bạn xác nhận trước khi gửi
-                </h3>
-                <label for="approved">Nội dung sẽ gửi đi — sửa thoải mái</label>
-                <textarea id="approved" placeholder="Chọn một cách nói ở trên, hoặc tự viết…"></textarea>
-                <div class="row">
-                  <button class="primaryA" id="btnSend" disabled>
-                    <!-- Heroicon: Paper Airplane -->
-                    <svg class="hi" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
-                    </svg>
-                    Xác nhận & Gửi
-                  </button>
-                  <button id="btnViolate">Thử gửi khi chưa xác nhận</button>
-                </div>
-                <div class="tiny" id="gateNote" style="margin-top:10px">Hệ thống không bao giờ tự gửi thay bạn.</div>
-              </div>
-            </div>
-
-            <!-- Followup & A Status -->
-            <div id="aStatus" role="status" aria-live="polite" class="message"></div>
-            <button id="btnResolve" hidden>
-              <!-- Heroicon: Check Badge -->
-              <svg class="hi" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" />
-              </svg>
-              Tôi đã được hỗ trợ, đóng yêu cầu
-            </button>
-            <div id="followupBox" hidden>
-              <label for="followup">Bổ sung thông tin cho yêu cầu hiện tại</label>
-              <textarea id="followup" maxlength="1000" placeholder="Nhập thêm chi tiết cần bổ sung…"></textarea>
-              <div class="row">
-                <button id="sendFollowup" class="primaryA" disabled>Gửi thông tin bổ sung</button>
-              </div>
-            </div>
-
-          </div>
-        </section>
-      </div>
-
-      <!-- ============ NGƯỜI B: NGƯỜI NHẬN ============ -->
-      <div class="col">
-        <section class="pane paneB" aria-labelledby="paneBHeading">
-          <div class="paneHead">
-            <h2 id="paneBHeading">
-              <!-- Heroicon: Inbox Stack -->
-              <svg class="hi" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z" />
-              </svg>
-              Màn hình người nhận
-            </h2>
-            <div class="who" id="bWho">Chưa có gì được gửi</div>
-          </div>
-          <div class="paneBody">
-            <div id="bEmpty" class="empty">
-              <div class="empty-icon" aria-hidden="true">
-                <!-- Heroicon: Chat Bubble Left Right -->
-                <svg class="hi" style="width:40px;height:40px" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
-                </svg>
-              </div>
-              Người nhận chưa thấy gì cả.<br>
-              Minh phải tự chọn và tự bấm gửi thì nội dung mới xuất hiện ở đây.
-            </div>
-
-            <div id="bContent" hidden>
-              <h3 id="bMessageHeading" tabindex="-1" style="font-size:15px; font-weight:600; margin:0 0 6px;">
-                Tin nhắn Minh đã duyệt
-              </h3>
-              <p id="bApproved" class="message" style="background:#F8FAFC; border:1px solid var(--border-subtle); padding:14px; border-radius:var(--radius-md); font-size:15px; margin:0 0 8px;"></p>
-              <p class="tiny">Dưới đây là gợi ý hỗ trợ từ dữ liệu mẫu, không phải lời Minh đã nói. Kiểm tra với tin nhắn ở trên.</p>
-              
-              <div class="bCard">
-                <div class="bRow">
-                  <div class="k">Nhu cầu gợi ý từ mẫu — cần đối chiếu tin nhắn</div>
-                  <div class="v" id="bAsk"></div>
-                </div>
-                <div class="bRow action">
-                  <div class="k">Bạn có thể làm</div>
-                  <div class="v"><span id="bAction"></span><span class="mins" id="bMins"></span></div>
-                </div>
-                <div class="bRow">
-                  <div class="k">Vì sao giúp ích</div>
-                  <div class="v" id="bWhy"></div>
-                </div>
-              </div>
-
-              <h3 style="font-size:15px; font-weight:600; margin:18px 0 8px;">Chọn và duyệt phản hồi</h3>
-              <div id="replyOptions"></div>
-              
-              <label for="bReply">Nội dung trả lời — có thể sửa</label>
-              <textarea id="bReply" maxlength="1000" placeholder="Chọn một câu phản hồi ở trên hoặc tự soạn…"></textarea>
-              
-              <div class="row">
-                <button id="bSend" class="primaryB" disabled>
-                  <!-- Heroicon: Paper Airplane -->
-                  <svg class="hi" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
-                  </svg>
-                  Gửi phản hồi
-                </button>
-              </div>
-              <div class="tiny" style="margin-top:10px">Người nhận thấy nguyên văn Minh đã duyệt, không phải bản AI tự viết.</div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Tri thức domain -->
-        <div class="loaded">
-          <h3>
-            <!-- Heroicon: Academic Cap -->
-            <svg class="hi" style="color:var(--a-primary)" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" />
-            </svg>
-            Tri thức domain đang được nạp
-          </h3>
-          <div class="tiny">Định tuyến bằng sơ đồ tổ chức mẫu, không để AI tự chọn người nhận.</div>
-          <ul id="loadedList"><li>đang tải…</li></ul>
-        </div>
-
-        <!-- Bản ghi demo trong bộ nhớ -->
-        <div class="loaded">
-          <details>
-            <summary>
-              <!-- Heroicon: Document Text -->
-              <svg class="hi" style="color:var(--ink-muted)" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-              </svg>
-              Bản ghi demo trong bộ nhớ (có nội dung tin nhắn)
-            </summary>
-            <div class="tiny" style="margin: 8px 0 4px;">Mỗi câu gợi ý đều truy được về file nguồn.</div>
-            <pre id="evidence">[]</pre>
-          </details>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- ============ CLARIFICATION ASSISTANT ============ -->
-    <section class="clarifier" aria-labelledby="clarifierTitle">
-      <div class="clarifierHead">
-        <h2 id="clarifierTitle">
-          <!-- Heroicon: Question Mark Circle -->
-          <svg class="hi" style="color:var(--a-primary)" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
-          </svg>
-          Clarification Assistant — khi bạn vẫn chưa hiểu
-        </h2>
-        <div class="tiny" style="margin-top:2px;">
-          Chọn điều cần làm rõ → chọn hoặc sửa câu hỏi → tự gửi → nhận câu trả lời. AI không tự trả lời thay người giao việc.
-        </div>
-      </div>
-      <div class="clarifierBody">
-        <div class="clarifyGrid">
-
-          <!-- Clarifier Left: Minh -->
-          <div>
-            <div class="sectionTitle">1 · Tin nhắn Minh nhận được</div>
-            <div class="incoming">
-              <div class="sender" id="cSender">Tech Lead · tin nhắn mô phỏng</div>
-              <p id="cOriginal"></p>
-            </div>
-            <div class="row">
-              <button class="primaryA" id="cStart">
-                <!-- Heroicon: Chat Bubble Oval Left -->
-                <svg class="hi" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 0 1-.923 1.785A5.969 5.969 0 0 0 6 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337Z" />
-                </svg>
-                Làm rõ
-              </button>
-              <button id="cNextSample">Đổi tình huống mẫu</button>
-            </div>
-
-            <div id="cFlow" hidden>
-              <div class="sectionTitle">2 · Bạn muốn làm rõ điều gì?</div>
-              <div class="choiceGrid" id="cTypes"></div>
-              
-              <div id="cComposer" hidden>
-                <h3 id="cOptionsHeading" tabindex="-1" style="font-size:14.5px; font-weight:600; margin:16px 0 8px;">
-                  3 · Chọn cách hỏi đúng ý bạn
-                </h3>
-                <div id="cOptions"></div>
-                
-                <div class="gate">
-                  <h3>
-                    <!-- Heroicon: Shield Check -->
-                    <svg class="hi" style="color:var(--guard-primary)" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
-                    </svg>
-                    Bạn xác nhận trước khi gửi
-                  </h3>
-                  <label for="cApproved">Câu hỏi sẽ gửi — có thể sửa</label>
-                  <textarea id="cApproved" maxlength="500" placeholder="Chọn một câu hỏi ở trên hoặc tự sửa…"></textarea>
-                  <div class="row">
-                    <button class="primaryA" id="cSend" disabled>
-                      <!-- Heroicon: Paper Airplane -->
-                      <svg class="hi" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
-                      </svg>
-                      Xác nhận &amp; Gửi câu hỏi
-                    </button>
-                  </div>
-                  <div class="tiny" style="margin-top:8px">Hệ thống không tự gửi và không tự đoán câu trả lời.</div>
-                </div>
-              </div>
-            </div>
-
-            <div id="cUserStatus" role="status" aria-live="polite" style="margin-top:14px; font-size:14px; color:var(--ink-secondary);"></div>
-            <div id="cAnswer" class="answer" hidden></div>
-            <button id="cResolve" hidden style="margin-top:12px">
-              <!-- Heroicon: Check Badge -->
-              <svg class="hi" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" />
-              </svg>
-              Tôi đã hiểu, đóng vòng làm rõ
-            </button>
-          </div>
-
-          <!-- Clarifier Right: Receiver -->
-          <div>
-            <div class="sectionTitle">4 · Màn hình người giao việc</div>
-            <div id="cReceiverEmpty" class="empty">Chưa có câu hỏi nào được gửi.</div>
-            
-            <div id="cReceiver" hidden>
-              <div class="bCard">
-                <div class="bRow">
-                  <div class="k">Tin nhắn ban đầu</div>
-                  <div class="v" id="cReceiverOriginal"></div>
-                </div>
-                <div class="bRow action">
-                  <div class="k">Câu hỏi Minh đã duyệt</div>
-                  <div class="v" id="cReceiverQuestion"></div>
-                </div>
-              </div>
-              
-              <h3 style="font-size:15px; font-weight:600; margin:16px 0 8px;">Trả lời để khép kín vòng làm rõ</h3>
-              <label for="cResponse">Nội dung phản hồi — có thể sửa</label>
-              <textarea id="cResponse" maxlength="700" placeholder="Soạn nội dung trả lời để làm rõ chỉ dẫn…"></textarea>
-              
-              <div class="row">
-                <button class="primaryB" id="cRespond" disabled>
-                  <!-- Heroicon: Paper Airplane -->
-                  <svg class="hi" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
-                  </svg>
-                  Gửi câu trả lời
-                </button>
-              </div>
-              <div class="tiny" style="margin-top:10px">Phản hồi mẫu chỉ phục vụ demo; người giao việc vẫn tự duyệt và gửi.</div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- ============ PERSONALIZED AI INTERVIEW SUPPORT ============ -->
-    <section class="clarifier" aria-labelledby="ivTitle">
-      <div class="clarifierHead">
+    <details class="loaded"><summary>Sample data and session records</summary>
+      <ul id="loadedList"></ul><p class="tiny">Only approved wording is recorded here. Reload the page to clear session records.</p><pre id="evidence">[]</pre>
+    </details>
+    <!-- =========================================================
+         MODULE 3: PERSONALIZED AI INTERVIEW SUPPORT (MAIN THEME)
+         ========================================================= -->
+    <section class="clarifier" aria-labelledby="ivTitle" style="border: 2px solid rgba(139, 92, 246, 0.35); box-shadow: var(--neu-shadow-lg);">
+      <div class="clarifierHead" style="background: linear-gradient(135deg, rgba(238, 242, 255, 0.9) 0%, rgba(250, 245, 255, 0.9) 50%, rgba(240, 253, 250, 0.9) 100%); border-bottom: 2px solid rgba(139, 92, 246, 0.25);">
         <h2 id="ivTitle">
           <!-- Heroicon: Academic Cap -->
-          <svg class="hi" style="color:var(--a-primary)" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <svg class="hi" style="color:var(--flower-violet)" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" />
           </svg>
           Personalized AI Interview Support
         </h2>
-        <div class="tiny" style="margin-top:2px;">
-          Hồ sơ hỗ trợ do chính bạn khai báo → luyện phỏng vấn với hỗ trợ giao tiếp → ghi nhận hỗ trợ nào hữu ích.
-          Không chẩn đoán, không chấm điểm bạn, không dự đoán người phỏng vấn sẽ hỏi gì.
+        <div class="tiny" style="margin-top:4px;">
+          Create your support profile → practise with communication supports → keep only what works for you.
+          <strong>Designed with neurodivergent users in mind: no diagnosis, no scoring, and no pressure to respond quickly. Every support is optional.</strong>
         </div>
       </div>
       <div class="clarifierBody">
 
-        <!-- BƯỚC 1 · HỒ SƠ HỖ TRỢ -->
-        <div class="sectionTitle">1 · Hồ sơ hỗ trợ của bạn</div>
+        <nav class="flow-nav" aria-label="Preparation steps"><a href="#ivTitle">Support profile</a><a href="#jobTitle">Job description</a><a href="#practiceTitle">Practice</a><a href="#reviewTitle">Reflect</a></nav>
+        <p>Prepare at your own pace. There is no countdown, emotion analysis, eye-contact scoring, or response-speed scoring.</p>
+        <!-- STEP 1 · SUPPORT PROFILE -->
+        <h3 class="sectionTitle">1 · Your support profile</h3>
 
         <div id="ivSummary" class="ivSummary" hidden>
           <dl id="ivSummaryList"></dl>
-          <div class="row" style="margin-top:12px">
-            <button id="ivEditProfile">Sửa hồ sơ</button>
-            <button id="ivClearProfile">Xoá hồ sơ khỏi máy này</button>
+          <div class="row" style="margin-top:14px">
+            <button id="ivEditProfile">Edit profile</button>
+            <button id="ivClearProfile">Delete profile from this device</button>
           </div>
         </div>
 
         <div id="ivForm">
           <div id="ivProfileQuestions"></div>
-          <div class="sectionTitle" style="margin-top:18px">Thế mạnh bạn muốn thể hiện</div>
-          <div class="choiceGrid" id="ivStrengths" role="group" aria-label="Thế mạnh tự khai báo"></div>
-          <div class="row" style="margin-top:14px">
-            <button class="primaryA" id="ivSaveProfile">Lưu hồ sơ</button>
-            <button id="ivSkipProfile">Bỏ qua, luyện tập luôn</button>
+          <div class="sectionTitle" style="margin-top:20px">Strengths you want to communicate</div>
+          <div class="choiceGrid" id="ivStrengths" role="group" aria-label="Self-reported strengths"></div>
+          <div class="row" style="margin-top:16px">
+            <button class="primaryA" id="ivSaveProfile">Save profile</button>
+            <button id="ivSkipProfile">Skip the profile for this session</button>
           </div>
-          <div class="tiny" style="margin-top:8px">
-            Hồ sơ lưu trên trình duyệt của bạn, không gửi lên máy chủ và không gửi cho AI. Sửa hoặc xoá bất cứ lúc nào.
+          <div class="tiny" style="margin-top:10px">
+            Your profile is stored in this browser (<code>bridge:interview-profile</code>), and is never sent to the server or the AI provider. You can edit or delete it at any time.
           </div>
         </div>
 
-        <!-- BƯỚC 2 · LUYỆN TẬP -->
+        <section class="flow-section" aria-labelledby="jobTitle">
+          <h3 id="jobTitle" tabindex="-1">2 · Understand the role</h3>
+          <p>Paste a job description to explore what you may need to demonstrate. Do not include personal information. This version accepts text, not PDF files.</p>
+          <div id="jobSamples" class="row" role="group" aria-label="Sample job descriptions"></div>
+          <label for="jdText">Job description (1–5,000 characters)</label>
+          <textarea id="jdText" maxlength="5000" aria-describedby="jobPrivacy jobError" placeholder="Paste the job description here…"></textarea>
+          <p id="jobPrivacy" class="tiny">The job description is sent to the AI provider only when AI is enabled and you select Analyze. Your support profile is never included. The job description and answers remain in this browser session.</p>
+          <div class="row"><button id="jobAnalyze" class="primaryA">Analyze job description</button><button id="jobCancel" hidden>Cancel AI request</button></div>
+          <div id="jobError" role="alert" class="err"></div><p id="jobStatus" role="status" aria-live="polite"></p>
+          <div id="jobResult" hidden><h4 id="jobResultTitle" tabindex="-1">What the role may require</h4><div id="jobCards" class="result-grid"></div></div>
+          <div class="row"><button id="generateQuestions" disabled>Generate role-based questions</button><button id="startPractice">Practise with template questions</button></div>
+          <p id="questionSource" class="source-note">Template question bank · does not predict the interview.</p>
+          <details><summary>Interview terms in plain language</summary><dl id="interviewGlossary"></dl></details>
+        </section>
+        <section class="flow-section" aria-labelledby="mapTitle">
+          <h3 id="mapTitle">Preparation map</h3><p>A count of answers you chose to save in this session—not an ability score or interview-readiness score.</p>
+          <ul id="preparationMap" class="progress-list"></ul><p id="focusAreas" class="tiny"></p>
+        </section>
+        <!-- STEP 2 · INTERVIEW PRACTICE -->
         <div id="ivPractice" hidden>
-          <div class="sectionTitle" style="margin-top:22px">2 · Phỏng vấn thử</div>
-          <div class="row" id="ivCategories" role="group" aria-label="Chọn nhóm câu hỏi"></div>
+          <h3 class="sectionTitle" id="practiceTitle" tabindex="-1">3 · Mock interview</h3>
+          <p>You can pause, rewrite, or ask for clarification. These are realistic practice questions, not predictions of what an employer will ask.</p>
+          <label for="ivDifficulty">Challenge level you choose</label><select id="ivDifficulty"><option value="0">All levels</option><option value="1">1 · Familiar</option><option value="2">2 · Applied</option><option value="3">3 · Complex</option><option value="4">4 · Unexpected follow-up</option></select>
+          <div class="row" id="ivCategories" role="group" aria-label="Choose a question category"></div>
 
-          <div class="incoming" style="margin-top:12px">
-            <div class="sender" id="ivAsker">Người phỏng vấn · câu hỏi mô phỏng</div>
-            <p class="ivQuestion" id="ivQuestion"></p>
+          <div class="incoming" style="margin-top:14px">
+            <div class="sender" id="ivAsker">Interviewer · simulated question</div>
+            <p class="ivQuestion" id="ivQuestion" tabindex="-1"></p>
+            <p id="currentQuestionSource" class="source-note"></p>
           </div>
 
-          <div class="sectionTitle" style="margin-top:16px">Hỗ trợ giao tiếp</div>
-          <div class="row" id="ivSupports" role="group" aria-label="Các hỗ trợ giao tiếp"></div>
+          <div class="sectionTitle" style="margin-top:18px">Communication supports</div>
+          <div class="row" id="ivSupports" role="group" aria-label="Communication supports"></div>
+          <button id="dismissSupport" hidden>Close support and answer independently</button>
           <div id="ivPanel" class="ivPanel" hidden></div>
 
           <div id="ivComposer" hidden>
-            <h3 id="ivOptionsHeading" tabindex="-1" style="font-size:14.5px; font-weight:600; margin:16px 0 8px;">
-              Chọn cách nói đúng ý bạn
+            <h3 id="ivOptionsHeading" tabindex="-1" style="font-size:15px; font-weight:700; margin:18px 0 10px; color:var(--ink-primary);">
+              Choose wording that reflects your intent
             </h3>
             <div id="ivOptions"></div>
             <div class="gate">
@@ -1495,38 +1516,174 @@
                 <svg class="hi" style="color:var(--guard-primary)" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
                 </svg>
-                Bạn xác nhận trước khi nói ra
+                You approve the wording before using it
               </h3>
-              <label for="ivApproved">Câu bạn sẽ nói với người phỏng vấn — có thể sửa</label>
-              <textarea id="ivApproved" maxlength="500" placeholder="Chọn một cách nói ở trên hoặc tự sửa…"></textarea>
+              <label for="ivApproved">What you would say to the interviewer — editable</label>
+              <textarea id="ivApproved" maxlength="500" placeholder="Choose a suggestion above or write your own…"></textarea>
               <div class="row">
-                <button class="primaryA" id="ivUseLine" disabled>Dùng câu này</button>
+                <button class="primaryA" id="ivUseLine" disabled>Use this wording</button>
               </div>
-              <div class="tiny" style="margin-top:8px">AI chỉ gợi ý cách nói. Bạn là người quyết định nói gì.</div>
+              <div class="tiny" style="margin-top:8px">AI suggests wording. You decide what to say.</div>
             </div>
           </div>
 
-          <div style="margin-top:18px">
-            <label for="ivAnswer">Câu trả lời của bạn — chỉ lưu trên máy bạn, không gửi đi đâu</label>
-            <textarea id="ivAnswer" maxlength="2000" placeholder="Ghi lại câu trả lời để tự xem lại sau…"></textarea>
+          <div style="margin-top:20px">
+            <label for="ivAnswer">Your answer — a session draft that is cleared when the page reloads</label>
+            <textarea id="ivAnswer" aria-describedby="answerPrivacy answerError" maxlength="2000" placeholder="Draft your answer here for review…"></textarea>
           </div>
 
-          <div class="row" style="margin-top:12px">
-            <button class="primaryA" id="ivNext">Câu tiếp theo</button>
-            <button id="ivFinish">Kết thúc buổi luyện</button>
+          <p id="answerPrivacy" class="tiny">Your answer is recorded only when you select “Save answer &amp; analyze.” When AI is enabled, that action sends the question, answer, and job context—but never your support profile.</p>
+          <div class="row"><button id="analyzeAnswer" class="primaryA">Save answer &amp; analyze</button><button id="answerCancel" hidden>Cancel AI analysis</button></div>
+          <div id="answerError" class="err" role="alert"></div><p id="answerStatus" role="status" aria-live="polite"></p>
+          <section id="answerResult" class="flow-section" aria-labelledby="answerTitle" hidden><h3 id="answerTitle" tabindex="-1">Strength → Evidence</h3><div id="answerCards"></div></section>
+          <div class="row" style="margin-top:14px">
+            <button class="primaryA" id="ivNext">Next question</button>
+            <button id="ivFinish">Finish practice</button>
           </div>
-          <div id="ivStatus" role="status" aria-live="polite" class="message" style="margin-top:14px; font-size:14px; color:var(--ink-secondary);"></div>
+          <div id="ivStatus" role="status" aria-live="polite" class="message" style="margin-top:16px; font-size:14px; color:var(--ink-secondary);"></div>
         </div>
 
-        <!-- BƯỚC 3 · GHI NHẬN -->
+        <section class="flow-section" aria-labelledby="packTitle">
+          <h3 id="packTitle">Preparation pack for the real interview</h3>
+          <label for="employerQuestions">Questions you want to ask the employer</label>
+          <textarea id="employerQuestions" maxlength="1000" placeholder="Example: What stages are in the interview? Could I receive multi-part questions in writing?"></textarea>
+          <div class="row"><button id="buildPack">Build on-screen pack</button><button id="clearSession">Clear practice-session data</button></div>
+          <p class="tiny">Nothing is sent to the employer or exported. Clearing the session does not delete your saved support profile.</p><div id="interviewPack" hidden tabindex="-1"></div>
+        </section>
+        <!-- STEP 3 · REVIEW SUPPORT USED -->
         <div id="ivReview" hidden>
-          <div class="sectionTitle" style="margin-top:22px">3 · Hỗ trợ nào đã giúp bạn</div>
-          <div id="ivReviewBody"></div>
+          <h3 class="sectionTitle" id="reviewTitle" tabindex="-1">4 · Practice reflection</h3>
+          <p>Using a support does not prove it helped. You decide what should be prioritized next time.</p>
+          <div id="ivReviewBody"></div><div id="reflectionBody"></div>
         </div>
 
       </div>
     </section>
 
+    <details class="loaded"><summary>Try a two-way clarification loop with a simulated interviewer</summary>
+    <!-- =========================================================
+         MODULE 2: CLARIFICATION ASSISTANT
+         ========================================================= -->
+    <section class="clarifier" aria-labelledby="clarifierTitle">
+      <div class="clarifierHead">
+        <h2 id="clarifierTitle">
+          <!-- Heroicon: Question Mark Circle -->
+          <svg class="hi" style="color:var(--a-primary)" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
+          </svg>
+          Clarification Assistant — when the question is still unclear
+        </h2>
+        <div class="tiny" style="margin-top:4px;">
+          Choose what is unclear → review or edit the question → send it yourself → receive a simulated response. AI never answers on the interviewer’s behalf.
+        </div>
+      </div>
+      <div class="clarifierBody">
+        <div class="clarifyGrid">
+
+          <!-- Clarifier Left: Minh -->
+          <div>
+            <div class="sectionTitle">1 · The question you received</div>
+            <div class="incoming">
+              <div class="sender" id="cSender">Interviewer · simulated question</div>
+              <p id="cOriginal"></p>
+            </div>
+            <div class="row">
+              <button class="primaryA" id="cStart">
+                <!-- Heroicon: Chat Bubble Oval Left -->
+                <svg class="hi" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 0 1-.923 1.785A5.969 5.969 0 0 0 6 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337Z" />
+                </svg>
+                Clarify
+              </button>
+              <button id="cNextSample">Change sample scenario</button>
+            </div>
+
+            <div id="cFlow" hidden>
+              <div class="sectionTitle">2 · What would you like to clarify?</div>
+              <div class="choiceGrid" id="cTypes"></div>
+
+              <div id="cComposer" hidden>
+                <h3 id="cOptionsHeading" tabindex="-1" style="font-size:15px; font-weight:700; margin:20px 0 10px; color:var(--ink-primary);">
+                  3 · Choose wording that reflects your intent
+                </h3>
+                <div id="cOptions"></div>
+
+                <div class="gate">
+                  <h3>
+                    <!-- Heroicon: Shield Check -->
+                    <svg class="hi" style="color:var(--guard-primary)" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
+                    </svg>
+                    You approve the question before sending
+                  </h3>
+                  <label for="cApproved">Question to send — editable</label>
+                  <textarea id="cApproved" maxlength="500" placeholder="Choose a question above or edit your own…"></textarea>
+                  <div class="row">
+                    <button class="primaryA" id="cSend" disabled>
+                      <!-- Heroicon: Paper Airplane -->
+                      <svg class="hi" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
+                      </svg>
+                      Confirm &amp; send question
+                    </button>
+                    <button id="btnViolate">Try sending without approval</button>
+                  </div>
+                  <div class="tiny" style="margin-top:8px">The system never sends automatically or guesses the answer.</div>
+                </div>
+              </div>
+            </div>
+
+            <div id="cUserStatus" role="status" aria-live="polite" style="margin-top:16px; font-size:14px; color:var(--ink-secondary);"></div>
+            <div tabindex="-1" id="cAnswer" class="answer" hidden></div>
+            <button id="cResolve" hidden style="margin-top:14px">
+              <!-- Heroicon: Check Badge -->
+              <svg class="hi" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" />
+              </svg>
+              I understand now — close the clarification loop
+            </button>
+          </div>
+
+          <!-- Clarifier Right: Receiver -->
+          <div>
+            <div class="sectionTitle">4 · Simulated interviewer view</div>
+            <div id="cReceiverEmpty" class="empty">No question has been sent.</div>
+
+            <div id="cReceiver" hidden>
+              <div class="bCard">
+                <div class="bRow">
+                  <div class="k">Original question</div>
+                  <div class="v" id="cReceiverOriginal"></div>
+                </div>
+                <div class="bRow action">
+                  <div class="k">Your approved clarification</div>
+                  <div class="v" id="cReceiverQuestion"></div>
+                </div>
+              </div>
+
+              <h3 style="font-size:15px; font-weight:700; margin:18px 0 10px; color:var(--ink-primary);">Respond to complete the clarification loop</h3>
+              <label for="cResponse">Response — editable</label>
+              <textarea id="cResponse" maxlength="700" placeholder="Draft a response that clarifies the question…"></textarea>
+
+              <div class="row">
+                <button class="primaryB" id="cRespond" disabled>
+                  <!-- Heroicon: Paper Airplane -->
+                  <svg class="hi" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
+                  </svg>
+                  Send response
+                </button>
+              </div>
+              <div class="tiny" style="margin-top:10px">This response is part of the simulation; the interviewer still reviews and sends it manually.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+
+</details>
   </main>
 
 </div>

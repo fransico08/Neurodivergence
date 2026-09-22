@@ -1,0 +1,180 @@
+{
+  "schemaVersion": "1.0.0",
+  "samples": [
+    {
+      "jobId": "junior-web",
+      "title": "Junior Software Engineer",
+      "text": "Junior Software Engineer\nSkills: React, REST APIs, debugging, problem solving, and collaboration.\nResponsibilities: build features, fix bugs, and work with a team. Examples from academic projects are welcome."
+    },
+    {
+      "jobId": "qa",
+      "title": "Junior QA Engineer",
+      "text": "Junior QA Engineer\nRequirements: software testing, attention to detail, and clear communication.\nResponsibilities: write test cases, report defects, and collaborate with the team to verify quality."
+    },
+    {
+      "jobId": "data",
+      "title": "Data Analyst Intern",
+      "text": "Data Analyst Intern\nSkills: SQL, Excel, data analysis, and problem solving.\nResponsibilities: clean data, build reports, and present findings to the team."
+    }
+  ],
+  "dictionary": [
+    {
+      "id": "react",
+      "label": "React",
+      "kind": "technical",
+      "keywords": [
+        "React"
+      ],
+      "categoryId": "technical"
+    },
+    {
+      "id": "api",
+      "label": "REST APIs",
+      "kind": "technical",
+      "keywords": [
+        "REST API",
+        "REST APIs"
+      ],
+      "categoryId": "technical"
+    },
+    {
+      "id": "debugging",
+      "label": "Debugging",
+      "kind": "technical",
+      "keywords": [
+        "debugging",
+        "debug"
+      ],
+      "categoryId": "technical"
+    },
+    {
+      "id": "testing",
+      "label": "Software testing",
+      "kind": "technical",
+      "keywords": [
+        "software testing"
+      ],
+      "categoryId": "technical"
+    },
+    {
+      "id": "sql",
+      "label": "SQL",
+      "kind": "technical",
+      "keywords": [
+        "SQL"
+      ],
+      "categoryId": "technical"
+    },
+    {
+      "id": "excel",
+      "label": "Excel",
+      "kind": "technical",
+      "keywords": [
+        "Excel"
+      ],
+      "categoryId": "technical"
+    },
+    {
+      "id": "data-analysis",
+      "label": "Data analysis",
+      "kind": "technical",
+      "keywords": [
+        "data analysis"
+      ],
+      "categoryId": "technical"
+    },
+    {
+      "id": "problem-solving",
+      "label": "Problem solving",
+      "kind": "behavioral",
+      "keywords": [
+        "problem solving"
+      ],
+      "categoryId": "behavioral"
+    },
+    {
+      "id": "collaboration",
+      "label": "Collaboration",
+      "kind": "behavioral",
+      "keywords": [
+        "collaboration",
+        "work with a team",
+        "collaborate with the team"
+      ],
+      "categoryId": "behavioral"
+    },
+    {
+      "id": "detail",
+      "label": "Attention to detail",
+      "kind": "behavioral",
+      "keywords": [
+        "attention to detail"
+      ],
+      "categoryId": "behavioral"
+    },
+    {
+      "id": "communication",
+      "label": "Clear communication",
+      "kind": "behavioral",
+      "keywords": [
+        "clear communication",
+        "present findings"
+      ],
+      "categoryId": "behavioral"
+    },
+    {
+      "id": "features",
+      "label": "Build features",
+      "kind": "responsibility",
+      "keywords": [
+        "build features"
+      ],
+      "categoryId": "job-specific"
+    },
+    {
+      "id": "bugs",
+      "label": "Fix bugs",
+      "kind": "responsibility",
+      "keywords": [
+        "fix bugs"
+      ],
+      "categoryId": "situational"
+    },
+    {
+      "id": "test-case",
+      "label": "Write test cases",
+      "kind": "responsibility",
+      "keywords": [
+        "write test cases"
+      ],
+      "categoryId": "job-specific"
+    },
+    {
+      "id": "clean-data",
+      "label": "Clean data",
+      "kind": "responsibility",
+      "keywords": [
+        "clean data"
+      ],
+      "categoryId": "job-specific"
+    },
+    {
+      "id": "reports",
+      "label": "Build reports",
+      "kind": "responsibility",
+      "keywords": [
+        "build reports"
+      ],
+      "categoryId": "job-specific"
+    },
+    {
+      "id": "report-bugs",
+      "label": "Report defects",
+      "kind": "responsibility",
+      "keywords": [
+        "report defects"
+      ],
+      "categoryId": "job-specific"
+    }
+  ]
+}

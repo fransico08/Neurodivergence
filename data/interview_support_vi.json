@@ -1,260 +1,357 @@
 {
-  "schemaVersion": "1.0.0",
+  "schemaVersion": "1.1.0",
   "packId": "interview-support",
-  "domain": "vietnamese-software-interview",
+  "domain": "software-interview-preparation",
   "updatedAt": "2026-09-22",
-  "note": "Ngân hàng câu hỏi luyện tập soạn sẵn, chạy offline. Sản phẩm KHÔNG dự đoán người phỏng vấn sẽ hỏi gì — đây là luyện tập để giảm bất ngờ, không phải để học thuộc đáp án.",
-  "designNote": "Hồ sơ hỗ trợ KHÔNG phải chẩn đoán. Nó chỉ ghi lại cách người dùng muốn được hỗ trợ, do chính họ khai báo và sửa được bất cứ lúc nào. Mọi suy luận của hệ thống đều hiển thị bằng ngôn ngữ thường và người dùng có quyền tắt.",
-
+  "note": "A static practice-question bank that works offline. The product does not predict exact interview questions; it provides realistic practice to reduce uncertainty, not answers to memorize.",
+  "designNote": "The support profile is not a diagnosis. It records support preferences that the user chooses, can inspect, edit, disable, or delete at any time.",
   "profileQuestions": [
     {
       "groupId": "communication",
-      "label": "Giao tiếp",
-      "question": "Khi gặp một câu hỏi bất ngờ, bạn thường muốn gì?",
+      "label": "Communication",
+      "question": "When you receive an unexpected question, what usually helps?",
       "options": [
-        { "optionId": "answer-now", "text": "Trả lời ngay", "enablesSupport": [] },
-        { "optionId": "few-seconds", "text": "Có vài giây để suy nghĩ", "enablesSupport": ["thinking-time"] },
-        { "optionId": "ask-back", "text": "Được hỏi lại cho rõ", "enablesSupport": ["question-focus"] },
-        { "optionId": "split-question", "text": "Câu hỏi được chia nhỏ ra", "enablesSupport": ["question-breakdown"] }
+        {
+          "optionId": "answer-now",
+          "text": "Answer right away",
+          "enablesSupport": []
+        },
+        {
+          "optionId": "few-seconds",
+          "text": "Have a moment to think",
+          "enablesSupport": [
+            "thinking-time"
+          ]
+        },
+        {
+          "optionId": "ask-back",
+          "text": "Ask a clarifying question",
+          "enablesSupport": [
+            "question-focus"
+          ]
+        },
+        {
+          "optionId": "split-question",
+          "text": "Have the question broken into smaller parts",
+          "enablesSupport": [
+            "question-breakdown"
+          ]
+        }
       ]
     },
     {
       "groupId": "information",
-      "label": "Tiếp nhận thông tin",
-      "question": "Với một chỉ dẫn phức tạp, bạn tiếp nhận tốt nhất bằng cách nào?",
+      "label": "Information format",
+      "question": "For complex instructions, which format works best for you?",
       "options": [
-        { "optionId": "written", "text": "Văn bản", "enablesSupport": ["question-breakdown"] },
-        { "optionId": "verbal", "text": "Nghe nói", "enablesSupport": [] },
-        { "optionId": "both", "text": "Cả hai", "enablesSupport": [] }
+        {
+          "optionId": "written",
+          "text": "Written",
+          "enablesSupport": [
+            "question-breakdown"
+          ]
+        },
+        {
+          "optionId": "verbal",
+          "text": "Spoken",
+          "enablesSupport": []
+        },
+        {
+          "optionId": "both",
+          "text": "Both written and spoken",
+          "enablesSupport": []
+        }
       ]
     },
     {
       "groupId": "workstyle",
-      "label": "Cách làm việc",
-      "question": "Bạn thường làm tốt nhất khi nào?",
+      "label": "Work style",
+      "question": "When do you usually work at your best?",
       "options": [
-        { "optionId": "clear-deadline", "text": "Có hạn chót rõ ràng", "enablesSupport": [] },
-        { "optionId": "interesting-problem", "text": "Gặp vấn đề thú vị", "enablesSupport": [] },
-        { "optionId": "deep-focus", "text": "Có thời gian tập trung sâu", "enablesSupport": ["thinking-time"] },
-        { "optionId": "structure", "text": "Có cấu trúc rõ ràng", "enablesSupport": ["question-breakdown"] }
+        {
+          "optionId": "clear-deadline",
+          "text": "With a clear deadline",
+          "enablesSupport": []
+        },
+        {
+          "optionId": "interesting-problem",
+          "text": "With an interesting problem",
+          "enablesSupport": []
+        },
+        {
+          "optionId": "deep-focus",
+          "text": "With uninterrupted focus time",
+          "enablesSupport": [
+            "thinking-time"
+          ]
+        },
+        {
+          "optionId": "structure",
+          "text": "With clear structure",
+          "enablesSupport": [
+            "question-breakdown"
+          ]
+        }
       ]
     }
   ],
-
   "strengths": [
-    { "strengthId": "problem-solving", "text": "Giải quyết vấn đề" },
-    { "strengthId": "pattern-recognition", "text": "Nhận ra quy luật" },
-    { "strengthId": "creativity", "text": "Sáng tạo" },
-    { "strengthId": "attention-detail", "text": "Chú ý chi tiết" },
-    { "strengthId": "deep-focus", "text": "Tập trung sâu" },
-    { "strengthId": "persistence", "text": "Bền bỉ" },
-    { "strengthId": "system-thinking", "text": "Tư duy hệ thống" },
-    { "strengthId": "learning-fast", "text": "Học nhanh" }
+    {
+      "strengthId": "problem-solving",
+      "text": "Problem solving"
+    },
+    {
+      "strengthId": "pattern-recognition",
+      "text": "Pattern recognition"
+    },
+    {
+      "strengthId": "creativity",
+      "text": "Creativity"
+    },
+    {
+      "strengthId": "attention-detail",
+      "text": "Attention to detail"
+    },
+    {
+      "strengthId": "deep-focus",
+      "text": "Deep focus"
+    },
+    {
+      "strengthId": "persistence",
+      "text": "Persistence"
+    },
+    {
+      "strengthId": "system-thinking",
+      "text": "Systems thinking"
+    },
+    {
+      "strengthId": "learning-fast",
+      "text": "Learning quickly"
+    }
   ],
-
   "supportActions": [
     {
       "supportId": "thinking-time",
-      "label": "Cần thêm thời gian",
-      "description": "Xin một khoảng lặng ngắn để sắp xếp ý, thay vì trả lời vội rồi thiếu ý.",
+      "label": "Need a moment",
+      "description": "Ask for a brief pause to organize your thoughts instead of rushing an incomplete answer.",
       "clarificationId": "thinking-time"
     },
     {
       "supportId": "question-focus",
-      "label": "Hỏi lại cho rõ",
-      "description": "Câu hỏi chạm nhiều khía cạnh — hỏi lại để biết nên tập trung vào phần nào.",
+      "label": "Clarify the focus",
+      "description": "Ask which aspect matters most when a question could be interpreted in several ways.",
       "clarificationId": "question-focus"
     },
     {
       "supportId": "question-breakdown",
-      "label": "Tách nhỏ câu hỏi",
-      "description": "Câu hỏi ghép nhiều vế — tách ra để trả lời lần lượt, không sót ý.",
+      "label": "Break it down",
+      "description": "Split a multi-part question into smaller pieces and answer them one at a time.",
       "clarificationId": "question-breakdown"
     }
   ],
-
   "categories": [
-    { "categoryId": "technical", "label": "Kỹ thuật" },
-    { "categoryId": "behavioral", "label": "Hành vi" },
-    { "categoryId": "situational", "label": "Tình huống" },
-    { "categoryId": "job-specific", "label": "Theo vị trí" }
+    {
+      "categoryId": "technical",
+      "label": "Technical"
+    },
+    {
+      "categoryId": "behavioral",
+      "label": "Behavioral"
+    },
+    {
+      "categoryId": "situational",
+      "label": "Situational"
+    },
+    {
+      "categoryId": "job-specific",
+      "label": "Role-specific"
+    }
   ],
-
   "questions": [
     {
       "questionId": "tech-debug-500",
       "categoryId": "technical",
-      "text": "Một API trả về lỗi 500. Bạn sẽ lần theo hướng nào để tìm nguyên nhân?",
+      "text": "An API returns a 500 error. How would you trace the cause?",
       "parts": [
-        "Bạn kiểm tra thông tin gì đầu tiên",
-        "Bạn thu hẹp phạm vi nguyên nhân ra sao",
-        "Bạn xác nhận đã sửa đúng bằng cách nào"
+        "What information would you check first?",
+        "How would you narrow down possible causes?",
+        "How would you confirm the fix works?"
       ],
       "focusOptions": [
-        "Quy trình lần tìm lỗi của bạn",
-        "Kiến thức kỹ thuật cụ thể về HTTP và server",
-        "Cách bạn phối hợp với người khác khi gỡ lỗi"
-      ]
+        "Your debugging process",
+        "Your HTTP and server knowledge",
+        "How you collaborate while debugging"
+      ],
+      "difficulty": 2
     },
     {
       "questionId": "tech-code-review",
       "categoryId": "technical",
-      "text": "Bạn nhận một nhận xét review code mà bạn không đồng ý. Bạn làm gì?",
+      "text": "You receive code-review feedback that you disagree with. What would you do?",
       "parts": [
-        "Bạn hiểu ý người review thế nào",
-        "Bạn trình bày quan điểm của mình ra sao",
-        "Bạn xử lý khi vẫn không thống nhất"
+        "How would you understand the reviewer’s concern?",
+        "How would you explain your reasoning?",
+        "What would you do if you still disagreed?"
       ],
       "focusOptions": [
-        "Cách bạn lập luận về mặt kỹ thuật",
-        "Cách bạn giao tiếp khi bất đồng"
-      ]
+        "Your technical reasoning",
+        "How you communicate during disagreement"
+      ],
+      "difficulty": 2
     },
     {
       "questionId": "tech-react-scale",
       "categoryId": "technical",
-      "text": "Một ứng dụng React lớn dần lên. Bạn tổ chức lại cấu trúc theo hướng nào?",
+      "text": "A React application is growing. How would you reorganize its structure?",
       "parts": [
-        "Bạn chia nhỏ theo tiêu chí gì",
-        "Bạn xử lý phần dùng chung ra sao",
-        "Bạn tránh việc mọi thứ phụ thuộc lẫn nhau thế nào"
+        "How would you decide where to split the code?",
+        "How would you manage shared code?",
+        "How would you reduce unnecessary coupling?"
       ],
       "focusOptions": [
-        "Nguyên tắc tổ chức mã nguồn",
-        "Kinh nghiệm thực tế bạn từng làm"
-      ]
+        "Your code-organization principles",
+        "A relevant example from your experience"
+      ],
+      "difficulty": 3
     },
-
     {
       "questionId": "behav-difficult-problem",
       "categoryId": "behavioral",
-      "text": "Kể về một vấn đề kỹ thuật khó mà bạn đã giải quyết.",
+      "text": "Tell me about a difficult technical problem you solved.",
       "parts": [
-        "Bối cảnh và vấn đề là gì",
-        "Bạn đã làm những bước nào",
-        "Kết quả cuối cùng ra sao",
-        "Bạn rút ra điều gì"
+        "What was the context and the problem?",
+        "What steps did you take?",
+        "What was the outcome?",
+        "What did you learn?"
       ],
       "focusOptions": [
-        "Cách bạn tiếp cận và suy luận",
-        "Độ khó kỹ thuật của vấn đề",
-        "Tác động của kết quả"
-      ]
+        "Your approach and reasoning",
+        "The technical difficulty",
+        "The impact of the outcome"
+      ],
+      "difficulty": 2
     },
     {
       "questionId": "behav-competing-priorities",
       "categoryId": "behavioral",
-      "text": "Kể về một lần bạn phải cân bằng nhiều ưu tiên xung đột trong khi vẫn giữ được sự đồng thuận của các bên liên quan.",
+      "text": "Tell me about a time you balanced competing priorities while maintaining stakeholder alignment.",
       "parts": [
-        "Tình huống có những ưu tiên nào xung đột",
-        "Bạn quyết định cái gì quan trọng hơn dựa trên điều gì",
-        "Bạn truyền đạt quyết định đó ra sao",
-        "Sau đó chuyện gì xảy ra"
+        "Which priorities were in conflict?",
+        "How did you decide what mattered most?",
+        "How did you communicate the decision?",
+        "What happened afterward?"
       ],
       "focusOptions": [
-        "Cách bạn ra quyết định",
-        "Cách bạn giao tiếp với các bên",
-        "Kết quả và bài học"
-      ]
+        "How you make decisions",
+        "How you communicate with stakeholders",
+        "The outcome and what you learned"
+      ],
+      "difficulty": 3
     },
     {
       "questionId": "behav-tell-about-yourself",
       "categoryId": "behavioral",
-      "text": "Bạn giới thiệu một chút về bản thân đi.",
+      "text": "Tell me a little about yourself.",
       "parts": [
-        "Bạn đang làm gì hiện tại",
-        "Điều gì đưa bạn tới vị trí này",
-        "Vì sao bạn quan tâm tới công việc đang ứng tuyển"
+        "What are you doing now?",
+        "What brought you to this point?",
+        "Why are you interested in this role?"
       ],
       "focusOptions": [
-        "Hành trình nghề nghiệp",
-        "Thế mạnh liên quan tới vị trí này",
-        "Động lực ứng tuyển"
-      ]
+        "Your career or learning journey",
+        "Strengths relevant to the role",
+        "Your motivation for applying"
+      ],
+      "difficulty": 1
     },
-
     {
       "questionId": "situ-teammate-disagree",
       "categoryId": "situational",
-      "text": "Nếu một đồng nghiệp không đồng ý với cách bạn triển khai, bạn sẽ xử lý thế nào?",
+      "text": "If a teammate disagreed with your implementation, how would you handle it?",
       "parts": [
-        "Bạn tìm hiểu lý do họ không đồng ý ra sao",
-        "Bạn đưa ra căn cứ của mình thế nào",
-        "Bạn kết thúc bất đồng bằng cách nào"
+        "How would you understand their concern?",
+        "How would you explain your evidence?",
+        "How would you resolve the disagreement?"
       ],
       "focusOptions": [
-        "Cách bạn giữ quan hệ làm việc",
-        "Cách bạn bảo vệ quyết định kỹ thuật"
-      ]
+        "How you preserve the working relationship",
+        "How you support a technical decision"
+      ],
+      "difficulty": 2
     },
     {
       "questionId": "situ-missed-deadline",
       "categoryId": "situational",
-      "text": "Bạn nhận ra sẽ không kịp hạn chót. Bạn làm gì?",
+      "text": "You realize you will miss a deadline. What would you do?",
       "parts": [
-        "Bạn nhận ra vào thời điểm nào",
-        "Bạn báo cho ai và báo thế nào",
-        "Bạn đề xuất phương án gì"
+        "When did you notice the risk?",
+        "Who would you tell, and how?",
+        "What options would you propose?"
       ],
       "focusOptions": [
-        "Thời điểm và cách bạn báo sớm",
-        "Phương án bạn đưa ra"
-      ]
+        "How early and clearly you communicate risk",
+        "The options you propose"
+      ],
+      "difficulty": 2
     },
     {
       "questionId": "situ-unclear-task",
       "categoryId": "situational",
-      "text": "Bạn được giao một việc mà yêu cầu chưa rõ ràng. Bạn bắt đầu từ đâu?",
+      "text": "You are given a task with unclear requirements. Where would you start?",
       "parts": [
-        "Bạn xác định chỗ nào chưa rõ",
-        "Bạn hỏi ai và hỏi gì",
-        "Bạn bắt đầu làm khi nào"
+        "How would you identify what is unclear?",
+        "Who would you ask, and what would you ask?",
+        "When would you begin implementation?"
       ],
       "focusOptions": [
-        "Cách bạn làm rõ yêu cầu",
-        "Cách bạn tránh làm sai hướng"
-      ]
+        "How you clarify requirements",
+        "How you avoid working in the wrong direction"
+      ],
+      "difficulty": 2
     },
-
     {
       "questionId": "job-first-90-days",
       "categoryId": "job-specific",
-      "text": "Trong 90 ngày đầu ở vị trí này, bạn muốn đạt được điều gì?",
+      "text": "What would you hope to achieve in your first 90 days in this role?",
       "parts": [
-        "Bạn muốn học gì trước",
-        "Bạn muốn đóng góp gì sớm",
-        "Bạn đo bằng cách nào"
+        "What would you learn first?",
+        "What would you try to contribute early?",
+        "How would you know you were making progress?"
       ],
       "focusOptions": [
-        "Kế hoạch học việc",
-        "Đóng góp cụ thể bạn nhắm tới"
-      ]
+        "Your onboarding and learning plan",
+        "A concrete early contribution"
+      ],
+      "difficulty": 3
     },
     {
       "questionId": "job-why-this-role",
       "categoryId": "job-specific",
-      "text": "Vì sao bạn chọn vị trí này thay vì một vị trí khác?",
+      "text": "Why did you choose this role rather than a different one?",
       "parts": [
-        "Điều gì ở công việc này hợp với bạn",
-        "Bạn mang lại được gì cho vị trí này"
+        "What about the work interests you?",
+        "What could you contribute to the role?"
       ],
       "focusOptions": [
-        "Động lực cá nhân",
-        "Sự phù hợp về năng lực"
-      ]
+        "Your motivation",
+        "How your capabilities relate to the role"
+      ],
+      "difficulty": 1
     },
     {
       "questionId": "job-working-style",
       "categoryId": "job-specific",
-      "text": "Bạn làm việc hiệu quả nhất trong môi trường như thế nào?",
+      "text": "If your preferred working conditions were not immediately available, what alternative would you propose, and why?",
       "parts": [
-        "Điều kiện giúp bạn tập trung",
-        "Cách bạn thích nhận thông tin và phản hồi"
+        "Which condition matters most to you?",
+        "What alternative would you suggest?",
+        "How would you evaluate whether it works?"
       ],
       "focusOptions": [
-        "Điều kiện làm việc",
-        "Cách giao tiếp trong nhóm"
-      ]
+        "How you communicate support preferences",
+        "Why you chose the alternative"
+      ],
+      "difficulty": 4
     }
   ]
 }

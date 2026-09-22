@@ -1,67 +1,51 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {detectIntent,norm,hasKeyword,extractTicket,fillTicket} from '../prototype/core.mjs';
-import {suggest,clarify,validateOutput,validateClarificationOutput,validRequest,validClarificationRequest} from '../server/ai.mjs';
+import {norm,hasKeyword} from '../prototype/core.mjs';
+import {clarify,validateClarificationOutput,validClarificationRequest} from '../server/ai.mjs';
 import {createServer} from '../server/app.mjs';
-const intents=JSON.parse(await readFile(new URL('../data/intents_vi.json',import.meta.url)));
-const clarifications=JSON.parse(await readFile(new URL('../data/clarifications_vi.json',import.meta.url)));
-const req={rawText:'em không hiểu task API-142',intentId:'unclear-task',allowedFacts:{ticket:'API-142'}};
-const output={acknowledgedIntentId:'unclear-task',confident:true,options:{neutral:'Em chưa hiểu API-142. Anh/chị giải thích giúp em nhé?',direct:'Em cần làm rõ yêu cầu.',soft:'Anh/chị giúp em hiểu rõ hơn được không ạ?'}};
-test('Vietnamese normalization, whole words, no-hit abstain, routing and ticket',()=>{
- assert.equal(norm('ĐẦU VÀO'),'dau vao');assert.equal(hasKeyword('trời đẹp','rối'),false);
- assert.equal(detectIntent('hom nay troi dep qua',intents),null);
- assert.equal(detectIntent('em khong hieu task nay',intents).intent.routeTo,'tech-lead');
- assert.equal(detectIntent('công việc lặp lại',intents).intent.intentId,'under-stimulated');
- assert.equal(extractTicket('api-142'),'API-142');assert.equal(fillTicket('{ticket}',null),'việc được giao');
+const pack=JSON.parse(await readFile(new URL('../data/clarifications_interview_vi.json',import.meta.url)));
+const req={originalMessage:'Bạn sẽ gỡ lỗi API như thế nào?',clarificationId:'question-focus',packId:'interview'};
+const output={acknowledgedClarificationId:'question-focus',confident:true,options:{neutral:'Anh/chị muốn em tập trung vào phần nào ạ?',direct:'Em nên giải thích cách tìm lỗi hay cách kiểm tra kết quả ạ?',soft:'Anh/chị làm rõ trọng tâm giúp em được không ạ?'}};
+test('Vietnamese normalization and whole-word matching',()=>{
+ assert.equal(norm('ĐẦU VÀO'),'dau vao');assert.equal(hasKeyword('trời đẹp','rối'),false);assert(hasKeyword('Tôi dùng React','react'));
 });
-test('request strict schema and server checks client ticket and intent',()=>{
- assert(validRequest(req,intents));assert.equal(validRequest({...req,intentId:'made-up'},intents),null);
- assert.equal(validRequest({...req,allowedFacts:{ticket:'API-999'}},intents),null);
- assert.equal(validRequest({...req,rawText:' '},intents),null);assert.equal(validRequest({...req,extra:1},intents),null);
+test('strict interview request and allowed pack',()=>{
+ assert(validClarificationRequest(req,pack));
+ for(const bad of [{...req,packId:'workplace'},{...req,clarificationId:'scope'},{...req,originalMessage:' '},{...req,extra:1}])assert.equal(validClarificationRequest(bad,pack),null);
 });
-test('output schema, ID echo, confidence, unsupported past and numeric fact',()=>{
- assert(validateOutput(output,req,[]));
- for(const bad of [null,{...output,confident:false},{...output,acknowledgedIntentId:'overload'},{...output,options:{...output.options,soft:'Em đã thử 9 lần.'}},{...output,options:{...output.options,direct:'Anh Đức giúp em.'}}])assert.equal(validateOutput(bad,req,[{name:'Anh Đức'}]),false);
+test('output schema, echo and confidence',()=>{
+ assert(validateClarificationOutput(output,req,[]));
+ for(const bad of [null,{...output,confident:false},{...output,acknowledgedClarificationId:'thinking-time'},{...output,score:8}])assert.equal(validateClarificationOutput(bad,req,[]),false);
 });
-test('LLM and deterministic fallback contracts with fake provider',async()=>{
- assert.equal((await suggest(req,{roles:[]})).reasonCode,'NO_KEY');
- assert.equal((await suggest(req,{roles:[],provider:async()=>output})).mode,'llm');
- assert.equal((await suggest(req,{roles:[],provider:async()=>null})).reasonCode,'VALIDATION_FAILED');
- assert.equal((await suggest(req,{roles:[],provider:async()=>{throw {status:429};}})).reasonCode,'RATE_LIMIT');
- assert.equal((await suggest(req,{roles:[],provider:async()=>{throw new Error('secret');}})).reasonCode,'API_ERROR');
- assert.equal((await suggest(req,{roles:[],provider:()=>new Promise(()=>{}),timeoutMs:10})).reasonCode,'TIMEOUT');
+test('reject unsupported past action and numeric fact',()=>{
+ for(const phrase of ['Em đã thử cách này, đúng không?','Em cần 14 phút được không?'])assert.equal(validateClarificationOutput({...output,options:{...output.options,soft:phrase}},req,[]),false);
 });
-test('clarification request, guarded output and fallback contracts',async()=>{
- const request={originalMessage:'Em xử lý giúp anh vấn đề của khách hàng nhé.',clarificationId:'scope'};
- const response={acknowledgedClarificationId:'scope',confident:true,options:{neutral:'Anh có thể nói rõ bước em cần làm không ạ?',direct:'Em cần thực hiện bước nào trước ạ?',soft:'Anh mô tả thêm phần em cần làm giúp em được không ạ?'}};
- assert(validClarificationRequest(request,clarifications));
- assert.equal(validClarificationRequest({...request,clarificationId:'made-up'},clarifications),null);
- assert(validateClarificationOutput(response,request,[]));
- assert.equal(validateClarificationOutput({...response,acknowledgedClarificationId:'priority'},request,[]),false);
- assert.equal(validateClarificationOutput({...response,options:{...response.options,direct:'Em sẽ hoàn thành trong 10 phút.'}},request,[]),false);
- assert.equal((await clarify(request,{roles:[]})).reasonCode,'NO_KEY');
- assert.equal((await clarify(request,{roles:[],provider:async(_request,_signal,mode)=>{assert.equal(mode,'clarify');return response;}})).mode,'llm');
+test('reject fabricated weekday, date and recipient name',()=>{
+ for(const phrase of ['Thứ Hai được không?','Ngày 12/03 được không?','Đức giúp em nhé?'])assert.equal(validateClarificationOutput({...output,options:{...output.options,soft:phrase}},req,[{name:'Anh Đức'}]),false);
 });
-test('reject fabricated weekday, numeric substrings and bare recipient name',()=>{
- for(const phrase of ['Em sẽ làm thứ Hai.','Em cần 14 phút.','Đức giúp em nhé.','Em sẽ làm ngày 12/03.']){
-  assert.equal(validateOutput({...output,options:{...output.options,soft:phrase}},req,[{name:'Anh Đức'}]),false);
- }
+test('Vietnamese diacritics do not confuse nắm and Nam',()=>{
+ assert(validateClarificationOutput({...output,options:{...output.options,soft:'Em chưa nắm rõ, anh/chị nói thêm được không?'}},req,[{name:'Anh Nam'}]));
 });
-test('Vietnamese common words do not collide with diacritic-bearing names',()=>{
- const candidate={...output,options:{...output.options,soft:'Dạ, em chưa nắm rõ task API-142 này ạ.'}};
- assert(validateOutput(candidate,req,[{name:'Anh Nam'}]));
+test('LLM and deterministic fallback with fake provider',async()=>{
+ assert.equal((await clarify(req)).reasonCode,'NO_KEY');
+ assert.equal((await clarify(req,{provider:async(_r,_s,mode)=>{assert.equal(mode,'clarify-interview');return output;}})).mode,'llm');
+ assert.equal((await clarify(req,{provider:async()=>null})).reasonCode,'VALIDATION_FAILED');
+ assert.equal((await clarify(req,{provider:async()=>{throw {status:429};}})).reasonCode,'RATE_LIMIT');
+ assert.equal((await clarify(req,{provider:async()=>{throw new Error('not returned');}})).reasonCode,'API_ERROR');
+ assert.equal((await clarify(req,{provider:()=>new Promise(()=>{}),timeoutMs:10})).reasonCode,'TIMEOUT');
 });
-test('HTTP static allowlist, error, fallback, forbidden origin',async()=>{
- const server=createServer();await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
- const base=`http://127.0.0.1:${server.address().port}`;
- try {
+test('HTTP allowlist, removed endpoint, default interview, invalid pack and origin',async()=>{
+ const server=createServer();await new Promise(r=>server.listen(0,'127.0.0.1',r));
+ const base='http://127.0.0.1:'+server.address().port;
+ try{
   assert.equal((await fetch(base+'/')).status,200);
-  for(const p of ['/.env','/package.json','/server/app.mjs','/prompt-for-agent.md'])assert.equal((await fetch(base+p)).status,404);
-  const post=body=>fetch(base+'/api/suggest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-  assert.equal((await (await post(req)).json()).reasonCode,'NO_KEY');assert.equal((await post({})).status,400);
-  const clarificationResponse=await fetch(base+'/api/clarify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({originalMessage:'Em xử lý giúp anh vấn đề của khách hàng nhé.',clarificationId:'scope'})});
-  assert.equal((await clarificationResponse.json()).reasonCode,'NO_KEY');
+  for(const p of ['/.env','/package.json','/server/app.mjs','/data/intents_vi.json','/api/suggest'])assert.equal((await fetch(base+p)).status,404);
+  const post=body=>fetch(base+'/api/clarify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  assert.equal((await (await post(req)).json()).reasonCode,'NO_KEY');
+  const {packId,...defaultReq}=req;assert.equal((await post(defaultReq)).status,200);
+  assert.equal((await post({...req,packId:'made-up'})).status,400);
+  assert.equal((await post({})).status,400);
   assert.equal((await fetch(base+'/',{headers:{Origin:'https://evil.example'}})).status,403);
- }finally{await new Promise(resolve=>server.close(resolve));}
+ }finally{await new Promise(r=>server.close(r));}
 });

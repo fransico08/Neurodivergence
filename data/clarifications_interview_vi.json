@@ -1,125 +1,130 @@
 {
-  "schemaVersion": "1.0.0",
-  "packId": "interview-stage3",
-  "packLabel": "Phỏng vấn tuyển dụng (Stage 3)",
-  "domain": "vietnamese-interview-stage3",
+  "schemaVersion": "1.1.0",
+  "packId": "interview-preparation",
+  "packLabel": "Interview practice",
+  "domain": "interview-preparation",
   "updatedAt": "2026-09-22",
-  "note": "Cùng một engine với pack Nơi làm việc, chỉ đổi dữ liệu: người gửi là người phỏng vấn, tin nhắn đến là câu hỏi phỏng vấn nhiều tầng. Câu hỏi làm rõ chỉ là gợi ý — người dùng phải chọn, kiểm tra, sửa nếu cần và tự nói ra. Sản phẩm KHÔNG dự đoán người phỏng vấn sẽ hỏi gì; đây là luyện tập để giảm bất ngờ, không phải để học thuộc đáp án.",
-  "designNote": "Trong phỏng vấn, hỏi lại cho rõ là tín hiệu TỐT — nó cho thấy ứng viên kiểm tra yêu cầu trước khi bắt tay làm. Vì vậy mọi câu ở đây được viết theo giọng chuyên nghiệp và tự tin, không xin lỗi thừa, không hạ thấp bản thân.",
+  "note": "The sender is a simulated interviewer. Clarification prompts are suggestions that the user must review, edit, and approve. Practice reduces uncertainty; it does not predict exact interview questions.",
+  "designNote": "Clarifying a question is a professional communication strategy. The language is direct and respectful, without unnecessary apology or self-deprecation.",
   "sampleMessages": [
     {
       "messageId": "iv-competing-priorities",
       "senderRoleId": "interviewer",
-      "text": "Kể cho tôi nghe về một lần bạn phải cân bằng nhiều ưu tiên xung đột trong khi vẫn giữ được sự đồng thuận của các bên liên quan."
+      "text": "Tell me about a time you balanced competing priorities while maintaining stakeholder alignment."
     },
     {
       "messageId": "iv-tell-me-about-yourself",
       "senderRoleId": "interviewer",
-      "text": "Bạn giới thiệu một chút về bản thân đi."
+      "text": "Tell me a little about yourself."
     },
     {
       "messageId": "iv-handle-pressure",
       "senderRoleId": "hr-coordinator",
-      "text": "Bạn thường xử lý áp lực công việc như thế nào?"
+      "text": "How do you usually handle pressure at work?"
     }
   ],
   "clarificationTypes": [
     {
       "clarificationId": "question-focus",
-      "label": "Anh/chị muốn nghe về khía cạnh nào?",
-      "shortLabel": "Trọng tâm câu hỏi",
-      "description": "Câu hỏi chạm nhiều khía cạnh cùng lúc. Hỏi lại để biết nên tập trung vào phần nào.",
+      "label": "Which aspect should I focus on?",
+      "shortLabel": "Question focus",
+      "description": "The question covers several areas. Ask which one matters most.",
       "phrasings": [
         {
           "phrasingId": "clarify-focus-neutral",
           "tone": "neutral",
-          "text": "Anh/chị muốn em tập trung vào quyết định chuyên môn hay vào cách em làm việc với mọi người ạ?"
+          "text": "Would you like me to focus on the technical decision or on how I worked with others?"
         },
         {
           "phrasingId": "clarify-focus-direct",
           "tone": "direct",
-          "text": "Để trả lời đúng trọng tâm, anh/chị quan tâm nhất tới khía cạnh nào trong câu hỏi này ạ?"
+          "text": "To keep my answer focused, which part of the question matters most to you?"
         },
         {
           "phrasingId": "clarify-focus-soft",
           "tone": "soft",
-          "text": "Câu này có thể hiểu theo vài hướng, anh/chị cho em biết hướng nào hữu ích nhất với anh/chị được không ạ?"
+          "text": "I can interpret this in a few ways. Which direction would be most useful for you?"
         }
       ]
     },
     {
       "clarificationId": "question-breakdown",
-      "label": "Câu hỏi này gồm mấy phần?",
-      "shortLabel": "Tách nhỏ câu hỏi",
-      "description": "Câu hỏi ghép nhiều vế. Hỏi lại để tách thành từng phần và trả lời theo thứ tự.",
+      "label": "Could we break this into parts?",
+      "shortLabel": "Break down the question",
+      "description": "The question has several parts. Ask to work through them one at a time.",
       "phrasings": [
         {
           "phrasingId": "clarify-breakdown-neutral",
           "tone": "neutral",
-          "text": "Em hiểu câu hỏi có vài phần: tình huống, cách em quyết định, và kết quả. Em trả lời lần lượt như vậy được không ạ?"
+          "text": "Could we break the question into smaller parts so I can answer each one clearly?"
         },
         {
           "phrasingId": "clarify-breakdown-direct",
           "tone": "direct",
-          "text": "Anh/chị muốn em đi qua từng phần theo thứ tự nào ạ?"
+          "text": "Which part would you like me to answer first?"
         },
         {
           "phrasingId": "clarify-breakdown-soft",
           "tone": "soft",
-          "text": "Để trả lời đủ ý, em xin tách câu hỏi thành từng phần nhỏ rồi đi lần lượt được không ạ?"
+          "text": "To make sure I cover everything, may I take the question one part at a time?"
         }
       ]
     },
     {
       "clarificationId": "answer-format",
-      "label": "Nên trả lời bằng ví dụ hay nói tổng quát?",
-      "shortLabel": "Cách trả lời mong đợi",
-      "description": "Làm rõ kỳ vọng về độ chi tiết, tránh đoán sai rồi nói lệch hướng.",
+      "label": "Would you prefer an example or a general approach?",
+      "shortLabel": "Expected answer format",
+      "description": "Clarify the expected level of detail before choosing an answer structure.",
       "phrasings": [
         {
           "phrasingId": "clarify-format-neutral",
           "tone": "neutral",
-          "text": "Anh/chị muốn nghe một ví dụ cụ thể từ dự án em từng làm, hay cách em tiếp cận nói chung ạ?"
+          "text": "Would you prefer a specific example from a project or a general explanation of my approach?"
         },
         {
           "phrasingId": "clarify-format-direct",
           "tone": "direct",
-          "text": "Em nên đi sâu vào một tình huống cụ thể hay trình bày ngắn gọn ở mức tổng quan ạ?"
+          "text": "Should I go into one detailed example or keep the answer at a high level?"
         },
         {
           "phrasingId": "clarify-format-soft",
           "tone": "soft",
-          "text": "Em có một ví dụ khá chi tiết, anh/chị thấy kể cụ thể như vậy có phù hợp không ạ?"
+          "text": "Would a specific example be most useful, or would you prefer a general approach?"
         }
       ]
     },
     {
       "clarificationId": "thinking-time",
-      "label": "Xin thêm một chút thời gian sắp xếp ý",
-      "shortLabel": "Thời gian suy nghĩ",
-      "description": "Xin khoảng lặng ngắn để tổ chức câu trả lời, thay vì trả lời vội rồi nói thiếu ý.",
+      "label": "Ask for a moment to organize your thoughts",
+      "shortLabel": "Processing time",
+      "description": "Request a brief pause to organize the answer instead of rushing.",
       "phrasings": [
         {
           "phrasingId": "clarify-time-neutral",
           "tone": "neutral",
-          "text": "Em xin khoảng một phút để sắp xếp ý rồi trả lời được không ạ?"
+          "text": "Could I take a moment to organize my thoughts before I answer?"
         },
         {
           "phrasingId": "clarify-time-direct",
           "tone": "direct",
-          "text": "Em muốn trả lời câu này cho đủ ý, anh/chị cho em một chút thời gian nhé?"
+          "text": "I would like to give you a complete answer. May I take a brief moment?"
         },
         {
           "phrasingId": "clarify-time-soft",
           "tone": "soft",
-          "text": "Câu này hay, em suy nghĩ một chút rồi trả lời anh/chị được không ạ?"
+          "text": "That is a useful question. May I think for a moment before answering?"
         }
       ]
     }
   ],
   "responseExamples": [
-    "Bạn cứ tập trung vào cách bạn ra quyết định, phần làm việc nhóm để lát nữa mình hỏi riêng.",
-    "Bạn lấy một ví dụ cụ thể giúp mình, không cần nói chung chung đâu.",
-    "Không sao, bạn cứ thong thả suy nghĩ rồi trả lời."
-  ]
+    "Please focus on how you made the decision; I can ask about teamwork afterward.",
+    "Please use one specific example rather than a general answer.",
+    "Of course. Take a moment and answer when you are ready."
+  ],
+  "toneLabels": {
+    "neutral": "Neutral",
+    "direct": "Direct",
+    "soft": "Gentle"
+  }
 }

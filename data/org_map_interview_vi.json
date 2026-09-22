@@ -1,44 +1,44 @@
 {
   "schemaVersion": "1.0.0",
-  "packId": "interview-stage3",
-  "packLabel": "Phỏng vấn tuyển dụng (Stage 3)",
-  "domain": "vietnamese-interview-stage3",
+  "packId": "interview-preparation",
+  "packLabel": "Interview practice",
+  "domain": "interview-preparation",
   "updatedAt": "2026-09-22",
-  "note": "Các vai trò trong bối cảnh phỏng vấn. Đây là người BÊN NGOÀI công ty ứng viên đang ứng tuyển — khác hẳn org_map.json (đồng nghiệp nội bộ ở Stage 4-6). Tách riêng để chứng minh engine không phụ thuộc vào một sơ đồ tổ chức cố định. Dữ liệu mẫu, tên là hư cấu.",
+  "note": "Roles used in the simulated interview. All names and interactions are fictional; these are not real accounts or recipients.",
   "roles": [
     {
       "roleId": "interviewer",
-      "name": "Người phỏng vấn",
-      "title": "Trưởng nhóm kỹ thuật (bên tuyển dụng)",
+      "name": "Interviewer",
+      "title": "Technical team lead at the hiring organization",
       "ownsWhat": [
-        "đặt câu hỏi chuyên môn",
-        "đánh giá năng lực kỹ thuật",
-        "quyết định vòng tiếp theo"
+        "ask role-related questions",
+        "explore technical capability",
+        "decide the next interview step"
       ],
       "askAboutExamples": [
-        "câu hỏi có nhiều phần cùng lúc",
-        "chưa rõ nên trả lời ở mức chi tiết nào",
-        "cần thêm thời gian sắp xếp ý"
+        "a question with several parts",
+        "unclear expected level of detail",
+        "needing time to organize an answer"
       ],
-      "channel": "trao đổi trực tiếp trong buổi phỏng vấn",
-      "responseTimeHint": "trả lời ngay trong buổi"
+      "channel": "live interview conversation",
+      "responseTimeHint": "usually answered during the interview"
     },
     {
       "roleId": "hr-coordinator",
-      "name": "Cán bộ tuyển dụng",
-      "title": "Nhân sự điều phối phỏng vấn",
+      "name": "Recruitment coordinator",
+      "title": "Interview process coordinator",
       "ownsWhat": [
-        "hình thức và lịch phỏng vấn",
-        "thông tin quy trình",
-        "điều chỉnh hỗ trợ khi ứng viên đề nghị"
+        "interview format and schedule",
+        "process information",
+        "access adjustments requested by the candidate"
       ],
       "askAboutExamples": [
-        "buổi phỏng vấn gồm mấy vòng, bao lâu",
-        "có mấy người tham gia",
-        "đề nghị điều chỉnh cách thức phỏng vấn"
+        "number and length of interview rounds",
+        "who will attend",
+        "requesting a change to the interview format"
       ],
-      "channel": "email hoặc tin nhắn trước buổi phỏng vấn",
-      "responseTimeHint": "thường trong 1 ngày làm việc"
+      "channel": "email or message before the interview",
+      "responseTimeHint": "usually within one business day"
     }
   ]
 }

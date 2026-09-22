@@ -1,28 +1,44 @@
-# Cầu Nối — prototype ADC
+# Bridge — Personalized AI Interview Support
 
-Web demo hai chiều: người dùng diễn đạt nhu cầu → tự duyệt câu → người nhận nhận nguyên văn → tự duyệt phản hồi → người dùng bổ sung hoặc xác nhận đóng yêu cầu. Clarification Assistant bổ sung vòng riêng cho chỉ dẫn mơ hồ: chọn điều cần làm rõ → duyệt câu hỏi → nhận câu trả lời → người dùng tự đóng vòng.
+Bridge is a neurodivergent-friendly interview preparation prototype. It reduces uncertainty, supports different processing and communication preferences, and helps users connect real experience to job-relevant strengths. It is not a diagnostic tool, a candidate-scoring system, or an employer monitoring product.
 
-## Chạy
+## Run locally
 
-Yêu cầu Node.js 20 trở lên. Mở terminal tại `C:\Hackathon`:
+Node.js 20 or later is required.
 
 ```powershell
-npm ci
+npm install
 npm start
 ```
 
-Mở http://127.0.0.1:8777/ hoặc http://127.0.0.1:8777/prototype/bridge.html. Một server phục vụ trang và API. Không mở HTML qua file://. Dừng bằng Ctrl+C. Chỉ lắng nghe trên máy cục bộ; đây không phải ứng dụng production.
+Open [http://127.0.0.1:8777/](http://127.0.0.1:8777/). The server hosts both the interface and API; do not open the HTML with `file://`. Stop it with `Ctrl+C`. To use another port in PowerShell:
 
 ```powershell
-npm run validate
-npm test
+$env:PORT='8778'
+npm start
 ```
 
-Không cần API key để chạy demo đầy đủ bằng câu mẫu. Không cần kết nối Internet sau khi đã cài thư viện và khởi động server, khi tắt AI.
+The prototype uses plain HTML, CSS, and ES modules with no frontend build step. Poppins is used when installed locally, with system-font fallbacks and no font CDN.
 
-## Bật AI tùy chọn
+## Product flow
 
-Ba lệnh sau lần lượt tạo file cấu hình (chỉ chạy lệnh đầu nếu chưa có .env), mở để tự nhập key và khởi động server:
+1. **Support profile:** users select communication, information, and work-style preferences plus self-reported strengths. The profile is optional, visible, editable, and deletable. It never infers a neurological label.
+2. **Job description:** users paste 1–5,000 characters or choose a sample. The product extracts skills, responsibilities, practice areas, and exact source quotes.
+3. **Question generation:** AI can generate realistic questions grounded in the job description. Every question includes parts, possible focus areas, category, and challenge level. Invalid AI questions are replaced by templates. Nothing claims to predict exact employer questions.
+4. **Mock interview:** users practice one question at a time with optional Need a moment, Clarify, and Break it down support. There is no countdown, emotion detection, eye-contact analysis, or response-speed assessment. Users choose, edit, and approve all suggested wording.
+5. **Strength-to-evidence mapping:** answers are saved only when the user chooses. Every suggested strength requires a verbatim quote from the answer and may link to a sourced job requirement. The user keeps or rejects each suggestion. There are no scores or rankings.
+6. **Reflection:** the interface reports answered questions, user-confirmed evidence, and support the user actively selected. Usage does not prove usefulness; the user decides whether to prioritize a support option.
+7. **Interview Pack:** an on-screen summary separates self-reported strengths from confirmed evidence. It is not exported or sent to an employer.
+
+Challenge level is user-controlled; it does not adapt automatically. The static bank contains 12 software-oriented questions across four categories. A spoken-information preference is recorded as a preference only—audio and text-to-speech are not implemented. The preparation map shows completed practice, not readiness or ability.
+
+The expandable Clarification Assistant demonstrates a complete, user-approved loop: simulated interviewer question → clarification → manual approval → simulated response → user closes the loop. Trying to send without approval is blocked and creates no record. It does not contact a real person.
+
+## Optional AI and configuration
+
+The entire flow works without an API key through dictionaries, a static question bank, phrasing templates, and reflection prompts. When AI mode is off, the browser does not call `/api/`.
+
+Create `.env` only when one does not already exist:
 
 ```powershell
 Copy-Item .env.example .env
@@ -30,57 +46,68 @@ notepad .env
 npm start
 ```
 
-Đặt `GEMINI_API_KEY` và `GEMINI_MODEL` trong `.env`. Model mặc định là `gemini-3.5-flash-lite` để ưu tiên độ trễ demo; có thể đổi sang model Gemini hỗ trợ `generateContent` và structured output mà tài khoản được cấp quyền. Không đưa key vào trình duyệt, git hoặc ảnh chụp. `.env` được gitignore và không được static server phục vụ.
+Set `GEMINI_API_KEY` and `GEMINI_MODEL`. The account must have access to a model that supports `generateContent` and structured JSON output. The key remains on the server and must never be committed or exposed to the browser. Without a key, the server still starts and returns `NO_KEY` fallbacks.
 
-Checkbox AI mặc định tắt. Bật checkbox chưa gửi dữ liệu; chỉ bấm Tìm cách diễn đạt mới gửi `{rawText,intentId,allowedFacts:{ticket}}`. Không gửi sơ đồ tổ chức. Tuy nhiên tên hoặc thông tin nhạy cảm người dùng tự gõ trong rawText vẫn nằm trong payload: đừng nhập dữ liệu thật nhạy cảm để demo.
+Enabling AI does not send content by itself. A request occurs only when the user activates an AI action. The support profile and support-usage history are never sent to Gemini. Requests are not retried automatically.
 
-Proxy không ghi nội dung vào file/log. Nhà cung cấp AI có chính sách xử lý/lưu trữ riêng; không tuyên bố dữ liệu không rời máy khi bật AI.
-
-## Hành vi và trạng thái
-
-- 9 intent + abstain; 30 câu mẫu; 6 đầu mối hư cấu; 15 thuật ngữ và 5 workplace norms được lọc theo intent.
-- Cho chọn lại intent nếu keyword engine hiểu sai. Điểm khớp từ không phải xác suất hoặc chẩn đoán.
-- B thấy nguyên văn `userApprovedText`; gợi ý hành động nằm riêng và được ghi nhãn là dữ liệu mẫu.
-- B có accept / clarify / redirect và ô sửa. Redirect chỉ đề xuất đầu mối, không chuyển tin tự động.
-- A được gửi thông tin bổ sung; chỉ A xác nhận mới chuyển sang resolved.
-- Clarification Assistant có 4 lựa chọn cố định: phạm vi, ưu tiên/thời hạn, kết quả mong đợi và đầu mối phối hợp. AI chỉ tạo cách hỏi, không tự trả lời chỉ dẫn.
-- Câu hỏi làm rõ có trạng thái draft → awaiting-response → answered → resolved; cả câu hỏi và câu trả lời đều cần người gửi tự duyệt.
-- Mỗi thời điểm có một yêu cầu đang hoạt động. Làm lại xóa dữ liệu demo trong bộ nhớ. Refresh cũng mất dữ liệu; không có database/localStorage.
-- Bản ghi demo chứa rawInput và tin nhắn, nằm trong phần thu gọn trên cùng máy, không phải dashboard quản lý. Không chia sẻ màn hình mục này với dữ liệu thật.
-
-## API
-
-| HTTP | Kết quả | Giao diện |
+| Endpoint | Data sent after a user action | Fallback |
 |---|---|---|
-| 200 | mode llm, options neutral/direct/soft | Cho chọn cả bộ ba đã qua kiểm tra tự động |
-| 200 | mode fallback; NO_KEY / TIMEOUT / API_ERROR / RATE_LIMIT / VALIDATION_FAILED | Giữ cả bộ câu mẫu |
-| 400 | mode error, BAD_INPUT | Hiện lỗi, không tự gọi lại |
+| `POST /api/interview/analyze-job` | Job description; the server adds its dictionary | Whole-word keyword extraction with source quotes |
+| `POST /api/interview/generate-questions` | Job description and sourced job profile | 12 clearly labeled template questions |
+| `POST /api/interview/analyze-answer` | Job context, question, and answer | Four reflection prompts: context, action, result, learning |
+| `POST /api/clarify` | Current question and clarification type | Three prewritten options |
 
-Hai endpoint `/api/suggest` và `/api/clarify` dùng cùng hợp đồng HTTP. Backend timeout 5 giây, browser timeout 5,5 giây; proxy không retry. Sửa đầu vào, đổi mode, reset hoặc chọn lại intent/loại làm rõ sẽ hủy request trước và bỏ qua kết quả cũ. Câu trả lời LLM không trộn với câu mẫu. LLM ID: llm-neutral / llm-direct / llm-soft. Evidence dùng source llm/fallback/user; LOCAL_MODE là nhãn nội bộ cho lựa chọn câu mẫu chủ động.
+`/api/suggest` is intentionally absent and returns 404. The previous workplace-routing contract is not reused for interview preparation.
 
-Validator gồm schema, echo intentId/confident, token số/ngày/thứ/ticket, tên trong org_map, năm mẫu tuyên bố quá khứ. Đây là heuristic giới hạn, không kiểm chứng ngữ nghĩa, không đảm bảo chống mọi prompt injection, không nhận diện mọi tên người. Luôn cần người dùng duyệt. Câu mẫu cũng cần được người dùng kiểm tra, vì có thể chứa giả định chưa đúng.
-
-## Ranh giới sản phẩm
-
-Không tự gửi tin/tạo task; không suy luận chẩn đoán, cảm xúc, mức chú ý hay năng suất; không đếm số lần xin hỗ trợ để HR theo dõi; không ghi nội dung vào log; không hứa mọi yêu cầu sẽ được chấp thuận. Workplace norms là chính sách hư cấu có nhãn, không phải quy tắc đúng cho mọi công ty.
-
-Chưa làm: đăng nhập, phân quyền nhiều người, database, Slack/Teams thật, app mobile, task-fit diary, dữ liệu gộp, quản trị đa công ty. Các vai trên cùng browser chỉ là mô phỏng, không phải các tài khoản bảo mật.
-
-## Mở rộng cả 6 stage
-
-Engine không khóa stage. Quy tắc nhận diện, định tuyến và nội dung hỗ trợ nằm trong data; persona/nhãn giao diện vẫn là Workplace Pack. Hiện demo tập trung Stage 4 và có intent cân chỉnh thử thách liên quan Stage 6; chưa có đủ nội dung đã kiểm chứng cho cả sáu stage.
-
-| Stage | Gói nội dung có thể bổ sung sau co-design |
+| HTTP | Contract |
 |---|---|
-| 1 Career preparation | Nêu thế mạnh/nhu cầu với cố vấn; không gán nghề từ chẩn đoán |
-| 2 Job search & application | Hỏi làm rõ JD, yêu cầu cách nộp hồ sơ phù hợp |
-| 3 Interview | Yêu cầu thông tin quy trình và cách giao tiếp phù hợp |
-| 4 Onboarding | Hỏi đúng đầu mối, làm rõ công việc/quy ước |
-| 5 On the job | Báo vướng mắc và chủ động xin hỗ trợ |
-| 6 Development & retention | Cân chỉnh thử thách, khối lượng và cách học |
+| 200 | `mode: llm`; schema and heuristic checks passed, but the user must still review the meaning |
+| 200 | `mode: fallback`; includes a `reasonCode` and safe local data |
+| 400 | `mode: error`, `BAD_INPUT`; the interface shows the error and does not retry automatically |
 
-Đổi pack phải xác minh lại org_map, intent, norms với người dùng/đơn vị; không chỉ đổi tên JSON rồi tuyên bố phù hợp mọi ngành.
+The interview pipelines return `data`; clarification returns `options`. Network failures become `NETWORK_ERROR` fallbacks. `LOCAL_MODE` means the user deliberately chose the local path, not that an error occurred. New interview endpoints time out after 10 seconds on the server and 11 seconds in the browser; clarification uses 5 and 5.5 seconds. Changing inputs, questions, or modes cancels stale requests.
 
-## Kiểm thử và giới hạn nghiệm thu
+## Neurodivergence and user control
 
-Xem `IMPLEMENTATION-NOTES.md`. Provider thật chưa được kiểm thử khi không có key. Tests dùng fake provider phải được gọi đúng là mô phỏng, không phải LLM thật. Chưa chứng nhận WCAG hoặc thử với người dùng thực tế.
+- Support is based on explicit user choices, never inferred from answer content, latency, voice, or passive behavior.
+- There are no hidden diagnostic scores. Profile answers and prioritized support remain visible, editable, and deletable.
+- Users never need to disclose a condition to practice.
+- The product does not judge eye contact, speaking speed, personality, attention, productivity, or employability.
+- There is no employer or HR dashboard and no automatic sharing with a real interviewer.
+- AI helps with phrasing and evidence mapping; it never invents experience or confirms evidence on the user’s behalf.
+- Neurodivergent people are not a single user type. Further development requires co-design and testing with people who have lived experience.
+
+Design principle: **AI adapts the environment to the user, not the user to a fixed label.**
+
+## Storage and privacy
+
+- Only the self-reported profile and keep/remove support choices persist in local storage under `bridge:interview-profile`. The app can migrate the previous local key when the profile is next saved.
+- Job descriptions, drafts, answers, evidence, support-use counts, and communication records stay in page memory and disappear on refresh.
+- **Clear practice session** removes current practice content but keeps the profile. **Delete profile** removes the profile but does not erase current in-memory answers.
+- Skipping profile setup applies only to the current session and does not delete a previously saved profile.
+- Changing the job description clears saved results and evidence tied to the previous role, while question drafts remain. Editing an answer removes its analysis until the answer is saved again.
+- The local proxy processes requests in memory and does not write user content to files or logs. The provider has its own retention policy; when AI is enabled, request data leaves the device.
+- Do not use real personal information in demonstrations. Simulated roles in one browser do not provide security boundaries.
+
+## Validation and tests
+
+```powershell
+npm run validate
+npm test
+```
+
+The test suite covers schema validation, sourced extraction, AI fallback behavior, stale-request cancellation, user approval, evidence grounding, support profiles, and API input boundaries. Successful API tests use a fake provider; they do not prove Gemini output quality.
+
+The optional browser smoke test uses Playwright with an installed browser:
+
+```powershell
+node scripts/smoke-interview.mjs
+```
+
+It covers local mode without API calls, profile persistence, job and question sources, question breakdown, empty filters, user-confirmed evidence, fallback behavior, HTTP 400 handling, clarification approval, session deletion, responsive widths, 200% CSS zoom, and reduced motion. This is not a WCAG certification or a complete screen-reader audit.
+
+## Current limitations
+
+Source quotes prove that text exists, not that an AI interpretation is correct. Keyword extraction can miss context or negation. Echoing an ID does not prove semantic alignment. Prompt boundaries reduce—but cannot eliminate—prompt injection risk. Dynamic content is rendered with `textContent`.
+
+PDF upload, voice or video, a general chat platform, adaptive support or difficulty, file export, authentication, a database, and real hiring integrations are not implemented. The server binds only to localhost and is not production-ready.

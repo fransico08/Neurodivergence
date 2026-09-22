@@ -1,0 +1,125 @@
+{
+  "schemaVersion": "1.0.0",
+  "packId": "interview-stage3",
+  "packLabel": "Phỏng vấn tuyển dụng (Stage 3)",
+  "domain": "vietnamese-interview-stage3",
+  "updatedAt": "2026-09-22",
+  "note": "Cùng một engine với pack Nơi làm việc, chỉ đổi dữ liệu: người gửi là người phỏng vấn, tin nhắn đến là câu hỏi phỏng vấn nhiều tầng. Câu hỏi làm rõ chỉ là gợi ý — người dùng phải chọn, kiểm tra, sửa nếu cần và tự nói ra. Sản phẩm KHÔNG dự đoán người phỏng vấn sẽ hỏi gì; đây là luyện tập để giảm bất ngờ, không phải để học thuộc đáp án.",
+  "designNote": "Trong phỏng vấn, hỏi lại cho rõ là tín hiệu TỐT — nó cho thấy ứng viên kiểm tra yêu cầu trước khi bắt tay làm. Vì vậy mọi câu ở đây được viết theo giọng chuyên nghiệp và tự tin, không xin lỗi thừa, không hạ thấp bản thân.",
+  "sampleMessages": [
+    {
+      "messageId": "iv-competing-priorities",
+      "senderRoleId": "interviewer",
+      "text": "Kể cho tôi nghe về một lần bạn phải cân bằng nhiều ưu tiên xung đột trong khi vẫn giữ được sự đồng thuận của các bên liên quan."
+    },
+    {
+      "messageId": "iv-tell-me-about-yourself",
+      "senderRoleId": "interviewer",
+      "text": "Bạn giới thiệu một chút về bản thân đi."
+    },
+    {
+      "messageId": "iv-handle-pressure",
+      "senderRoleId": "hr-coordinator",
+      "text": "Bạn thường xử lý áp lực công việc như thế nào?"
+    }
+  ],
+  "clarificationTypes": [
+    {
+      "clarificationId": "question-focus",
+      "label": "Anh/chị muốn nghe về khía cạnh nào?",
+      "shortLabel": "Trọng tâm câu hỏi",
+      "description": "Câu hỏi chạm nhiều khía cạnh cùng lúc. Hỏi lại để biết nên tập trung vào phần nào.",
+      "phrasings": [
+        {
+          "phrasingId": "clarify-focus-neutral",
+          "tone": "neutral",
+          "text": "Anh/chị muốn em tập trung vào quyết định chuyên môn hay vào cách em làm việc với mọi người ạ?"
+        },
+        {
+          "phrasingId": "clarify-focus-direct",
+          "tone": "direct",
+          "text": "Để trả lời đúng trọng tâm, anh/chị quan tâm nhất tới khía cạnh nào trong câu hỏi này ạ?"
+        },
+        {
+          "phrasingId": "clarify-focus-soft",
+          "tone": "soft",
+          "text": "Câu này có thể hiểu theo vài hướng, anh/chị cho em biết hướng nào hữu ích nhất với anh/chị được không ạ?"
+        }
+      ]
+    },
+    {
+      "clarificationId": "question-breakdown",
+      "label": "Câu hỏi này gồm mấy phần?",
+      "shortLabel": "Tách nhỏ câu hỏi",
+      "description": "Câu hỏi ghép nhiều vế. Hỏi lại để tách thành từng phần và trả lời theo thứ tự.",
+      "phrasings": [
+        {
+          "phrasingId": "clarify-breakdown-neutral",
+          "tone": "neutral",
+          "text": "Em hiểu câu hỏi có vài phần: tình huống, cách em quyết định, và kết quả. Em trả lời lần lượt như vậy được không ạ?"
+        },
+        {
+          "phrasingId": "clarify-breakdown-direct",
+          "tone": "direct",
+          "text": "Anh/chị muốn em đi qua từng phần theo thứ tự nào ạ?"
+        },
+        {
+          "phrasingId": "clarify-breakdown-soft",
+          "tone": "soft",
+          "text": "Để trả lời đủ ý, em xin tách câu hỏi thành từng phần nhỏ rồi đi lần lượt được không ạ?"
+        }
+      ]
+    },
+    {
+      "clarificationId": "answer-format",
+      "label": "Nên trả lời bằng ví dụ hay nói tổng quát?",
+      "shortLabel": "Cách trả lời mong đợi",
+      "description": "Làm rõ kỳ vọng về độ chi tiết, tránh đoán sai rồi nói lệch hướng.",
+      "phrasings": [
+        {
+          "phrasingId": "clarify-format-neutral",
+          "tone": "neutral",
+          "text": "Anh/chị muốn nghe một ví dụ cụ thể từ dự án em từng làm, hay cách em tiếp cận nói chung ạ?"
+        },
+        {
+          "phrasingId": "clarify-format-direct",
+          "tone": "direct",
+          "text": "Em nên đi sâu vào một tình huống cụ thể hay trình bày ngắn gọn ở mức tổng quan ạ?"
+        },
+        {
+          "phrasingId": "clarify-format-soft",
+          "tone": "soft",
+          "text": "Em có một ví dụ khá chi tiết, anh/chị thấy kể cụ thể như vậy có phù hợp không ạ?"
+        }
+      ]
+    },
+    {
+      "clarificationId": "thinking-time",
+      "label": "Xin thêm một chút thời gian sắp xếp ý",
+      "shortLabel": "Thời gian suy nghĩ",
+      "description": "Xin khoảng lặng ngắn để tổ chức câu trả lời, thay vì trả lời vội rồi nói thiếu ý.",
+      "phrasings": [
+        {
+          "phrasingId": "clarify-time-neutral",
+          "tone": "neutral",
+          "text": "Em xin khoảng một phút để sắp xếp ý rồi trả lời được không ạ?"
+        },
+        {
+          "phrasingId": "clarify-time-direct",
+          "tone": "direct",
+          "text": "Em muốn trả lời câu này cho đủ ý, anh/chị cho em một chút thời gian nhé?"
+        },
+        {
+          "phrasingId": "clarify-time-soft",
+          "tone": "soft",
+          "text": "Câu này hay, em suy nghĩ một chút rồi trả lời anh/chị được không ạ?"
+        }
+      ]
+    }
+  ],
+  "responseExamples": [
+    "Bạn cứ tập trung vào cách bạn ra quyết định, phần làm việc nhóm để lát nữa mình hỏi riêng.",
+    "Bạn lấy một ví dụ cụ thể giúp mình, không cần nói chung chung đâu.",
+    "Không sao, bạn cứ thong thả suy nghĩ rồi trả lời."
+  ]
+}

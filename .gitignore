@@ -6,3 +6,9 @@ test-results/
 playwright-report/
 *.md
 !README.md
+!AGENTS.md
+!UI-REFERENCE.md
+!.agents/
+!.agents/**
+__pycache__/
+*.pyc

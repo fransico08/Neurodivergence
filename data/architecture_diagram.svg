@@ -1,0 +1,201 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 760" width="1280" height="760" role="img" aria-labelledby="diagTitle diagDesc">
+  <title id="diagTitle">SignalFlow — Kiến trúc kỹ thuật cho Neurodivergence track, ADC Hackathon 2026</title>
+  <desc id="diagDesc">Sơ đồ năm lớp: Thu nhận, Xử lý, Bằng chứng, Hiển thị, Đầu ra. Module Declutter xử lý hình ảnh tài liệu, module Communicate xử lý giọng nói. Một cột rào chắn xuyên suốt liệt kê các nguyên tắc AI có trách nhiệm.</desc>
+
+  <style>
+    .bg { fill: #FFFFFF; }
+    text { font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; }
+    .h1 { font-size: 21px; font-weight: 700; fill: #1F2933; }
+    .h2 { font-size: 12.5px; fill: #5B6B7A; }
+    .layerBox { fill: #F6F8FA; stroke: #DDE4EA; stroke-width: 1; }
+    .layerLabel { font-size: 12px; font-weight: 700; fill: #55677A; letter-spacing: 1.1px; }
+    .boxTitle { font-size: 13.5px; font-weight: 700; fill: #1F2933; }
+    .boxSub { font-size: 11px; fill: #5B6B7A; }
+    .visual { fill: #E7F1F7; stroke: #2C6E8F; stroke-width: 1.4; }
+    .voice { fill: #FAEDE1; stroke: #A3592A; stroke-width: 1.4; }
+    .neutral { fill: #EDF1F5; stroke: #55677A; stroke-width: 1.4; }
+    .guard { fill: #FAECEC; stroke: #9E3D3D; stroke-width: 1.4; }
+    .guardText { font-size: 11px; fill: #7E3232; font-weight: 600; }
+    .panel { fill: #FAFBFC; stroke: #CFD9E0; stroke-width: 1; }
+    .panelHead { font-size: 11.5px; font-weight: 700; fill: #9E3D3D; letter-spacing: 0.9px; }
+    .panelHead2 { font-size: 11.5px; font-weight: 700; fill: #2C6E8F; letter-spacing: 0.9px; }
+    .panelText { font-size: 10.5px; fill: #47555F; }
+    .panelNote { font-size: 10.5px; font-style: italic; fill: #7E3232; }
+    .flow { stroke: #8C9BA8; stroke-width: 1.6; fill: none; }
+    .divider { stroke: #DDE4EA; stroke-width: 1; }
+    .footText { font-size: 11.5px; fill: #47555F; }
+    .legendText { font-size: 10.5px; fill: #5B6B7A; }
+  </style>
+
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#8C9BA8"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1280" height="760"/>
+
+  <!-- Title -->
+  <text class="h1" x="40" y="34">SignalFlow — Kiến trúc kỹ thuật (Neurodivergence track)</text>
+  <text class="h2" x="40" y="58">ADC Hackathon 2026 · Module Declutter (thị giác) + Communicate (giọng nói) · 16/09/2026</text>
+
+  <!-- Legend -->
+  <rect class="voice" x="838" y="22" width="12" height="12" rx="3"/>
+  <text class="legendText" x="856" y="32">Communicate</text>
+  <rect class="visual" x="946" y="22" width="12" height="12" rx="3"/>
+  <text class="legendText" x="964" y="32">Declutter</text>
+  <rect class="neutral" x="1032" y="22" width="12" height="12" rx="3"/>
+  <text class="legendText" x="1050" y="32">Dùng chung</text>
+  <rect class="guard" x="1140" y="22" width="12" height="12" rx="3"/>
+  <text class="legendText" x="1158" y="32">Rào chắn</text>
+
+  <!-- ===== LAYER 1 — CAPTURE ===== -->
+  <rect class="layerBox" x="40" y="76" width="920" height="92" rx="8"/>
+  <text class="layerLabel" x="62" y="100">1 · THU NHẬN (CAPTURE)</text>
+
+  <rect class="voice" x="62" y="110" width="424" height="44" rx="6"/>
+  <text class="boxTitle" x="76" y="130">Micro</text>
+  <text class="boxSub" x="76" y="146">getUserMedia + AudioWorklet → PCM chunks</text>
+
+  <rect class="visual" x="514" y="110" width="424" height="44" rx="6"/>
+  <text class="boxTitle" x="528" y="130">Camera / Screen-share</text>
+  <text class="boxSub" x="528" y="146">Ảnh slide, tài liệu, biểu mẫu (JPEG/PNG)</text>
+
+  <path class="flow" d="M 274 168 L 274 188" marker-end="url(#arrow)"/>
+  <path class="flow" d="M 726 168 L 726 188" marker-end="url(#arrow)"/>
+
+  <!-- ===== LAYER 2 — PROCESSING ===== -->
+  <rect class="layerBox" x="40" y="192" width="920" height="104" rx="8"/>
+  <text class="layerLabel" x="62" y="216">2 · XỬ LÝ (PROCESSING)</text>
+
+  <rect class="voice" x="62" y="226" width="273" height="56" rx="6"/>
+  <text class="boxTitle" x="76" y="246">STT Service</text>
+  <text class="boxSub" x="76" y="262">VAD → PhoWhisper / PhoASR</text>
+  <text class="boxSub" x="76" y="276">text + timestamp + độ tin cậy</text>
+
+  <rect class="visual" x="363" y="226" width="273" height="56" rx="6"/>
+  <text class="boxTitle" x="377" y="246">OCR Service</text>
+  <text class="boxSub" x="377" y="262">Tesseract.js — gói ngôn ngữ vie</text>
+  <text class="boxSub" x="377" y="276">text thô + bounding box</text>
+
+  <rect class="neutral" x="664" y="226" width="273" height="56" rx="6"/>
+  <text class="boxTitle" x="678" y="246">LLM Service</text>
+  <text class="boxSub" x="678" y="262">Restructure + Tone-check</text>
+  <text class="boxSub" x="678" y="276">JSON schema bắt buộc, temp thấp</text>
+
+  <path class="flow" d="M 198 296 L 198 316" marker-end="url(#arrow)"/>
+  <path class="flow" d="M 500 296 L 500 316" marker-end="url(#arrow)"/>
+  <path class="flow" d="M 800 296 L 800 316" marker-end="url(#arrow)"/>
+
+  <!-- ===== LAYER 3 — EVIDENCE ===== -->
+  <rect class="layerBox" x="40" y="320" width="920" height="104" rx="8"/>
+  <text class="layerLabel" x="62" y="344">3 · BẰNG CHỨNG (EVIDENCE STORE — APPEND-ONLY)</text>
+
+  <rect class="voice" x="62" y="354" width="273" height="56" rx="6"/>
+  <text class="boxTitle" x="76" y="374">utterances[]</text>
+  <text class="boxSub" x="76" y="390">verbatimText, startMs, endMs</text>
+  <text class="boxSub" x="76" y="404">asrConfidence, corrections</text>
+
+  <rect class="visual" x="363" y="354" width="273" height="56" rx="6"/>
+  <text class="boxTitle" x="377" y="374">declutterCards[]</text>
+  <text class="boxSub" x="377" y="390">simplifiedBlocks[], confidence</text>
+  <text class="boxSub" x="377" y="404">evidenceRef → ảnh gốc</text>
+
+  <rect class="neutral" x="664" y="354" width="273" height="56" rx="6"/>
+  <text class="boxTitle" x="678" y="374">communicateDrafts[]</text>
+  <text class="boxSub" x="678" y="390">suggestedPhrasing[], toneTag</text>
+  <text class="boxSub" x="678" y="404">userApprovedText, status</text>
+
+  <path class="flow" d="M 198 424 L 198 444" marker-end="url(#arrow)"/>
+  <path class="flow" d="M 500 424 L 500 444" marker-end="url(#arrow)"/>
+  <path class="flow" d="M 800 424 L 800 444" marker-end="url(#arrow)"/>
+
+  <!-- ===== LAYER 4 — RENDERER ===== -->
+  <rect class="layerBox" x="40" y="448" width="920" height="104" rx="8"/>
+  <text class="layerLabel" x="62" y="472">4 · HIỂN THỊ (RENDERER — NGƯỜI DÙNG CHỌN CHẾ ĐỘ)</text>
+
+  <rect class="neutral" x="62" y="482" width="273" height="56" rx="6"/>
+  <text class="boxTitle" x="76" y="502">Focus / Combined view</text>
+  <text class="boxSub" x="76" y="518">Now · Before · Next</text>
+  <text class="boxSub" x="76" y="532">mỗi dòng mở được timestamp</text>
+
+  <rect class="visual" x="363" y="482" width="273" height="56" rx="6"/>
+  <text class="boxTitle" x="377" y="502">Declutter panel</text>
+  <text class="boxSub" x="377" y="518">Card một cột, mật độ thấp</text>
+  <text class="boxSub" x="377" y="532">xem ảnh gốc bất cứ lúc nào</text>
+
+  <rect class="voice" x="664" y="482" width="273" height="56" rx="6"/>
+  <text class="boxTitle" x="678" y="502">Communicate composer</text>
+  <text class="boxSub" x="678" y="518">Quick-phrase · template · gõ</text>
+  <text class="boxSub" x="678" y="532">xem trước và chỉnh sửa</text>
+
+  <path class="flow" d="M 198 552 L 198 572" marker-end="url(#arrow)"/>
+  <path class="flow" d="M 500 552 L 500 572" marker-end="url(#arrow)"/>
+  <path class="flow" d="M 800 552 L 800 572" marker-end="url(#arrow)"/>
+
+  <!-- ===== LAYER 5 — OUTPUT ===== -->
+  <rect class="layerBox" x="40" y="576" width="920" height="92" rx="8"/>
+  <text class="layerLabel" x="62" y="600">5 · ĐẦU RA (OUTPUT)</text>
+
+  <rect class="visual" x="62" y="610" width="273" height="44" rx="6"/>
+  <text class="boxTitle" x="76" y="630">Card trực quan</text>
+  <text class="boxSub" x="76" y="646">Đọc từng block theo yêu cầu</text>
+
+  <rect class="guard" x="363" y="610" width="273" height="44" rx="6"/>
+  <text class="boxTitle" x="377" y="630">TTS playback</text>
+  <text class="guardText" x="377" y="646">CHỈ phát sau khi người dùng xác nhận</text>
+
+  <rect class="guard" x="664" y="610" width="273" height="44" rx="6"/>
+  <text class="boxTitle" x="678" y="630">Export thủ công</text>
+  <text class="guardText" x="678" y="646">Không tự động gửi email / tạo task</text>
+
+  <!-- ===== GUARDRAIL PANEL ===== -->
+  <rect class="panel" x="985" y="76" width="260" height="592" rx="8"/>
+
+  <text class="panelHead" x="1001" y="104">RÀO CHẮN XUYÊN SUỐT</text>
+
+  <text class="panelText" x="1001" y="130">• Mọi trường suy luận phải có</text>
+  <text class="panelText" x="1010" y="145">evidenceIds. Nếu rỗng → hiện</text>
+  <text class="panelText" x="1010" y="160">“Không đủ bằng chứng”.</text>
+
+  <text class="panelText" x="1001" y="186">• userApprovedText = null →</text>
+  <text class="panelText" x="1010" y="201">TTS không phát, không export.</text>
+
+  <text class="panelText" x="1001" y="227">• Local-first: audio và ảnh gốc</text>
+  <text class="panelText" x="1010" y="242">không lên cloud mặc định.</text>
+
+  <text class="panelText" x="1001" y="268">• Không nhận diện khuôn mặt,</text>
+  <text class="panelText" x="1010" y="283">cảm xúc hay mức chú ý.</text>
+
+  <text class="panelText" x="1001" y="309">• Không chẩn đoán, không chấm</text>
+  <text class="panelText" x="1010" y="324">điểm năng suất nhân viên.</text>
+
+  <text class="panelText" x="1001" y="350">• Mỗi lớp AI đều có đường lui</text>
+  <text class="panelText" x="1010" y="365">rule-based khi lỗi.</text>
+
+  <line class="divider" x1="1001" y1="390" x2="1229" y2="390"/>
+
+  <text class="panelHead2" x="1001" y="416">CHUẨN BỊ TRƯỚC NGÀY 1</text>
+
+  <text class="panelText" x="1001" y="442">• quick_phrases_vi.json — 50+</text>
+  <text class="panelText" x="1010" y="457">cụm từ, 10 nhóm, 4 template</text>
+
+  <text class="panelText" x="1001" y="483">• Fixture âm thanh tiếng Việt</text>
+  <text class="panelText" x="1010" y="498">+ 20 từ khóa in-domain</text>
+
+  <text class="panelText" x="1001" y="524">• vie.traineddata (Tesseract.js)</text>
+
+  <text class="panelText" x="1001" y="550">• UI design token kit: mật độ,</text>
+  <text class="panelText" x="1010" y="565">chuyển động, cỡ chữ</text>
+
+  <text class="panelText" x="1001" y="591">• Schema validator + JSON mẫu</text>
+
+  <text class="panelNote" x="1001" y="630">Không chuẩn bị trước: kịch bản</text>
+  <text class="panelNote" x="1001" y="645">giải pháp cố định — brief thật</text>
+  <text class="panelNote" x="1001" y="660">chỉ công bố sáng 21/09.</text>
+
+  <!-- ===== FOOTER ===== -->
+  <rect class="layerBox" x="40" y="690" width="1205" height="46" rx="8"/>
+  <text class="footText" x="62" y="710">Đường lui khi hỏng:</text>
+  <text class="footText" x="62" y="726">OCR lỗi → dán text thủ công  ·  LLM lỗi → tách rule-based theo dòng  ·  TTS lỗi → hiện text cỡ lớn  ·  Mạng lỗi → chạy fixture offline</text>
+</svg>

@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "1.0.0",
+  "domain": "vietnamese-software-company",
+  "companyName": "Công ty phần mềm — dữ liệu mẫu",
+  "updatedAt": "2026-09-22",
+  "note": "Sơ đồ ai-phụ-trách-gì. Đây là phần tri thức domain mà một trợ lý AI đa dụng không thể có: nó không biết trong công ty này ai sở hữu việc gì. Dữ liệu mẫu cho demo, thay bằng dữ liệu thật khi triển khai.",
+  "roles": [
+    {
+      "roleId": "tech-lead",
+      "name": "Anh Đức",
+      "title": "Tech Lead",
+      "ownsWhat": ["phạm vi công việc kỹ thuật", "review code", "quyết định kỹ thuật", "phân task trong sprint"],
+      "askAboutExamples": ["không rõ yêu cầu của một task", "bị kẹt lỗi kỹ thuật", "không hiểu nhận xét review"],
+      "channel": "tin nhắn nhóm kỹ thuật",
+      "responseTimeHint": "thường trả lời trong buổi"
+    },
+    {
+      "roleId": "buddy",
+      "name": "Chị Lan",
+      "title": "Người kèm cặp (Buddy)",
+      "ownsWhat": ["hướng dẫn người mới", "giải thích quy trình nội bộ", "chỉ đường khi không biết hỏi ai"],
+      "askAboutExamples": ["không biết quy trình làm việc", "không biết nên hỏi ai", "thắc mắc lặt vặt tuần đầu"],
+      "channel": "tin nhắn riêng",
+      "responseTimeHint": "ưu tiên trả lời người mới"
+    },
+    {
+      "roleId": "manager",
+      "name": "Chị Mai",
+      "title": "Quản lý trực tiếp",
+      "ownsWhat": ["khối lượng công việc", "thứ tự ưu tiên", "lịch họp", "điều chỉnh cách làm việc"],
+      "askAboutExamples": ["quá tải", "cần điều chỉnh lịch họp", "cần thông tin ở dạng văn bản"],
+      "channel": "tin nhắn riêng hoặc 1-1 hàng tuần",
+      "responseTimeHint": "trong ngày"
+    },
+    {
+      "roleId": "it-support",
+      "name": "Anh Nam",
+      "title": "IT Support",
+      "ownsWhat": ["tài khoản", "quyền truy cập", "máy móc thiết bị", "cài đặt công cụ"],
+      "askAboutExamples": ["chưa có quyền vào repo", "không đăng nhập được", "cần cài công cụ"],
+      "channel": "kênh #it-help",
+      "responseTimeHint": "trong 1 ngày làm việc"
+    },
+    {
+      "roleId": "qa-lead",
+      "name": "Anh Khoa",
+      "title": "QA Lead",
+      "ownsWhat": ["quy trình kiểm thử", "tiêu chí chấp nhận", "môi trường staging"],
+      "askAboutExamples": ["không rõ tiêu chí chấp nhận", "cần dữ liệu để test"],
+      "channel": "kênh #qa",
+      "responseTimeHint": "trong buổi"
+    },
+    {
+      "roleId": "hr",
+      "name": "Chị Hà",
+      "title": "Nhân sự",
+      "ownsWhat": ["hợp đồng", "chế độ", "điều chỉnh hỗ trợ tại nơi làm việc", "nghỉ phép"],
+      "askAboutExamples": ["thủ tục giấy tờ", "xin điều chỉnh điều kiện làm việc chính thức"],
+      "channel": "email hoặc gặp trực tiếp",
+      "responseTimeHint": "1-2 ngày làm việc"
+    }
+  ]
+}

@@ -1,0 +1,232 @@
+{
+  "schemaVersion": "1.1.0",
+  "domain": "vietnamese-software-company",
+  "updatedAt": "2026-09-22",
+  "note": "Thuật ngữ mà người mới trong công ty phần mềm Việt Nam thường gặp nhưng ngại hỏi lại. Brief Stage 4 ghi: kỳ vọng và quy tắc giao tiếp thường không được nói ra (unspoken). Đây là phần nói chúng ra.",
+  "entries": [
+    {
+      "termId": "sprint",
+      "term": "sprint",
+      "aliases": [
+        "sprint",
+        "chạy sprint"
+      ],
+      "plain": "Một chu kỳ làm việc ngắn, thường 1-2 tuần. Đầu chu kỳ chốt việc, cuối chu kỳ giao kết quả.",
+      "category": "quy-trinh",
+      "entryType": "term"
+    },
+    {
+      "termId": "backlog",
+      "term": "backlog",
+      "aliases": [
+        "backlog"
+      ],
+      "plain": "Danh sách việc chưa làm, xếp theo thứ tự ưu tiên. Chưa vào sprint nghĩa là chưa cần làm ngay.",
+      "category": "quy-trinh",
+      "entryType": "term"
+    },
+    {
+      "termId": "standup",
+      "term": "standup",
+      "aliases": [
+        "standup",
+        "daily",
+        "họp đứng"
+      ],
+      "plain": "Họp ngắn mỗi sáng, mỗi người nói 3 ý: hôm qua làm gì, hôm nay làm gì, đang vướng gì. Nói 'đang vướng' là chuyện bình thường, không phải thừa nhận yếu kém.",
+      "category": "quy-trinh",
+      "entryType": "term"
+    },
+    {
+      "termId": "pr",
+      "term": "PR",
+      "aliases": [
+        "PR",
+        "pull request",
+        "merge request",
+        "MR"
+      ],
+      "plain": "Đề nghị gộp code của bạn vào nhánh chung. Người khác sẽ đọc và góp ý trước khi gộp.",
+      "category": "ky-thuat",
+      "entryType": "term"
+    },
+    {
+      "termId": "code-review",
+      "term": "code review",
+      "aliases": [
+        "code review",
+        "review code",
+        "review"
+      ],
+      "plain": "Đồng nghiệp đọc code của bạn và góp ý. Góp ý nhắm vào code, không nhắm vào người viết.",
+      "category": "ky-thuat",
+      "entryType": "term"
+    },
+    {
+      "termId": "staging",
+      "term": "staging",
+      "aliases": [
+        "staging",
+        "môi trường staging"
+      ],
+      "plain": "Môi trường chạy thử giống thật, dùng để kiểm tra trước khi đưa ra cho người dùng.",
+      "category": "ky-thuat",
+      "entryType": "term"
+    },
+    {
+      "termId": "deploy",
+      "term": "deploy",
+      "aliases": [
+        "deploy",
+        "triển khai",
+        "lên prod"
+      ],
+      "plain": "Đưa code lên môi trường chạy thật cho người dùng dùng.",
+      "category": "ky-thuat",
+      "entryType": "term"
+    },
+    {
+      "termId": "hotfix",
+      "term": "hotfix",
+      "aliases": [
+        "hotfix",
+        "fix gấp"
+      ],
+      "plain": "Sửa lỗi khẩn cấp trên môi trường thật, làm ngoài quy trình thông thường vì gấp.",
+      "category": "ky-thuat",
+      "entryType": "term"
+    },
+    {
+      "termId": "ticket",
+      "term": "ticket",
+      "aliases": [
+        "ticket",
+        "task",
+        "issue",
+        "card"
+      ],
+      "plain": "Một đơn vị công việc được ghi lại trên hệ thống, có mã riêng (ví dụ API-142) để mọi người cùng theo dõi.",
+      "category": "quy-trinh",
+      "entryType": "term"
+    },
+    {
+      "termId": "acceptance-criteria",
+      "term": "acceptance criteria",
+      "aliases": [
+        "acceptance criteria",
+        "AC",
+        "tiêu chí chấp nhận"
+      ],
+      "plain": "Danh sách điều kiện phải đạt thì việc mới được tính là xong. Nếu ticket không ghi rõ, bạn có quyền hỏi.",
+      "category": "quy-trinh",
+      "entryType": "term"
+    },
+    {
+      "termId": "retro",
+      "term": "retro",
+      "aliases": [
+        "retro",
+        "retrospective"
+      ],
+      "plain": "Buổi họp cuối sprint để nhìn lại: cái gì tốt, cái gì cần đổi. Nói thẳng ở đây là được khuyến khích.",
+      "category": "quy-trinh",
+      "entryType": "term"
+    },
+    {
+      "termId": "blocker",
+      "term": "blocker",
+      "aliases": [
+        "blocker",
+        "bị block",
+        "block"
+      ],
+      "plain": "Thứ khiến bạn không đi tiếp được. Báo blocker sớm là đúng quy trình, không phải làm phiền.",
+      "category": "quy-trinh",
+      "entryType": "term"
+    },
+    {
+      "termId": "story-point",
+      "term": "story point",
+      "aliases": [
+        "story point",
+        "point",
+        "điểm"
+      ],
+      "plain": "Con số ước lượng độ phức tạp của một việc, không phải số giờ. Ước sai là bình thường.",
+      "category": "quy-trinh",
+      "entryType": "term"
+    },
+    {
+      "termId": "onboarding",
+      "term": "onboarding",
+      "aliases": [
+        "onboarding",
+        "hội nhập"
+      ],
+      "plain": "Giai đoạn đầu khi mới vào công ty: làm quen người, công cụ, quy trình. Thường tính bằng tuần, không phải ngày.",
+      "category": "quy-trinh",
+      "entryType": "term"
+    },
+    {
+      "termId": "one-on-one",
+      "term": "1-1",
+      "aliases": [
+        "1-1",
+        "one-on-one",
+        "1:1"
+      ],
+      "plain": "Buổi nói chuyện riêng định kỳ với quản lý. Đây là chỗ hợp lệ để nêu khó khăn, không chỉ để báo cáo tiến độ.",
+      "category": "quy-trinh",
+      "entryType": "term"
+    },
+    {
+      "entryType": "workplace-norm",
+      "normId": "norm-blocker",
+      "title": "Báo vướng mắc",
+      "plain": "Trong tổ chức demo, báo blocker là cách đề nghị hỗ trợ, không phải đánh giá năng lực.",
+      "relatedIntentIds": [
+        "blocked-technical",
+        "unclear-task"
+      ]
+    },
+    {
+      "entryType": "workplace-norm",
+      "normId": "norm-estimate",
+      "title": "Ước lượng có thể thay đổi",
+      "plain": "Trong tổ chức demo, trao đổi lại khi ước lượng thay đổi và thống nhất ưu tiên với quản lý.",
+      "relatedIntentIds": [
+        "overload"
+      ]
+    },
+    {
+      "entryType": "workplace-norm",
+      "normId": "norm-one-on-one",
+      "title": "Trao đổi nhu cầu",
+      "plain": "Trong tổ chức demo, buổi 1-1 có thể dùng để nêu nhu cầu hỗ trợ, không chỉ báo tiến độ.",
+      "relatedIntentIds": [
+        "under-stimulated",
+        "overload"
+      ]
+    },
+    {
+      "entryType": "workplace-norm",
+      "normId": "norm-written",
+      "title": "Yêu cầu hướng dẫn bằng văn bản",
+      "plain": "Trong tổ chức demo, bạn có thể đề nghị nhắn lại các bước. Không cần chia sẻ chẩn đoán.",
+      "relatedIntentIds": [
+        "need-written",
+        "meeting-load"
+      ]
+    },
+    {
+      "entryType": "workplace-norm",
+      "normId": "norm-ask",
+      "title": "Chưa biết hỏi ai",
+      "plain": "Trong tổ chức demo, buddy giúp tìm đầu mối. Không có cam kết mọi yêu cầu đều được chấp thuận.",
+      "relatedIntentIds": [
+        "abstain",
+        "unclear-process"
+      ]
+    }
+  ]
+}

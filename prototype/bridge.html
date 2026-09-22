@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cầu Nối — từ điều khó nói thành việc làm được</title>
+<style>
+  :root{
+    --bg:#F7F9FA; --surface:#FFFFFF; --ink:#1B2733; --muted:#5B6B7A; --line:#DCE3E9;
+    --a:#2C6E8F; --aBg:#E8F2F7;
+    --b:#7A5230; --bBg:#F8EEE4;
+    --ok:#2F6F4F; --okBg:#E8F2EC;
+    --guard:#9E3D3D; --guardBg:#FAECEC;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font-family:"Segoe UI","Helvetica Neue",Arial,sans-serif;font-size:15px;line-height:1.55}
+  header{background:var(--surface);border-bottom:1px solid var(--line);padding:14px 24px}
+  h1{margin:0;font-size:18px}
+  .sub{color:var(--muted);font-size:12.5px;margin-top:3px}
+  .badges{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+  .badge{font-size:11px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--muted)}
+  .badge.ok{background:var(--okBg);border-color:var(--ok);color:var(--ok)}
+  .badge.warn{background:var(--guardBg);border-color:var(--guard);color:var(--guard)}
+
+  main{padding:20px 24px 40px;max-width:1400px;margin:0 auto}
+  .cols{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap}
+  .col{flex:1 1 440px;min-width:360px}
+
+  .pane{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .paneHead{padding:12px 18px;border-bottom:1px solid var(--line)}
+  .paneHead h2{margin:0;font-size:15px}
+  .paneHead .who{font-size:12px;color:var(--muted);margin-top:2px}
+  .paneA .paneHead{background:var(--aBg);border-left:4px solid var(--a)}
+  .paneB .paneHead{background:var(--bBg);border-left:4px solid var(--b)}
+  .paneBody{padding:18px}
+
+  label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:6px}
+  textarea,input[type=text]{width:100%;padding:10px;border:1px solid var(--line);border-radius:7px;
+       font-family:inherit;font-size:14.5px;color:var(--ink);background:#fff;resize:vertical}
+  textarea{min-height:76px}
+  button{font-family:inherit;font-size:14px;padding:9px 15px;border-radius:7px;
+         border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
+  button:hover:not(:disabled){background:#F1F5F7}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  button.primaryA{background:var(--aBg);border-color:var(--a);color:#1D4F68;font-weight:600}
+  button.primaryB{background:var(--bBg);border-color:var(--b);color:#5C3D22;font-weight:600}
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+  .tiny{font-size:11.5px;color:var(--muted)}
+
+  .samples{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+  .samples button{font-size:12px;padding:5px 10px;border-radius:999px}
+
+  .sectionTitle{font-size:12px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);
+       margin:20px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--line)}
+
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chip{font-size:11.5px;padding:3px 9px;border-radius:999px;background:#EEF3F6;border:1px solid var(--line);color:#3E4E5C}
+  .chip.glo{background:#FFF8E8;border-color:#E2CC96;color:#6E5518;cursor:help}
+
+  .routeCard{border:1px solid var(--a);background:var(--aBg);border-radius:8px;padding:12px 14px;margin-top:4px}
+  .routeCard.abstain{border-color:var(--guard);background:var(--guardBg)}
+  .routeCard .name{font-weight:700;font-size:15px}
+  .routeCard .meta{font-size:12px;color:var(--muted);margin-top:3px}
+
+  .opt{width:100%;text-align:left;padding:11px 13px;margin-bottom:8px;line-height:1.45}
+  .opt[aria-pressed=true]{background:var(--aBg);border-color:var(--a)}
+  .opt .toneTag{font-size:10.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);display:block;margin-bottom:3px}
+  .opt .src{font-size:10.5px;color:var(--muted);display:block;margin-top:5px;font-family:ui-monospace,Consolas,monospace}
+
+  .gate{border:1px solid var(--guard);background:var(--guardBg);border-radius:8px;padding:13px;margin-top:6px}
+  .gate h3{margin:0 0 7px;font-size:13px;color:#7E3232}
+
+  .bCard{border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .bRow{padding:11px 14px;border-bottom:1px solid var(--line)}
+  .bRow:last-child{border-bottom:none}
+  .bRow .k{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
+  .bRow .v{font-size:15px;margin-top:3px}
+  .bRow.action{background:#FCF7F2}
+  .bRow.action .v{font-weight:600}
+  .mins{display:inline-block;font-size:11.5px;color:var(--b);border:1px solid var(--b);
+        border-radius:999px;padding:1px 8px;margin-left:6px;vertical-align:middle}
+
+  .empty{color:var(--muted);font-size:13.5px;text-align:center;padding:36px 20px;line-height:1.7}
+
+  .status{margin-top:12px;padding:10px 13px;border-radius:7px;font-size:13.5px}
+  .status.done{background:var(--okBg);border:1px solid var(--ok);color:var(--ok)}
+  .status.talk{background:#FFF6E5;border:1px solid #C99A2E;color:#7A5B10}
+  .status.wait{background:#EEF3F6;border:1px solid var(--line);color:var(--muted)}
+
+  pre{background:#F2F6F8;border:1px solid var(--line);border-radius:7px;padding:11px;
+      font-size:11px;overflow:auto;max-height:230px;white-space:pre-wrap;word-break:break-word;margin:0}
+
+  .loaded{margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+  .loaded h3{margin:0 0 4px;font-size:14px}
+  .loaded ul{margin:8px 0 0;padding-left:18px;font-size:13px;color:var(--muted)}
+  .loaded li{margin-bottom:3px}
+  .err{background:var(--guardBg);border:1px solid var(--guard);color:var(--guard);padding:14px;border-radius:8px}
+  code{background:#F2F6F8;padding:1px 5px;border-radius:4px;font-size:12.5px}
+
+.sub,.badge,.who,.tiny,label,.sectionTitle,.chip,.toneTag,.src,.k,.mins,.samples button,.loaded ul,pre,code{font-size:15px!important}
+button,textarea{font-size:16px}.col{min-width:0}.cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:800px){.cols{grid-template-columns:1fr}main,header{padding:16px}}
+:focus-visible{outline:3px solid #2C6E8F;outline-offset:3px}[hidden]{display:none!important}.message{white-space:pre-wrap;overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Cầu Nối <span style="font-weight:400;color:var(--muted);font-size:14px">— từ điều khó nói thành việc làm được</span></h1>
+  <div class="sub">ADC Hackathon 2026 · Neurodivergence · Stage 4: Workplace Onboarding · Domain: công ty phần mềm Việt Nam</div>
+  <div class="badges">
+    <span class="badge" id="bData">Dữ liệu domain: đang tải…</span>
+    <span class="badge ok" id="bGate">Cổng xác nhận: đang bật</span>
+    <span class="badge ok" id="bGen">Nguồn câu chữ: soạn sẵn, không tự sinh</span>
+    <span class="badge">Demo hai vai trên cùng máy · không gửi tin ra ngoài</span>
+  </div>
+</header>
+
+<main>
+<div id="loadError" class="err" hidden>
+  Không tải được dữ liệu domain. Trang phải chạy qua HTTP, không mở bằng <code>file://</code>.
+  Chạy tại <code>C:\Hackathon</code>: <code>npm start</code> rồi mở
+  <code>http://localhost:8777/prototype/bridge.html</code>
+</div>
+
+<p>Workplace Pack · nhân vật, sơ đồ tổ chức và chính sách đều là dữ liệu mẫu. Bạn quyết định nội dung nào được chia sẻ.</p>
+<label><input type="checkbox" id="aiMode"> Dùng AI để gợi ý câu chữ (tùy chọn)</label>
+<p class="tiny">Khi bật và bấm “Tìm cách diễn đạt”, nội dung thô được gửi qua proxy tới nhà cung cấp AI. Ứng dụng không ghi nội dung vào file/log; chính sách lưu trữ của nhà cung cấp áp dụng riêng. Tắt AI để dùng câu mẫu.</p>
+<div id="notice" role="status" aria-live="polite"></div><div id="error" role="alert"></div>
+<div class="cols">
+
+  <!-- ============ NGƯỜI A ============ -->
+  <div class="col">
+    <div class="pane paneA">
+      <div class="paneHead">
+        <h2>Màn hình của Minh</h2>
+        <div class="who">Lập trình viên mới · tuần thứ 2 · đang kẹt nhưng ngại hỏi</div>
+      </div>
+      <div class="paneBody">
+
+        <label for="raw">Minh gõ thô — nghĩ gì gõ nấy, không cần đúng câu chữ</label>
+        <div class="samples" id="samples"></div>
+        <textarea id="raw" maxlength="500" placeholder="Ví dụ: em không hiểu cái task này lắm mà hỏi thì sợ phiền..."></textarea>
+        <div class="row">
+          <button class="primaryA" id="btnAnalyze">Tìm cách diễn đạt</button>
+          <button id="btnReset">Làm lại</button>
+        </div>
+
+        <div id="analysis" hidden>
+          <div class="sectionTitle">Hệ thống đọc được gì</div>
+          <div class="chips" id="chipsOut"></div>
+
+          <div class="sectionTitle">Nên gửi cho ai</div>
+          <div id="routeOut"></div>
+
+          <div id="normOut"></div><h3 id="optionsHeading" tabindex="-1">Chọn cách nói đúng ý bạn</h3>
+          <div id="optsOut"></div>
+
+          <div class="gate">
+            <h3>Bạn xác nhận trước khi gửi</h3>
+            <label for="approved">Nội dung sẽ gửi đi — sửa thoải mái</label>
+            <textarea id="approved" placeholder="Chọn một cách nói ở trên, hoặc tự viết…"></textarea>
+            <div class="row">
+              <button class="primaryA" id="btnSend" disabled>Xác nhận & Gửi</button>
+              <button id="btnViolate">Thử gửi khi chưa xác nhận</button>
+              
+            </div>
+            <div class="tiny" id="gateNote" style="margin-top:8px">Hệ thống không bao giờ tự gửi thay bạn.</div>
+          </div>
+        </div>
+
+        <div id="aStatus" role="status" aria-live="polite" class="message"></div><button id="btnResolve" hidden>Tôi đã được hỗ trợ, đóng yêu cầu</button>
+        <div id="followupBox" hidden><label for="followup">Bổ sung thông tin cho yêu cầu hiện tại</label><textarea id="followup" maxlength="1000"></textarea><button id="sendFollowup" disabled>Gửi thông tin bổ sung</button></div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ NGƯỜI B ============ -->
+  <div class="col">
+    <div class="pane paneB">
+      <div class="paneHead">
+        <h2>Màn hình người nhận</h2>
+        <div class="who" id="bWho">Chưa có gì được gửi</div>
+      </div>
+      <div class="paneBody">
+        <div id="bEmpty" class="empty">
+          Người nhận chưa thấy gì cả.<br>
+          Minh phải tự chọn và tự bấm gửi thì nội dung mới xuất hiện ở đây.
+        </div>
+
+        <div id="bContent" hidden>
+          <h3 id="bMessageHeading" tabindex="-1">Tin nhắn Minh đã duyệt</h3><p id="bApproved" class="message"></p><p class="tiny">Dưới đây là gợi ý hỗ trợ từ dữ liệu mẫu, không phải lời Minh đã nói. Kiểm tra với tin nhắn ở trên.</p><div class="bCard">
+            <div class="bRow">
+              <div class="k">Nhu cầu gợi ý từ mẫu — cần đối chiếu tin nhắn</div>
+              <div class="v" id="bAsk"></div>
+            </div>
+            <div class="bRow action">
+              <div class="k">Bạn có thể làm</div>
+              <div class="v"><span id="bAction"></span><span class="mins" id="bMins"></span></div>
+            </div>
+            <div class="bRow">
+              <div class="k">Vì sao giúp ích</div>
+              <div class="v" id="bWhy"></div>
+            </div>
+          </div>
+          <h3>Chọn và duyệt phản hồi</h3><div id="replyOptions"></div><label for="bReply">Nội dung trả lời — có thể sửa</label><textarea id="bReply" maxlength="1000"></textarea><button id="bSend" class="primaryB" disabled>Gửi phản hồi</button>
+          <div class="tiny" style="margin-top:9px">Người nhận thấy nguyên văn Minh đã duyệt, không phải bản AI tự viết.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="loaded">
+      <h3>Tri thức domain đang được nạp</h3>
+      <div class="tiny">Định tuyến bằng sơ đồ tổ chức mẫu, không để AI tự chọn người nhận.</div>
+      <ul id="loadedList"><li>đang tải…</li></ul>
+    </div>
+
+    <div class="loaded">
+      <details><summary>Bản ghi demo trong bộ nhớ (có nội dung tin nhắn)</summary>
+      <div class="tiny" style="margin-bottom:8px">Mỗi câu gợi ý đều truy được về file nguồn.</div>
+      <pre id="evidence">[]</pre></details>
+    </div>
+  </div>
+
+</div>
+</main>
+
+<script type="module" src="/prototype/bridge.mjs"></script>
+</body>
+</html>

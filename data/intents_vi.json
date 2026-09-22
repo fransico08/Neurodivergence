@@ -1,0 +1,568 @@
+{
+  "schemaVersion": "1.1.0",
+  "domain": "vietnamese-software-company",
+  "updatedAt": "2026-09-22",
+  "note": "Câu mẫu là gợi ý để người dùng kiểm tra, chọn và sửa. Không phải bằng chứng rằng mọi chi tiết đã được người dùng nói.",
+  "placeholders": {
+    "ticket": "Thay bằng mã công việc nếu phát hiện được trong câu người dùng (ví dụ API-142), nếu không thì dùng 'việc được giao'."
+  },
+  "toneLabels": {
+    "neutral": "Trung tính",
+    "direct": "Thẳng thắn",
+    "soft": "Nhẹ nhàng"
+  },
+  "intents": [
+    {
+      "intentId": "unclear-task",
+      "label": "Chưa rõ yêu cầu công việc",
+      "keywords": [
+        "không hiểu",
+        "chưa hiểu",
+        "không rõ",
+        "chưa rõ",
+        "mơ hồ",
+        "yêu cầu",
+        "task này",
+        "làm gì",
+        "phạm vi"
+      ],
+      "routeTo": "tech-lead",
+      "routeConfidence": "high",
+      "phrasings": [
+        {
+          "phrasingId": "unclear-task-1",
+          "tone": "neutral",
+          "text": "Em chưa rõ phạm vi của {ticket}. Anh mô tả giúp em đầu vào, đầu ra và hạn chót được không ạ?"
+        },
+        {
+          "phrasingId": "unclear-task-2",
+          "tone": "direct",
+          "text": "Em cần làm rõ yêu cầu của {ticket} trước khi bắt đầu, để làm đúng ngay từ đầu thay vì phải sửa lại."
+        },
+        {
+          "phrasingId": "unclear-task-3",
+          "tone": "soft",
+          "text": "Em đọc {ticket} rồi nhưng chưa chắc mình hiểu đúng ý. Anh xác nhận giúp em cách hiểu này được không ạ?"
+        }
+      ],
+      "bSide": {
+        "ask": "Chưa rõ phạm vi của {ticket}, cần làm rõ trước khi bắt đầu.",
+        "action": "Nhắn lại 3 gạch đầu dòng: đầu vào, đầu ra, hạn chót.",
+        "actionMinutes": 1,
+        "why": "Yêu cầu ở dạng viết giúp làm đúng ngay từ đầu, đỡ một vòng sửa lại.",
+        "replyOptions": [
+          {
+            "replyId": "accept",
+            "label": "Có thể hỗ trợ",
+            "text": "Mình sẽ gửi lại đầu vào, kết quả mong đợi và hạn chót của công việc."
+          },
+          {
+            "replyId": "clarify",
+            "label": "Cần làm rõ",
+            "text": "Em cho mình biết phần yêu cầu nào chưa rõ nhé."
+          },
+          {
+            "replyId": "redirect",
+            "label": "Đề xuất đầu mối khác",
+            "text": "Mình cần tìm người chốt yêu cầu này. Mình sẽ xác nhận đầu mối với em."
+          }
+        ]
+      }
+    },
+    {
+      "intentId": "blocked-technical",
+      "label": "Bị kẹt kỹ thuật",
+      "keywords": [
+        "kẹt",
+        "bị lỗi",
+        "không chạy",
+        "lỗi",
+        "fail",
+        "build",
+        "stuck",
+        "block",
+        "không được",
+        "hỏng"
+      ],
+      "routeTo": "tech-lead",
+      "routeConfidence": "high",
+      "phrasings": [
+        {
+          "phrasingId": "blocked-technical-1",
+          "tone": "neutral",
+          "text": "Em đang bị kẹt ở {ticket} và đã thử vài cách nhưng chưa qua được. Anh xem giúp em 10 phút được không ạ?"
+        },
+        {
+          "phrasingId": "blocked-technical-2",
+          "tone": "direct",
+          "text": "Em báo blocker ở {ticket}: em không đi tiếp được nếu chưa gỡ được chỗ này."
+        },
+        {
+          "phrasingId": "blocked-technical-3",
+          "tone": "soft",
+          "text": "Em đang vướng một chỗ ở {ticket}. Khi nào anh rảnh, chỉ em hướng nên thử tiếp được không ạ?"
+        }
+      ],
+      "bSide": {
+        "ask": "Đang bị chặn ở {ticket}, không tự đi tiếp được.",
+        "action": "Dành 10 phút xem cùng, hoặc chỉ ra một hướng để thử tiếp.",
+        "actionMinutes": 10,
+        "why": "Báo sớm rẻ hơn nhiều so với để kẹt âm thầm đến cuối sprint.",
+        "replyOptions": [
+          {
+            "replyId": "accept",
+            "label": "Có thể hỗ trợ",
+            "text": "Mình có thể xem cùng em chỗ đang bị chặn; mình sẽ xác nhận thời gian phù hợp."
+          },
+          {
+            "replyId": "clarify",
+            "label": "Cần làm rõ",
+            "text": "Em gửi thêm thông báo lỗi và bước đang bị kẹt được không?"
+          },
+          {
+            "replyId": "redirect",
+            "label": "Đề xuất đầu mối khác",
+            "text": "Mình sẽ hỏi người phụ trách phần kỹ thuật này trước khi đề xuất đầu mối cho em."
+          }
+        ]
+      }
+    },
+    {
+      "intentId": "access-tool",
+      "label": "Thiếu quyền hoặc công cụ",
+      "keywords": [
+        "không vào được",
+        "chưa có quyền",
+        "quyền truy cập",
+        "tài khoản",
+        "account",
+        "đăng nhập",
+        "cài",
+        "truy cập",
+        "repo"
+      ],
+      "routeTo": "it-support",
+      "routeConfidence": "high",
+      "phrasings": [
+        {
+          "phrasingId": "access-tool-1",
+          "tone": "neutral",
+          "text": "Em chưa có quyền truy cập để làm {ticket}. Anh cấp quyền giúp em được không ạ?"
+        },
+        {
+          "phrasingId": "access-tool-2",
+          "tone": "direct",
+          "text": "Em đang bị chặn vì thiếu quyền truy cập. Cần cấp quyền thì em mới bắt đầu được {ticket}."
+        },
+        {
+          "phrasingId": "access-tool-3",
+          "tone": "soft",
+          "text": "Em thử đăng nhập nhưng chưa vào được. Không biết em cần làm thủ tục gì để có quyền ạ?"
+        }
+      ],
+      "bSide": {
+        "ask": "Thiếu quyền truy cập nên chưa bắt đầu được {ticket}.",
+        "action": "Cấp quyền, hoặc chỉ rõ cần điền form nào.",
+        "actionMinutes": 5,
+        "why": "Đây là chặn cứng — không cấp quyền thì không có cách nào đi tiếp.",
+        "replyOptions": [
+          {
+            "replyId": "accept",
+            "label": "Có thể hỗ trợ",
+            "text": "Mình sẽ kiểm tra quyền truy cập và hướng dẫn bước tiếp theo."
+          },
+          {
+            "replyId": "clarify",
+            "label": "Cần làm rõ",
+            "text": "Em cần quyền vào công cụ nào? Đừng gửi mật khẩu hoặc mã xác thực nhé."
+          },
+          {
+            "replyId": "redirect",
+            "label": "Đề xuất đầu mối khác",
+            "text": "Công cụ này có thể do bộ phận khác quản lý; mình sẽ xác minh đầu mối."
+          }
+        ]
+      }
+    },
+    {
+      "intentId": "overload",
+      "label": "Quá tải khối lượng việc",
+      "keywords": [
+        "nhiều quá",
+        "quá tải",
+        "không kịp",
+        "loạn",
+        "rối",
+        "nhiều task",
+        "làm không xuể",
+        "cùng lúc",
+        "áp lực"
+      ],
+      "routeTo": "manager",
+      "routeConfidence": "high",
+      "phrasings": [
+        {
+          "phrasingId": "overload-1",
+          "tone": "neutral",
+          "text": "Em đang nhận nhiều việc cùng lúc và khó xác định nên làm cái nào trước. Chị giúp em xếp thứ tự ưu tiên được không ạ?"
+        },
+        {
+          "phrasingId": "overload-2",
+          "tone": "direct",
+          "text": "Khối lượng hiện tại vượt quá khả năng em xử lý trong sprint này. Em cần biết việc nào có thể lùi lại."
+        },
+        {
+          "phrasingId": "overload-3",
+          "tone": "soft",
+          "text": "Em làm việc tốt hơn khi nhận từng việc một. Chị xem giúp em có thể giãn bớt phần nào không ạ?"
+        }
+      ],
+      "bSide": {
+        "ask": "Đang nhận nhiều việc song song, cần biết thứ tự ưu tiên.",
+        "action": "Đánh số 1-2-3 cho các việc đang giao, nói rõ việc nào lùi được.",
+        "actionMinutes": 3,
+        "why": "Thứ tự rõ ràng thay thế được việc phải tự đoán, giảm nguy cơ làm sai việc quan trọng.",
+        "replyOptions": [
+          {
+            "replyId": "accept",
+            "label": "Có thể hỗ trợ",
+            "text": "Mình sẽ cùng em sắp lại thứ tự ưu tiên và xác nhận việc nào có thể lùi."
+          },
+          {
+            "replyId": "clarify",
+            "label": "Cần làm rõ",
+            "text": "Em muốn bắt đầu trao đổi từ việc nào đang khó sắp xếp nhất?"
+          },
+          {
+            "replyId": "redirect",
+            "label": "Đề xuất đầu mối khác",
+            "text": "Mình sẽ đề nghị người đang phân công công việc cùng trao đổi với em."
+          }
+        ]
+      }
+    },
+    {
+      "intentId": "unclear-process",
+      "label": "Không biết quy trình hoặc hỏi ai",
+      "keywords": [
+        "quy trình",
+        "bắt đầu từ đâu",
+        "không biết hỏi ai",
+        "ai duyệt",
+        "làm sao",
+        "thủ tục",
+        "các bước",
+        "lần đầu"
+      ],
+      "routeTo": "buddy",
+      "routeConfidence": "high",
+      "phrasings": [
+        {
+          "phrasingId": "unclear-process-1",
+          "tone": "neutral",
+          "text": "Em chưa nắm được quy trình cho việc này. Chị chỉ em các bước và ai là người duyệt được không ạ?"
+        },
+        {
+          "phrasingId": "unclear-process-2",
+          "tone": "direct",
+          "text": "Em cần biết quy trình chuẩn cho việc này để làm đúng ngay lần đầu."
+        },
+        {
+          "phrasingId": "unclear-process-3",
+          "tone": "soft",
+          "text": "Đây là lần đầu em làm việc này nên chưa rõ nên bắt đầu từ đâu. Chị hướng dẫn em được không ạ?"
+        }
+      ],
+      "bSide": {
+        "ask": "Chưa nắm quy trình, chưa biết bắt đầu từ đâu và ai duyệt.",
+        "action": "Gửi link tài liệu quy trình, kèm tên người duyệt ở bước cuối.",
+        "actionMinutes": 2,
+        "why": "Quy trình viết ra được thì đọc lại được, không phải hỏi lại nhiều lần.",
+        "replyOptions": [
+          {
+            "replyId": "accept",
+            "label": "Có thể hỗ trợ",
+            "text": "Mình sẽ gửi các bước bằng văn bản và chỉ rõ người phụ trách."
+          },
+          {
+            "replyId": "clarify",
+            "label": "Cần làm rõ",
+            "text": "Em đang ở bước nào của quy trình để mình hướng dẫn đúng chỗ?"
+          },
+          {
+            "replyId": "redirect",
+            "label": "Đề xuất đầu mối khác",
+            "text": "Mình sẽ xác minh người phụ trách quy trình rồi báo lại em."
+          }
+        ]
+      }
+    },
+    {
+      "intentId": "need-written",
+      "label": "Cần thông tin ở dạng văn bản",
+      "keywords": [
+        "nói nhanh",
+        "không nhớ kịp",
+        "ghi lại",
+        "nói miệng",
+        "quên mất",
+        "nhắn lại",
+        "viết ra"
+      ],
+      "routeTo": "manager",
+      "routeConfidence": "medium",
+      "phrasings": [
+        {
+          "phrasingId": "need-written-1",
+          "tone": "neutral",
+          "text": "Chị nhắn lại phần vừa trao đổi giúp em được không ạ? Em xử lý chính xác hơn khi có bản viết."
+        },
+        {
+          "phrasingId": "need-written-2",
+          "tone": "direct",
+          "text": "Em tiếp nhận thông tin bằng chữ viết tốt hơn bằng lời. Chị gửi tin nhắn thay vì trao đổi miệng giúp em nhé."
+        },
+        {
+          "phrasingId": "need-written-3",
+          "tone": "soft",
+          "text": "Em sợ nhớ sót chi tiết. Chị ghi lại ngắn gọn các ý chính giúp em được không ạ?"
+        }
+      ],
+      "bSide": {
+        "ask": "Cần nội dung vừa trao đổi ở dạng văn bản.",
+        "action": "Nhắn lại các ý chính dưới dạng gạch đầu dòng.",
+        "actionMinutes": 2,
+        "why": "Bản viết đọc lại được nhiều lần, giảm sai sót do nhớ nhầm.",
+        "replyOptions": [
+          {
+            "replyId": "accept",
+            "label": "Có thể hỗ trợ",
+            "text": "Mình sẽ nhắn lại các ý chính bằng văn bản để em đối chiếu."
+          },
+          {
+            "replyId": "clarify",
+            "label": "Cần làm rõ",
+            "text": "Em muốn mình ghi lại phần nào của trao đổi vừa rồi?"
+          },
+          {
+            "replyId": "redirect",
+            "label": "Đề xuất đầu mối khác",
+            "text": "Mình sẽ hỏi người trình bày nội dung đó để giúp em nhận bản viết chính xác."
+          }
+        ]
+      }
+    },
+    {
+      "intentId": "meeting-load",
+      "label": "Khó theo kịp cuộc họp",
+      "keywords": [
+        "họp",
+        "meeting",
+        "không theo kịp",
+        "nhiều người nói",
+        "nói chồng",
+        "mất mạch",
+        "agenda"
+      ],
+      "routeTo": "manager",
+      "routeConfidence": "medium",
+      "phrasings": [
+        {
+          "phrasingId": "meeting-load-1",
+          "tone": "neutral",
+          "text": "Chị gửi nội dung cuộc họp trước một hôm giúp em được không ạ? Em chuẩn bị trước sẽ tham gia tốt hơn."
+        },
+        {
+          "phrasingId": "meeting-load-2",
+          "tone": "direct",
+          "text": "Em khó theo kịp khi nhiều người nói cùng lúc. Em đề xuất mỗi lần một người nói trong họp."
+        },
+        {
+          "phrasingId": "meeting-load-3",
+          "tone": "soft",
+          "text": "Sau họp chị chốt lại giúp em phần việc của em được không ạ? Em muốn chắc là mình không hiểu sót."
+        }
+      ],
+      "bSide": {
+        "ask": "Khó theo kịp nhịp họp, cần thêm cấu trúc.",
+        "action": "Gửi agenda trước 1 ngày, và chốt lại đầu việc bằng tin nhắn sau họp.",
+        "actionMinutes": 3,
+        "why": "Chuẩn bị trước và chốt lại sau giúp tham gia đầy đủ thay vì chỉ ngồi nghe.",
+        "replyOptions": [
+          {
+            "replyId": "accept",
+            "label": "Có thể hỗ trợ",
+            "text": "Mình sẽ trao đổi với em để chọn cách hỗ trợ phù hợp trong cuộc họp."
+          },
+          {
+            "replyId": "clarify",
+            "label": "Cần làm rõ",
+            "text": "Agenda trước họp, lượt nói rõ ràng hay ghi chú sau họp sẽ giúp em nhất?"
+          },
+          {
+            "replyId": "redirect",
+            "label": "Đề xuất đầu mối khác",
+            "text": "Mình sẽ xác minh người điều phối cuộc họp và báo lại em trước khi chuyển yêu cầu."
+          }
+        ]
+      }
+    },
+    {
+      "intentId": "feedback-unclear",
+      "label": "Chưa hiểu góp ý nhận được",
+      "keywords": [
+        "góp ý",
+        "nhận xét",
+        "review",
+        "comment",
+        "phản hồi",
+        "chê",
+        "sửa lại",
+        "không hiểu ý"
+      ],
+      "routeTo": "tech-lead",
+      "routeConfidence": "high",
+      "phrasings": [
+        {
+          "phrasingId": "feedback-unclear-1",
+          "tone": "neutral",
+          "text": "Em chưa rõ ý của phần góp ý trong {ticket}. Anh cho em một ví dụ cụ thể được không ạ?"
+        },
+        {
+          "phrasingId": "feedback-unclear-2",
+          "tone": "direct",
+          "text": "Em cần góp ý cụ thể hơn ở {ticket}: nên sửa chỗ nào và sửa thành gì."
+        },
+        {
+          "phrasingId": "feedback-unclear-3",
+          "tone": "soft",
+          "text": "Em muốn sửa đúng ý anh nên hỏi lại cho chắc: phần nào là quan trọng nhất cần sửa trước ạ?"
+        }
+      ],
+      "bSide": {
+        "ask": "Chưa hiểu rõ góp ý ở {ticket}.",
+        "action": "Chỉ ra 1 chỗ cụ thể kèm ví dụ nên sửa thành gì.",
+        "actionMinutes": 3,
+        "why": "Góp ý kèm ví dụ cụ thể dễ làm theo hơn nhận xét chung chung.",
+        "replyOptions": [
+          {
+            "replyId": "accept",
+            "label": "Có thể hỗ trợ",
+            "text": "Mình sẽ chỉ ra chỗ cần sửa và gửi một ví dụ cụ thể."
+          },
+          {
+            "replyId": "clarify",
+            "label": "Cần làm rõ",
+            "text": "Em gửi phần góp ý đang chưa rõ để mình giải thích sát hơn nhé."
+          },
+          {
+            "replyId": "redirect",
+            "label": "Đề xuất đầu mối khác",
+            "text": "Mình sẽ xác minh người đưa góp ý để kết nối đúng người với em."
+          }
+        ]
+      }
+    },
+    {
+      "intentId": "under-stimulated",
+      "label": "Cần cân chỉnh độ thử thách",
+      "keywords": [
+        "quá nhàm chán",
+        "công việc lặp lại",
+        "thiếu thử thách",
+        "muốn thử thách hơn",
+        "việc quá dễ"
+      ],
+      "routeTo": "manager",
+      "routeConfidence": "medium",
+      "phrasings": [
+        {
+          "phrasingId": "under-stimulated-1",
+          "tone": "neutral",
+          "text": "Em muốn trao đổi về độ thử thách của công việc hiện tại. Anh/chị cùng em xem có thể điều chỉnh thế nào được không?"
+        },
+        {
+          "phrasingId": "under-stimulated-2",
+          "tone": "direct",
+          "text": "Em cần công việc có mức thử thách phù hợp hơn. Em muốn cùng anh/chị cân chỉnh, không chỉ nhận thêm việc."
+        },
+        {
+          "phrasingId": "under-stimulated-3",
+          "tone": "soft",
+          "text": "Em nghĩ mình có thể hứng thú hơn nếu được thử một phần việc khác. Anh/chị trao đổi cùng em được không ạ?"
+        }
+      ],
+      "bSide": {
+        "ask": "Muốn trao đổi về mức thử thách phù hợp.",
+        "action": "Hỏi phần việc nào phù hợp và cùng cân chỉnh độ khó, không mặc định tăng khối lượng.",
+        "actionMinutes": 5,
+        "why": "Nhu cầu về mức thử thách do người dùng nêu; không suy ra từ chẩn đoán.",
+        "replyOptions": [
+          {
+            "replyId": "accept",
+            "label": "Có thể hỗ trợ",
+            "text": "Mình có thể cùng em xem lại độ khó và cách phân bổ công việc."
+          },
+          {
+            "replyId": "clarify",
+            "label": "Cần làm rõ",
+            "text": "Em muốn thay đổi phần nào của công việc hiện tại?"
+          },
+          {
+            "replyId": "redirect",
+            "label": "Đề xuất đầu mối khác",
+            "text": "Mình đề xuất trao đổi thêm với người phân công công việc; em có đồng ý không?"
+          }
+        ]
+      }
+    }
+  ],
+  "fallback": {
+    "intentId": "abstain",
+    "label": "Chưa đủ thông tin để gợi ý",
+    "routeTo": "buddy",
+    "routeConfidence": "low",
+    "abstainMessage": "Chưa đủ thông tin để xác định nên hỏi ai. Hệ thống không đoán bừa.",
+    "abstainGuidance": "Bạn có thể gửi cho người kèm cặp — vai trò của họ là chỉ đường khi chưa biết hỏi ai.",
+    "phrasings": [
+      {
+        "phrasingId": "abstain-1",
+        "tone": "neutral",
+        "text": "Em đang gặp một vướng mắc nhưng chưa biết nên hỏi ai. Chị chỉ em đúng người được không ạ?"
+      },
+      {
+        "phrasingId": "abstain-2",
+        "tone": "soft",
+        "text": "Em có một thắc mắc nhỏ, không chắc có đúng chỗ để hỏi không. Chị xem giúp em với ạ."
+      },
+      {
+        "phrasingId": "abstain-3",
+        "tone": "direct",
+        "text": "Em cần biết ai có thể hỗ trợ vấn đề này. Chị giúp em xác định đầu mối được không?"
+      }
+    ],
+    "bSide": {
+      "ask": "Có vướng mắc nhưng chưa xác định được nên hỏi ai.",
+      "action": "Hỏi lại một câu để làm rõ, rồi chỉ sang đúng người phụ trách.",
+      "actionMinutes": 2,
+      "why": "Người mới thường không biết ranh giới trách nhiệm giữa các vai trò.",
+      "replyOptions": [
+        {
+          "replyId": "accept",
+          "label": "Có thể hỗ trợ",
+          "text": "Mình có thể giúp em tìm đúng đầu mối để hỏi."
+        },
+        {
+          "replyId": "clarify",
+          "label": "Cần làm rõ",
+          "text": "Em mô tả thêm một tình huống cụ thể đang vướng được không?"
+        },
+        {
+          "replyId": "redirect",
+          "label": "Đề xuất đầu mối khác",
+          "text": "Mình sẽ tìm người có thể giúp việc này và báo lại cho em."
+        }
+      ]
+    }
+  }
+}

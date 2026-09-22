@@ -95,12 +95,27 @@
   .loaded h3{margin:0 0 4px;font-size:14px}
   .loaded ul{margin:8px 0 0;padding-left:18px;font-size:13px;color:var(--muted)}
   .loaded li{margin-bottom:3px}
+  .clarifier{margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .clarifierHead{padding:14px 18px;background:linear-gradient(90deg,var(--aBg),#F7F4EE);border-bottom:1px solid var(--line)}
+  .clarifierHead h2{margin:0;font-size:16px}
+  .clarifierBody{padding:18px}
+  .clarifyGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+  .incoming{border:1px solid var(--line);border-left:4px solid var(--b);border-radius:8px;padding:12px 14px;background:#FCFAF7}
+  .incoming .sender{font-size:12px;color:var(--muted);margin-bottom:4px}
+  .incoming p{margin:0;font-size:16px}
+  .choiceGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:8px 0 14px}
+  .clarifyType{text-align:left;padding:11px 12px}
+  .clarifyType strong,.clarifyType span{display:block}
+  .clarifyType span{font-size:12px;color:var(--muted);margin-top:3px}
+  .clarifyType[aria-pressed=true]{background:var(--aBg);border-color:var(--a)}
+  .clarifyStatus{margin-top:10px;padding:10px 12px;border:1px solid var(--line);border-radius:7px;background:#F5F8FA;white-space:pre-wrap}
+  .answer{border-left:4px solid var(--ok);background:var(--okBg);padding:11px 13px;border-radius:7px;margin-top:10px;white-space:pre-wrap}
   .err{background:var(--guardBg);border:1px solid var(--guard);color:var(--guard);padding:14px;border-radius:8px}
   code{background:#F2F6F8;padding:1px 5px;border-radius:4px;font-size:12.5px}
 
 .sub,.badge,.who,.tiny,label,.sectionTitle,.chip,.toneTag,.src,.k,.mins,.samples button,.loaded ul,pre,code{font-size:15px!important}
 button,textarea{font-size:16px}.col{min-width:0}.cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
-@media(max-width:800px){.cols{grid-template-columns:1fr}main,header{padding:16px}}
+@media(max-width:800px){.cols,.clarifyGrid{grid-template-columns:1fr}.choiceGrid{grid-template-columns:1fr}main,header{padding:16px}}
 :focus-visible{outline:3px solid #2C6E8F;outline-offset:3px}[hidden]{display:none!important}.message{white-space:pre-wrap;overflow-wrap:anywhere}
 </style>
 </head>
@@ -225,6 +240,65 @@ button,textarea{font-size:16px}.col{min-width:0}.cols{display:grid;grid-template
   </div>
 
 </div>
+
+<section class="clarifier" aria-labelledby="clarifierTitle">
+  <div class="clarifierHead">
+    <h2 id="clarifierTitle">Clarification Assistant — khi bạn vẫn chưa hiểu</h2>
+    <div class="tiny">Chọn điều cần làm rõ → chọn hoặc sửa câu hỏi → tự gửi → nhận câu trả lời. AI không tự trả lời thay người giao việc.</div>
+  </div>
+  <div class="clarifierBody">
+    <div class="clarifyGrid">
+      <div>
+        <div class="sectionTitle">1 · Tin nhắn Minh nhận được</div>
+        <div class="incoming">
+          <div class="sender" id="cSender">Tech Lead · tin nhắn mô phỏng</div>
+          <p id="cOriginal"></p>
+        </div>
+        <div class="row">
+          <button class="primaryA" id="cStart">Làm rõ</button>
+          <button id="cNextSample">Đổi tình huống mẫu</button>
+        </div>
+
+        <div id="cFlow" hidden>
+          <div class="sectionTitle">2 · Bạn muốn làm rõ điều gì?</div>
+          <div class="choiceGrid" id="cTypes"></div>
+          <div id="cComposer" hidden>
+            <h3 id="cOptionsHeading" tabindex="-1">3 · Chọn cách hỏi đúng ý bạn</h3>
+            <div id="cOptions"></div>
+            <div class="gate">
+              <h3>Bạn xác nhận trước khi gửi</h3>
+              <label for="cApproved">Câu hỏi sẽ gửi — có thể sửa</label>
+              <textarea id="cApproved" maxlength="500"></textarea>
+              <div class="row">
+                <button class="primaryA" id="cSend" disabled>Xác nhận &amp; Gửi câu hỏi</button>
+              </div>
+              <div class="tiny">Hệ thống không tự gửi và không tự đoán câu trả lời.</div>
+            </div>
+          </div>
+        </div>
+        <div id="cUserStatus" role="status" aria-live="polite"></div>
+        <div id="cAnswer" class="answer" hidden></div>
+        <button id="cResolve" hidden style="margin-top:10px">Tôi đã hiểu, đóng vòng làm rõ</button>
+      </div>
+
+      <div>
+        <div class="sectionTitle">4 · Màn hình người giao việc</div>
+        <div id="cReceiverEmpty" class="empty">Chưa có câu hỏi nào được gửi.</div>
+        <div id="cReceiver" hidden>
+          <div class="bCard">
+            <div class="bRow"><div class="k">Tin nhắn ban đầu</div><div class="v" id="cReceiverOriginal"></div></div>
+            <div class="bRow action"><div class="k">Câu hỏi Minh đã duyệt</div><div class="v" id="cReceiverQuestion"></div></div>
+          </div>
+          <h3>Trả lời để khép kín vòng làm rõ</h3>
+          <label for="cResponse">Nội dung phản hồi — có thể sửa</label>
+          <textarea id="cResponse" maxlength="700"></textarea>
+          <button class="primaryB" id="cRespond" disabled>Gửi câu trả lời</button>
+          <div class="tiny" style="margin-top:8px">Phản hồi mẫu chỉ phục vụ demo; người giao việc vẫn tự duyệt và gửi.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 </main>
 
 <script type="module" src="/prototype/bridge.mjs"></script>

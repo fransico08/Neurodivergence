@@ -1,10 +1,73 @@
 import {norm,hasKeyword,extractTicket,fillTicket,detectIntent} from './core.mjs';
 const $=id=>document.getElementById(id);
-let INT,ORG,GLO,draft=null,active=null,selected=null,replyChoice=null,controller=null,revision=0,seq=0;
+let INT,ORG,GLO,CLAR,draft=null,active=null,selected=null,replyChoice=null,controller=null,revision=0,seq=0;
+let clarification=null,clarificationSelection=null,clarificationController=null,clarificationRevision=0,clarificationSeq=0,sampleIndex=0;
 const records=[];
 const text=(id,value)=>{$(id).textContent=value;};
 function node(tag,value,cls){const el=document.createElement(tag);el.textContent=value;if(cls)el.className=cls;return el;}
 function evidence(){text('evidence',JSON.stringify(records,null,2));}
+function cancelClarification(){clarificationRevision++;clarificationController?.abort();clarificationController=null;}
+function updateClarificationSend(){$('cSend').disabled=!clarification||!$('cApproved').value.trim()||clarification.status!=='draft';}
+function renderClarificationOptions(options,source){
+ $('cOptions').replaceChildren();clarificationSelection=null;$('cApproved').value='';updateClarificationSend();
+ for(const option of options){
+  const button=node('button','', 'opt');button.setAttribute('aria-pressed','false');
+  button.append(node('span',INT.toneLabels[option.tone]||option.tone,'toneTag'),node('span',option.text),node('span',source==='llm'?'AI · đã qua kiểm tra tự động, cần bạn kiểm tra ý nghĩa':`Câu mẫu · ${option.phrasingId}`,'src'));
+  button.onclick=()=>{for(const other of $('cOptions').children)other.setAttribute('aria-pressed','false');button.setAttribute('aria-pressed','true');clarificationSelection={...option,source};$('cApproved').value=option.text;updateClarificationSend();$('cApproved').focus({preventScroll:true});};
+  $('cOptions').append(button);
+ }
+}
+function showClarificationSample(){
+ if(!CLAR)return;
+ const sample=CLAR.sampleMessages[sampleIndex%CLAR.sampleMessages.length];
+ const role=ORG.roles.find(item=>item.roleId===sample.senderRoleId);
+ text('cSender',`${role?.title||'Người giao việc'} · tin nhắn mô phỏng`);text('cOriginal',sample.text);
+}
+function resetClarificationView(){
+ cancelClarification();clarification=null;clarificationSelection=null;
+ $('cFlow').hidden=true;$('cComposer').hidden=true;$('cReceiver').hidden=true;$('cReceiverEmpty').hidden=false;$('cAnswer').hidden=true;$('cResolve').hidden=true;
+ $('cApproved').value='';$('cResponse').value='';$('cRespond').disabled=true;text('cUserStatus','');$('cTypes').inert=false;$('cOptions').inert=false;$('cApproved').disabled=false;
+ for(const button of $('cTypes').children)button.setAttribute('aria-pressed','false');
+ showClarificationSample();
+}
+async function chooseClarification(type){
+ cancelClarification();const current=clarificationRevision;
+ const sample=CLAR.sampleMessages[sampleIndex%CLAR.sampleMessages.length];
+ clarification={status:'draft',sample,type,reasonCode:'LOCAL_MODE'};
+ for(const button of $('cTypes').children)button.setAttribute('aria-pressed',button.dataset.id===type.clarificationId?'true':'false');
+ $('cComposer').hidden=false;renderClarificationOptions(type.phrasings,'static');$('cOptionsHeading').focus({preventScroll:true});
+ if(!$('aiMode').checked){text('cUserStatus','Đang dùng câu hỏi mẫu; chưa gửi dữ liệu tới AI.');return;}
+ clarificationController=new AbortController();const localController=clarificationController;
+ text('cUserStatus','Đang lấy gợi ý câu hỏi từ AI…');$('cTypes').inert=true;$('cOptions').inert=true;$('cApproved').disabled=true;
+ const timeout=setTimeout(()=>localController.abort(),5500);
+ try{
+  const response=await fetch('/api/clarify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({originalMessage:sample.text,clarificationId:type.clarificationId}),signal:localController.signal});
+  const result=await response.json();if(current!==clarificationRevision)return;
+  if(response.status===400){clarification.reasonCode='BAD_INPUT';text('cUserStatus',result.message||'Dữ liệu làm rõ không hợp lệ.');}
+  else if(response.ok&&result.mode==='llm'){
+   clarification.reasonCode=null;renderClarificationOptions(Object.entries(result.options).map(([tone,value])=>({tone,text:value,phrasingId:`llm-${tone}`})),'llm');
+   text('cUserStatus','Gợi ý AI đã qua kiểm tra tự động; hãy kiểm tra lại ý nghĩa trước khi gửi.');
+  }else{clarification.reasonCode=result.reasonCode||'API_ERROR';text('cUserStatus',`Dùng câu hỏi mẫu dự phòng (${clarification.reasonCode}).`);}
+ }catch(error){if(current===clarificationRevision){clarification.reasonCode=error.name==='AbortError'?'TIMEOUT':'NETWORK_ERROR';text('cUserStatus',`Dùng câu hỏi mẫu dự phòng (${clarification.reasonCode}).`);}}
+ finally{clearTimeout(timeout);if(current===clarificationRevision){clarificationController=null;$('cTypes').inert=false;$('cOptions').inert=false;$('cApproved').disabled=false;}}
+}
+function sendClarification(){
+ const approved=$('cApproved').value.trim();if(!clarification||clarification.status!=='draft'||!approved)return;
+ const record={recordType:'clarification',id:`clarify-${++clarificationSeq}`,originalMessageId:clarification.sample.messageId,originalMessage:clarification.sample.text,fromRoleId:clarification.sample.senderRoleId,clarificationId:clarification.type.clarificationId,userApprovedText:approved,source:clarificationSelection?.source==='llm'?'llm':clarificationSelection?'fallback':'user',sourceFile:clarificationSelection?.source==='static'?'data/clarifications_vi.json':clarificationSelection?.source==='llm'?'/api/clarify':null,pickedPhrasingId:clarificationSelection?.phrasingId||null,wasEdited:!clarificationSelection||approved!==clarificationSelection.text,reasonCode:clarification.reasonCode,status:'awaiting-response',response:null};
+ clarification={...clarification,record,status:'awaiting-response'};records.push(record);evidence();
+ text('cReceiverOriginal',record.originalMessage);text('cReceiverQuestion',record.userApprovedText);$('cReceiverEmpty').hidden=true;$('cReceiver').hidden=false;
+ $('cResponse').value=CLAR.responseExamples[sampleIndex%CLAR.responseExamples.length]||'';$('cRespond').disabled=!$('cResponse').value.trim();
+ text('cUserStatus','Đã gửi trong demo · Đang chờ người giao việc phản hồi.');$('cTypes').inert=true;$('cOptions').inert=true;$('cApproved').disabled=true;$('cSend').disabled=true;$('cResponse').focus({preventScroll:true});
+}
+function respondToClarification(){
+ if(!clarification?.record||clarification.status!=='awaiting-response'||!$('cResponse').value.trim())return;
+ clarification.record.response={userApprovedText:$('cResponse').value.trim(),respondedByRoleId:clarification.sample.senderRoleId};clarification.record.status='answered';clarification.status='answered';evidence();
+ text('cAnswer',`Người giao việc trả lời:\n${clarification.record.response.userApprovedText}`);$('cAnswer').hidden=false;$('cResolve').hidden=false;$('cRespond').disabled=true;text('cUserStatus','Đã nhận câu trả lời · Minh quyết định khi nào đã đủ rõ.');$('cAnswer').focus?.({preventScroll:true});
+}
+function resolveClarification(){
+ if(!clarification?.record||clarification.status!=='answered')return;
+ clarification.status='resolved';clarification.record.status='resolved';evidence();text('cUserStatus','Đã hiểu · Vòng làm rõ đã được Minh đóng.');$('cResolve').hidden=true;
+}
 function cancel(){revision++;controller?.abort();controller=null;$('btnAnalyze').disabled=!INT;$('optsOut').inert=false;$('approved').disabled=false;}
 function invalidate(){cancel();draft=null;selected=null;$('analysis').hidden=true;$('approved').value='';$('btnSend').disabled=true;text('notice','');text('error','');}
 function updateSend(){$('btnSend').disabled=!draft||!$('approved').value.trim();}
@@ -69,21 +132,28 @@ function reply(){
  active.bReplyId=replyChoice||'custom';active.bReplyApprovedText=$('bReply').value;active.replies.push({replyId:active.bReplyId,userApprovedText:active.bReplyApprovedText});active.status=replyChoice==='clarify'?'needs-clarification':replyChoice==='redirect'?'redirect-proposed':'responded';
  text('aStatus',`Người nhận phản hồi:\n${$('bReply').value}\n${active.status==='redirect-proposed'?'Chỉ đề xuất đầu mối khác; chưa chuyển tin cho ai.':'Đã phản hồi, chưa có nghĩa là đã giải quyết.'}`);evidence();$('bSend').disabled=true;$('btnResolve').hidden=false;$('followupBox').hidden=false;$('followup').value='';$('sendFollowup').disabled=true;$('followup').focus({preventScroll:true});
 }
-function reset(){invalidate();active=null;records.length=0;seq=0;$('raw').value='';$('bReply').value='';$('followup').value='';$('followupBox').hidden=true;$('bContent').hidden=true;$('bEmpty').hidden=false;$('btnResolve').hidden=true;for(const id of ['aStatus','bApproved'])text(id,'');text('bWho','Chưa có gì được gửi');evidence();$('raw').focus();}
+function reset(){invalidate();active=null;records.length=0;seq=0;clarificationSeq=0;$('raw').value='';$('bReply').value='';$('followup').value='';$('followupBox').hidden=true;$('bContent').hidden=true;$('bEmpty').hidden=false;$('btnResolve').hidden=true;for(const id of ['aStatus','bApproved'])text(id,'');text('bWho','Chưa có gì được gửi');resetClarificationView();evidence();$('raw').focus();}
 $('raw').addEventListener('input',()=>{invalidate();$('optsOut').inert=false;$('approved').disabled=false;});
 $('approved').addEventListener('input',updateSend);
 $('bReply').addEventListener('input',()=>{$('bSend').disabled=!active||active.status==='resolved'||!$('bReply').value.trim();});
-$('aiMode').onchange=()=>{invalidate();$('optsOut').inert=false;$('approved').disabled=false;text('notice','Đã đổi chế độ. Bấm Tìm cách diễn đạt để tạo gợi ý; chưa gửi dữ liệu.');};
+$('aiMode').onchange=()=>{invalidate();resetClarificationView();$('optsOut').inert=false;$('approved').disabled=false;text('notice','Đã đổi chế độ. Bấm Tìm cách diễn đạt hoặc mở Làm rõ để tạo gợi ý; chưa gửi dữ liệu.');};
 $('btnAnalyze').onclick=()=>analyze();$('btnSend').onclick=()=>send(true);$('bSend').onclick=reply;$('btnReset').onclick=reset;
 $('btnViolate').onclick=()=>send(false);
 $('followup').oninput=()=>{$('sendFollowup').disabled=!$('followup').value.trim();};
 $('sendFollowup').onclick=()=>{if(!active||active.status==='resolved'||!$('followup').value.trim())return;active.followups.push($('followup').value);active.status='sent';text('bApproved',active.userApprovedText+'\n\nBổ sung từ Minh:\n'+active.followups.join('\n\n'));text('aStatus','Đã gửi bổ sung trong demo. Đang chờ phản hồi.');$('followupBox').hidden=true;$('btnResolve').hidden=true;$('bReply').value='';replyChoice=null;$('bSend').disabled=true;evidence();$('bMessageHeading').focus({preventScroll:true});};
 $('btnResolve').onclick=()=>{if(!active)return;active.status='resolved';evidence();text('aStatus','Bạn đã xác nhận được hỗ trợ và đóng yêu cầu.');$('btnResolve').hidden=true;$('followupBox').hidden=true;$('bSend').disabled=true;updateSend();$('raw').focus({preventScroll:true});};
+$('cStart').onclick=()=>{$('cFlow').hidden=false;$('cTypes').querySelector('button')?.focus({preventScroll:true});};
+$('cNextSample').onclick=()=>{sampleIndex=(sampleIndex+1)%CLAR.sampleMessages.length;resetClarificationView();};
+$('cApproved').oninput=updateClarificationSend;
+$('cResponse').oninput=()=>{$('cRespond').disabled=!clarification||clarification.status!=='awaiting-response'||!$('cResponse').value.trim();};
+$('cSend').onclick=sendClarification;$('cRespond').onclick=respondToClarification;$('cResolve').onclick=resolveClarification;
 $('btnAnalyze').disabled=true;
 try {
- [INT,ORG,GLO]=await Promise.all(['intents_vi','org_map','glossary_vi'].map(async name=>{const r=await fetch(`/data/${name}.json`);if(!r.ok)throw new Error('data');return r.json();}));
+ [INT,ORG,GLO,CLAR]=await Promise.all(['intents_vi','org_map','glossary_vi','clarifications_vi'].map(async name=>{const r=await fetch(`/data/${name}.json`);if(!r.ok)throw new Error('data');return r.json();}));
  text('bData',`Domain: ${INT.intents.length} ý định · ${ORG.roles.length} đầu mối`);$('btnAnalyze').disabled=false;
  const samples=[['Chưa rõ task','em không hiểu task API-142 lắm mà hỏi thì sợ phiền'],['Quá tải','nhiều task cùng lúc em không kịp'],['Quyền truy cập','em chưa có quyền truy cập repo'],['Cần viết lại','mọi người nói nhanh em không nhớ kịp'],['Thiếu thử thách','công việc lặp lại em muốn thử thách hơn'],['Chưa rõ nhu cầu','em muốn nói một chuyện']];
  for(const [label,value] of samples){const b=node('button',label);b.onclick=()=>{invalidate();$('raw').value=value;$('optsOut').inert=false;$('approved').disabled=false;$('raw').focus();};$('samples').append(b);}
+ for(const type of CLAR.clarificationTypes){const button=node('button','', 'clarifyType');button.dataset.id=type.clarificationId;button.setAttribute('aria-pressed','false');button.append(node('strong',type.label),node('span',type.description));button.onclick=()=>chooseClarification(type);$('cTypes').append(button);}
+ showClarificationSample();
  $('loadedList').replaceChildren(...[`${INT.intents.length} ý định, mỗi ý định có định tuyến và phản hồi mẫu.`,`${ORG.roles.length} vai trò hư cấu; cần thay bằng đầu mối thật khi triển khai.`,`${(GLO.entries||GLO.terms).length} mục tri thức; quy ước mẫu không phải cam kết của công ty.`].map(s=>node('li',s)));
 }catch{$('loadError').hidden=false;text('bData','Lỗi tải dữ liệu');}

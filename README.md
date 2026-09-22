@@ -1,6 +1,6 @@
 # Cầu Nối — prototype ADC
 
-Web demo hai chiều: người dùng diễn đạt nhu cầu → tự duyệt câu → người nhận nhận nguyên văn → tự duyệt phản hồi → người dùng bổ sung hoặc xác nhận đóng yêu cầu.
+Web demo hai chiều: người dùng diễn đạt nhu cầu → tự duyệt câu → người nhận nhận nguyên văn → tự duyệt phản hồi → người dùng bổ sung hoặc xác nhận đóng yêu cầu. Clarification Assistant bổ sung vòng riêng cho chỉ dẫn mơ hồ: chọn điều cần làm rõ → duyệt câu hỏi → nhận câu trả lời → người dùng tự đóng vòng.
 
 ## Chạy
 
@@ -43,6 +43,8 @@ Proxy không ghi nội dung vào file/log. Nhà cung cấp AI có chính sách x
 - B thấy nguyên văn `userApprovedText`; gợi ý hành động nằm riêng và được ghi nhãn là dữ liệu mẫu.
 - B có accept / clarify / redirect và ô sửa. Redirect chỉ đề xuất đầu mối, không chuyển tin tự động.
 - A được gửi thông tin bổ sung; chỉ A xác nhận mới chuyển sang resolved.
+- Clarification Assistant có 4 lựa chọn cố định: phạm vi, ưu tiên/thời hạn, kết quả mong đợi và đầu mối phối hợp. AI chỉ tạo cách hỏi, không tự trả lời chỉ dẫn.
+- Câu hỏi làm rõ có trạng thái draft → awaiting-response → answered → resolved; cả câu hỏi và câu trả lời đều cần người gửi tự duyệt.
 - Mỗi thời điểm có một yêu cầu đang hoạt động. Làm lại xóa dữ liệu demo trong bộ nhớ. Refresh cũng mất dữ liệu; không có database/localStorage.
 - Bản ghi demo chứa rawInput và tin nhắn, nằm trong phần thu gọn trên cùng máy, không phải dashboard quản lý. Không chia sẻ màn hình mục này với dữ liệu thật.
 
@@ -54,7 +56,7 @@ Proxy không ghi nội dung vào file/log. Nhà cung cấp AI có chính sách x
 | 200 | mode fallback; NO_KEY / TIMEOUT / API_ERROR / RATE_LIMIT / VALIDATION_FAILED | Giữ cả bộ câu mẫu |
 | 400 | mode error, BAD_INPUT | Hiện lỗi, không tự gọi lại |
 
-Backend timeout 5 giây, browser timeout 5,5 giây; proxy không retry. Sửa đầu vào, đổi mode, reset hoặc chọn lại intent hủy request trước và bỏ qua kết quả cũ. Câu trả lời LLM không trộn với câu mẫu. LLM ID: llm-neutral / llm-direct / llm-soft. Evidence dùng source llm/fallback/user; LOCAL_MODE là nhãn nội bộ cho lựa chọn câu mẫu chủ động.
+Hai endpoint `/api/suggest` và `/api/clarify` dùng cùng hợp đồng HTTP. Backend timeout 5 giây, browser timeout 5,5 giây; proxy không retry. Sửa đầu vào, đổi mode, reset hoặc chọn lại intent/loại làm rõ sẽ hủy request trước và bỏ qua kết quả cũ. Câu trả lời LLM không trộn với câu mẫu. LLM ID: llm-neutral / llm-direct / llm-soft. Evidence dùng source llm/fallback/user; LOCAL_MODE là nhãn nội bộ cho lựa chọn câu mẫu chủ động.
 
 Validator gồm schema, echo intentId/confident, token số/ngày/thứ/ticket, tên trong org_map, năm mẫu tuyên bố quá khứ. Đây là heuristic giới hạn, không kiểm chứng ngữ nghĩa, không đảm bảo chống mọi prompt injection, không nhận diện mọi tên người. Luôn cần người dùng duyệt. Câu mẫu cũng cần được người dùng kiểm tra, vì có thể chứa giả định chưa đúng.
 
@@ -62,7 +64,7 @@ Validator gồm schema, echo intentId/confident, token số/ngày/thứ/ticket, 
 
 Không tự gửi tin/tạo task; không suy luận chẩn đoán, cảm xúc, mức chú ý hay năng suất; không đếm số lần xin hỗ trợ để HR theo dõi; không ghi nội dung vào log; không hứa mọi yêu cầu sẽ được chấp thuận. Workplace norms là chính sách hư cấu có nhãn, không phải quy tắc đúng cho mọi công ty.
 
-Chưa làm: đăng nhập, phân quyền nhiều người, database, Slack/Teams thật, app mobile, task-fit diary, dữ liệu gộp, quản trị đa công ty. Hai cột là hai vai trong cùng browser, không phải hai tài khoản bảo mật.
+Chưa làm: đăng nhập, phân quyền nhiều người, database, Slack/Teams thật, app mobile, task-fit diary, dữ liệu gộp, quản trị đa công ty. Các vai trên cùng browser chỉ là mô phỏng, không phải các tài khoản bảo mật.
 
 ## Mở rộng cả 6 stage
 

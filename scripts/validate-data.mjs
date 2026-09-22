@@ -1,7 +1,7 @@
 import {readFile} from 'node:fs/promises';
 import assert from 'node:assert/strict';
 const read=async name=>JSON.parse(await readFile(new URL(`../data/${name}.json`,import.meta.url),'utf8'));
-const [intents,org,glossary]=await Promise.all(['intents_vi','org_map','glossary_vi'].map(read));
+const [intents,org,glossary,clarifications]=await Promise.all(['intents_vi','org_map','glossary_vi','clarifications_vi'].map(read));
 const ids=new Set(),phrases=new Set(),roles=new Set(org.roles.map(r=>r.roleId));
 assert.equal(roles.size,org.roles.length,'Duplicate roleId');
 for(const i of [...intents.intents,intents.fallback]){
@@ -19,4 +19,12 @@ for(const e of glossary.entries){
  assert(e.relatedIntentIds.every(id=>ids.has(id)));
 }
 assert(normIds.size>=5);
-console.log(`PASS: ${ids.size} intents including fallback, ${phrases.size} phrases, ${normIds.size} linked workplace norms.`);
+const clarificationIds=new Set(),clarificationPhrases=new Set();
+assert(Array.isArray(clarifications.sampleMessages)&&clarifications.sampleMessages.length>=2);
+for(const item of clarifications.clarificationTypes){
+ assert(item.clarificationId&&!clarificationIds.has(item.clarificationId));clarificationIds.add(item.clarificationId);
+ assert(item.label&&item.description);assert.equal(item.phrasings.length,3);
+ for(const phrase of item.phrasings){assert(!clarificationPhrases.has(phrase.phrasingId));clarificationPhrases.add(phrase.phrasingId);assert(phrase.text.trim().endsWith('?'),'Clarification phrasing must be a question');assert(['neutral','direct','soft'].includes(phrase.tone));}
+}
+assert.deepEqual([...clarificationIds],['scope','priority','outcome','coordination']);
+console.log(`PASS: ${ids.size} intents including fallback, ${phrases.size} phrases, ${normIds.size} linked workplace norms, ${clarificationIds.size} clarification types.`);

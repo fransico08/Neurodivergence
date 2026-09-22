@@ -3,12 +3,13 @@ import {readFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 import dotenv from 'dotenv';
-import {validRequest,suggest,makeProvider} from './ai.mjs';
+import {validRequest,validClarificationRequest,suggest,clarify,makeProvider} from './ai.mjs';
 const root=fileURLToPath(new URL('../',import.meta.url));
 dotenv.config({path:path.join(root,'.env'),quiet:true});
 const intents=JSON.parse(await readFile(path.join(root,'data/intents_vi.json'),'utf8'));
 const org=JSON.parse(await readFile(path.join(root,'data/org_map.json'),'utf8'));
-const paths=new Set(['/prototype/bridge.html','/prototype/bridge.mjs','/prototype/core.mjs','/data/intents_vi.json','/data/org_map.json','/data/glossary_vi.json']);
+const clarifications=JSON.parse(await readFile(path.join(root,'data/clarifications_vi.json'),'utf8'));
+const paths=new Set(['/prototype/bridge.html','/prototype/bridge.mjs','/prototype/core.mjs','/data/intents_vi.json','/data/org_map.json','/data/glossary_vi.json','/data/clarifications_vi.json']);
 export function createServer(provider=null) {
  return http.createServer(async(req,res)=>{
   const send=(status,value)=>{res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'});res.end(JSON.stringify(value));};
@@ -23,6 +24,15 @@ export function createServer(provider=null) {
     const request=validRequest(JSON.parse(body),intents);
     if(!request) return send(400,{mode:'error',reasonCode:'BAD_INPUT',message:'Kiểm tra nội dung, ý định và mã công việc.'});
     return send(200,await suggest(request,{provider,roles:org.roles}));
+   } catch {return send(400,{mode:'error',reasonCode:'BAD_INPUT',message:'JSON không hợp lệ.'});}
+  }
+  if(pathname==='/api/clarify' && req.method==='POST') {
+   if(!req.headers['content-type']?.startsWith('application/json')) return send(400,{mode:'error',reasonCode:'BAD_INPUT',message:'Cần JSON.'});
+   try {
+    let body=''; for await(const chunk of req) {body+=chunk; if(Buffer.byteLength(body)>8192) return send(400,{mode:'error',reasonCode:'BAD_INPUT',message:'Nội dung quá dài.'});}
+    const request=validClarificationRequest(JSON.parse(body),clarifications);
+    if(!request) return send(400,{mode:'error',reasonCode:'BAD_INPUT',message:'Kiểm tra tin nhắn và loại câu hỏi làm rõ.'});
+    return send(200,await clarify(request,{provider,roles:org.roles}));
    } catch {return send(400,{mode:'error',reasonCode:'BAD_INPUT',message:'JSON không hợp lệ.'});}
   }
   const target=pathname==='/'?'/prototype/bridge.html':pathname;
